@@ -42,3 +42,7 @@
 *.app
 
 # End of https://www.toptal.com/developers/gitignore/api/c++
+
+semestral/spankro1/.devcontainer/
+
+semestral/spankro1/.vscode/
