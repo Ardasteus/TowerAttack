@@ -1,9 +1,9 @@
-build: window.o
+build: label.o
 
 clean:
 	rm -f $(wildcard *.o)
 
-window.o: gui_window.cpp
+label.o: label.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $^
 
 FORCE:

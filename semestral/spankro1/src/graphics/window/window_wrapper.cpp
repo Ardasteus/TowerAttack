@@ -8,6 +8,15 @@ WindowWrapper::WindowWrapper()
     border = WindowBorder();
 }
 
+WindowWrapper::WindowWrapper(const WindowWrapper& other)
+{
+    width = other.width;
+    height = other.height;
+    position = other.position;
+    border = other.border;
+    handle = other.handle;
+}
+
 WindowWrapper::WindowWrapper( const int& _width, const int& _height, const IVector2& _position)
 {
     width = _width;
@@ -25,29 +34,27 @@ WindowWrapper::WindowWrapper(const int& _width, const int& _height, const IVecto
 }
 
 WindowWrapper::~WindowWrapper()
-{
-    if(handle != nullptr)
-    {
-        delwin(handle);
-    }
+{  
+    delwin(handle);
 }
 
 void WindowWrapper::Initialize()
 {
     handle = newwin(height, width, position.GetY(), position.GetX());
+    box(handle, ' ', ' ');
 }
 
-const WINDOW* WindowWrapper::GetWindow() const
+WINDOW* WindowWrapper::GetWindow() const
 {
     return handle;
 }
 
-const IVector2 WindowWrapper::GetPosition() const
+IVector2 WindowWrapper::GetPosition() const
 {
     return position;
 }
 
-const WindowBorder WindowWrapper::GetBorder() const
+WindowBorder WindowWrapper::GetBorder() const
 {
     return border;
 }

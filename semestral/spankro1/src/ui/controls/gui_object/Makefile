@@ -1,9 +1,9 @@
-build: base_control.o
+build: gui_object.o
 
 clean:
 	rm -f $(wildcard *.o)
 
-base_control.o: base_control.cpp
+gui_object.o: gui_object.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $^
 
 FORCE:

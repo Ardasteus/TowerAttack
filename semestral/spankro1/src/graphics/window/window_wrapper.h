@@ -15,14 +15,15 @@ private:
     int height;
 public:
     WindowWrapper();
+    WindowWrapper(const WindowWrapper& other);
     WindowWrapper(const int& _width, const int& _height, const IVector2& _position);
     WindowWrapper(const int& _width, const int& _height, const IVector2& _position, const WindowBorder& _border);
     ~WindowWrapper();
     void Initialize();
 
-    const WINDOW* GetWindow() const;
-    const IVector2 GetPosition() const;
-    const WindowBorder GetBorder() const;
+    WINDOW* GetWindow() const;
+    IVector2 GetPosition() const;
+    WindowBorder GetBorder() const;
     int GetWidth() const;
     int GetHeight() const;
 };

@@ -55,3 +55,18 @@ WindowBorder& WindowBorder::operator=(const WindowBorder& other)
     bottomRightCorner = other.bottomRightCorner;
     return *this;
 }
+
+std::vector<char> WindowBorder::GetBorderCharacters() const
+{
+    std::vector<char> characters;
+    characters.push_back(leftSide);
+    characters.push_back(rightSide);
+    characters.push_back(topSide);
+    characters.push_back(bottomSide);
+    characters.push_back(topLeftCorner);
+    characters.push_back(topRightCorner);
+    characters.push_back(bottomLeftCorner);
+    characters.push_back(bottomRightCorner);
+
+    return characters;
+}

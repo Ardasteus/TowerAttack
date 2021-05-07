@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 class WindowBorder
 {
 private:
@@ -21,4 +23,6 @@ public:
     ~WindowBorder();
 
     WindowBorder& operator=(const WindowBorder& other);
+
+    std::vector<char> GetBorderCharacters() const;
 };
