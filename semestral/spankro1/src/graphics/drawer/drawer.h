@@ -17,13 +17,13 @@ private:
     mutable std::set<ColorPair, ColorPairComparator> colors;
     bool colorEnabled;
 
-    WINDOW* GetWindow() const;
 public:
     Drawer();
     ~Drawer();
 
     void Initialize();
     void Refresh();
+    void Dispose();
 
     void SetWindow(const std::shared_ptr<WindowWrapper>& window) const;
     void SetColor(const short foreground, const short background) const;
@@ -31,4 +31,5 @@ public:
     void DrawWindowBorder() const;
     void DrawChar(const char character, const IVector2 position) const;
     void DrawString(std::string text, const IVector2 position) const;
+    WINDOW* GetWindow() const;
 };

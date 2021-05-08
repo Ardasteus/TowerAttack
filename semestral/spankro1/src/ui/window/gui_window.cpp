@@ -14,7 +14,7 @@ GUIWindow::GUIWindow(const string& _name, const int& width, const int& height, c
 
 GUIWindow::~GUIWindow()
 {
-    
+    guiElements.empty();
 }
 
 void GUIWindow::Draw(const Drawer& drawer) const

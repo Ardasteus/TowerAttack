@@ -7,7 +7,7 @@ Drawer::Drawer()
 
 Drawer::~Drawer()
 {
-    endwin();
+    
 }
 
 WINDOW* Drawer::GetWindow() const
@@ -21,6 +21,7 @@ void Drawer::Initialize()
     initscr();
     raw();
     noecho();
+    nodelay(stdscr, TRUE);
     keypad(stdscr, true);
     curs_set(0);
     colorEnabled = has_colors();
@@ -38,6 +39,11 @@ void Drawer::Refresh()
 void Drawer::SetWindow(const std::shared_ptr<WindowWrapper>& window) const
 {
     currentWindow = window;
+}
+
+void Drawer::Dispose()
+{
+    endwin();
 }
 
 void Drawer::SetColor(const short foreground, const short background) const

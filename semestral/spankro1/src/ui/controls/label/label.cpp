@@ -6,11 +6,6 @@ const IVector2& _position, const int& _width, const short& _foreground, const sh
     text = _text;
 }
 
-Label::~Label()
-{
-
-}
-
 void Label::Draw(const Drawer& drawer, const IVector2& offset) const
 {
     drawer.SetColor(foreground, background);

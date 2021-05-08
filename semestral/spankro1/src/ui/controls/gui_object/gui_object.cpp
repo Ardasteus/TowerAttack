@@ -9,7 +9,3 @@ GUIObject::GUIObject(const string& _name, const IVector2& _position, const int& 
     foreground = fg;
     background = bg;
 }
-
-GUIObject::~GUIObject()
-{
-}
