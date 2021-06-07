@@ -1,0 +1,42 @@
+Topic: Tower Attack Game
+
+Requirments:
+    1: Loading the definitions of attackers (player controlled side) from file
+    2: Loading the definitions of defenders (AI controlled side)
+    3: Loading map definitions
+    4: Interactions between defenders and attackers
+    5: Score and Victory detection
+    6: AI to place the defenders
+    7: Save and load capability
+
+Details:
+
+    The current idea is to make a roguelike tower attack game. Player will start on Floor 1 and progress to higher and higher floors, with the defenders getting stronger.
+The player will also be able to get stronger, every 10 floors they will be able to choose a power up that will effect this and any other future runs (global power up) 
+and every floor they can choose a mini power up that will impact his current run (local power up).
+
+    If the player loses, they can choose if they want to start from the beginning or from a checkpoint floor (every 10th floor). If the player decided to take a break
+and saves the games, his current floor will be saved and all the global and local power ups. In terms of maps, I would love to ignore the third requirement and generate.
+maps using Perlin 1D noise or some other function (to generate the path for attackers to run through), if that will not be possible, I will just generate some maps and save them.
+and load a random one on every floor.
+
+    I would also like to implement a buff/debuff system, so that there are special effects for the attackers and defenders, for example debuffing the defender damage, healing.
+the attacker over time etc.
+
+Technicalities:
+
+    I started with the design and development of a GUI framework, most of the gameplay will be done using buttons etc. This game uses Ncurses for graphics capability,
+I could have abstracted the drawing layer, however I decided not to as I will not be implementing any other type of rendering (OpenGL for example). The drawer works only in
+the context of given window and color, if you tell it to draw in window X using color Y it will do so unless told otherwise. The drawer is passed down to all the drawable objects.
+which can then use the capability of the drawing engine.
+
+    The graphics section of code provides an abstraction over Ncurses windows and a base class for all objects that will be in any way drawn, GUI and Game will use this.
+to implement their own DrawableObjects and Window. To connect the GUI and Game layers there will be Scenes, which will handle the communication between the GUI and Game layer.
+Scenes will basically act as the "screens" that the player sees, for example main menu, gameplay scene, pause menu, the Game object will manage these scenes.
+
+Polymorphism:
+
+    Implementation of polymorphism in this project is very logical, there are/will be GUIObjects and GameObjects which derive from DrawableObject. From these 2 base objects
+I will create GUI controls (buttons, labels, textboxes, ...) and Attacker and Defender classes which will derive from GameObject and other GameObject like walls, empty etc.
+There will also most likely be multiple types of Window, mainly on the GUI side (ScrollableWindow for example). If effects make it into the game, I will also. 
+use polymorphism there (timed effect, over time effect, one time effect).

@@ -9,12 +9,25 @@ const short& _foreground, const short& _background, const short& _fforeground, c
 
 void Textbox::HandleInput(const int key)
 {
-
+    char to_add = (char)key;
+    if(to_add == '\a')
+    {
+        string new_val = value.substr(0, value.size() - 1);
+        value = new_val;
+    }
+    else if(key < 32)
+        return;
+    else
+        value += to_add;
 }
 
 void Textbox::Draw(const Drawer& drawer, const IVector2& offset) const
 {
-    drawer.SetColor(foreground, background);
+    if(isCurrentlyFocused)
+        drawer.SetColor(focusedForegound, focusedBackground);
+    else
+        drawer.SetColor(foreground, background);
+
     string print = value;
     if(value.size() > width)
         print = value.substr(0, width - 1);

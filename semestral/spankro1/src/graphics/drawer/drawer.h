@@ -22,7 +22,8 @@ public:
     ~Drawer();
 
     void Initialize();
-    void Refresh();
+    void Clear() const;
+    void Refresh() const;
     void Dispose();
 
     void SetWindow(const std::shared_ptr<WindowWrapper>& window) const;

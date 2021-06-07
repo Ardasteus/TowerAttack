@@ -5,10 +5,11 @@
 class FocusableGUIObject : public GUIObject
 {
 protected:
-    bool isCurrentlyFocused;
     short focusedForegound;
     short focusedBackground;
 public:
+    bool isCurrentlyFocused;
+
     FocusableGUIObject(const string& _name, const IVector2& _position, const int& _width, const int& _height, 
     const short& fg, const short& bg, const short& ffg, const short& fbg);
     virtual ~FocusableGUIObject() {};

@@ -31,7 +31,12 @@ void Drawer::Initialize()
     }
 }
 
-void Drawer::Refresh()
+void Drawer::Clear() const
+{
+    werase(GetWindow());
+}
+
+void Drawer::Refresh() const
 {
     wrefresh(GetWindow());
 }
