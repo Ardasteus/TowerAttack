@@ -98,7 +98,7 @@ void GameManager::Initialize()
         game_objects[pos.GetX()][pos.GetY()] = make_shared<GameObject>(GameObject("Empty", pos, ' ', COLOR_WHITE, COLOR_BLACK));
     });
     game_window.Initialize();
-    Button* spawn_attacker_button = new Button("Spawner", "Spawn", IVector2(0,0), 10, COLOR_BLUE, COLOR_BLACK, COLOR_BLACK, COLOR_BLUE);
+    Button* spawn_attacker_button = new Button("Spawner", "Spawn One", IVector2(0,0), 10, COLOR_BLUE, COLOR_BLACK, COLOR_BLACK, COLOR_BLUE);
     spawn_attacker_button->AddOnClickEvent([&]() -> void
     {
         AttackerTemplate temp = AttackerTemplate("Attacker", 120, COLOR_BLUE, COLOR_BLACK, 'A');
@@ -109,7 +109,7 @@ void GameManager::Initialize()
         });
     });
 
-    Button* spawn_attacker_button2 = new Button("Spawner", "Spawn", IVector2(0,1), 10, COLOR_BLUE, COLOR_BLACK, COLOR_BLACK, COLOR_BLUE);
+    Button* spawn_attacker_button2 = new Button("Spawner", "Spawn Two", IVector2(0,1), 10, COLOR_BLUE, COLOR_BLACK, COLOR_BLACK, COLOR_BLUE);
     spawn_attacker_button2->AddOnClickEvent([&]() -> void
     {
         AttackerTemplate temp = AttackerTemplate("Attacker", 120, COLOR_BLUE, COLOR_BLACK, 'A');

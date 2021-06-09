@@ -28,6 +28,11 @@ void Textbox::Draw(const Drawer& drawer, const IVector2& offset) const
     else
         drawer.SetColor(foreground, background);
 
+
+    for (int i = 0; i < width; i++)
+        drawer.DrawChar(' ', offset + position + IVector2(i,0));
+    
+
     string print = value;
     if(value.size() > width)
         print = value.substr(0, width - 1);

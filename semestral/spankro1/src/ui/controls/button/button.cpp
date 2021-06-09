@@ -24,6 +24,9 @@ void Button::Draw(const Drawer& drawer, const IVector2& offset) const
     else
         drawer.SetColor(foreground, background);
 
+    for (int i = 0; i < width; i++)
+        drawer.DrawChar(' ', offset + position + IVector2(i,0));
+
     string print = caption;
     if(caption.size() > width)
         print = caption.substr(0, width - 1);
