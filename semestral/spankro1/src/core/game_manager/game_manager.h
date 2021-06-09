@@ -48,7 +48,9 @@ private:
     BaseWindow game_window;
     map<string, shared_ptr<GUIWindow>> gui_windows;
     shared_ptr<GUIWindow> current_window;
-    bool show_game = false;
+    bool game_running = false;
+    mutable bool force_redraw = false;
+    bool exit_application = false;
     Drawer drawer;
     InputHandler input_handler;
 public:
@@ -61,4 +63,6 @@ public:
     void Draw() const;
     void Update();
     void Dispose();
+
+    void ChangeWindow(string window_type);
 };  

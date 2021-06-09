@@ -31,6 +31,13 @@ void Drawer::Initialize()
     }
 }
 
+void Drawer::ClearAll() const
+{
+    erase();
+    refresh();
+}
+
+
 void Drawer::Clear() const
 {
     werase(GetWindow());

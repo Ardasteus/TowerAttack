@@ -13,12 +13,9 @@ void GameManager::Run()
     auto current = high_resolution_clock::now();
     auto previous = high_resolution_clock::now();
     int delta_limit = 33;
-    while(true)
+    while(!exit_application)
     {
         int input = input_handler.HandleInput();
-        if(input == KEY_END)
-            break;
-        char key_char = (char)input;
         current_window->HandleInput(input);
         Update();
         Draw();
@@ -60,18 +57,27 @@ shared_ptr<GameObject> GameManager::GetGameObjectAtPosition(IVector2 position) c
 
 void GameManager::Draw() const
 {
-    game_window.Draw(drawer);
-    IVector2 offset(1,1);
-    for (int i = 0; i < game_width; i++)
-        for (int j = 0; j < game_height; j++)
-            game_objects[i][j]->Draw(drawer, offset);
-    drawer.Refresh();
+    if(force_redraw)
+    {
+        drawer.ClearAll();
+        force_redraw = false;
+    }
+    if(game_running)
+    {
+        game_window.Draw(drawer);
+        IVector2 offset(1,1);
+        for (int i = 0; i < game_width; i++)
+            for (int j = 0; j < game_height; j++)
+                game_objects[i][j]->Draw(drawer, offset);
+        drawer.Refresh();
+    }
 
     current_window->Draw(drawer);
 }
 
 void GameManager::Update()
 {
+    if(game_running)
     for (int i = 0; i < game_width; i++)
         for (int j = 0; j < game_height; j++)
             game_objects[i][j]->Update(*this);
@@ -119,12 +125,34 @@ void GameManager::Initialize()
             game_objects[pos.GetX()][pos.GetY()] = make_shared<GameObject>(GameObject("Empty", pos, ' ', COLOR_WHITE, COLOR_BLACK));
         });
     });
-    GUIWindow attacker_selector = GUIWindow("Selector", game_width + 2, game_height + 2, IVector2(23,0));
+    Button* back_btn = new Button("Back", "Back", IVector2(0,2), 10, COLOR_BLUE, COLOR_BLACK, COLOR_BLACK, COLOR_BLUE);
+    back_btn->AddOnClickEvent([&]() -> void
+    {
+        ChangeWindow("MainMenu");
+    });
+    Button* start_game_btn = new Button("StartBtn", "Start Game", IVector2(0,0), 10, COLOR_BLUE, COLOR_BLACK, COLOR_BLACK, COLOR_BLUE);
+    start_game_btn->AddOnClickEvent([&]() -> void
+    {
+        ChangeWindow("Game");
+    });
+    Button* close_btn = new Button("CloseBtn", "Close", IVector2(0,1), 10, COLOR_BLUE, COLOR_BLACK, COLOR_BLACK, COLOR_BLUE);
+    close_btn->AddOnClickEvent([&]() -> void
+    {
+        exit_application = true;
+    });
+    GUIWindow main_menu = GUIWindow("MainMenu", game_width + 2, game_height + 2, IVector2(0,0));
+    GUIWindow attacker_selector = GUIWindow("Game", game_width + 2, game_height + 2, IVector2(23,0));
+    main_menu.Initialize();
+    main_menu.AddElement(start_game_btn);
+    main_menu.AddElement(close_btn);
     attacker_selector.Initialize();
     attacker_selector.AddElement(spawn_attacker_button);
     attacker_selector.AddElement(spawn_attacker_button2);
-    gui_windows["Selector"] = make_shared<GUIWindow>(attacker_selector);
-    current_window = gui_windows["Selector"];
+    attacker_selector.AddElement(back_btn);
+    gui_windows["Game"] = make_shared<GUIWindow>(attacker_selector);
+    gui_windows["MainMenu"] = make_shared<GUIWindow>(main_menu);
+    current_window = gui_windows["MainMenu"];
+    game_running = false;
 }
 
 void GameManager::Dispose()
@@ -135,4 +163,15 @@ void GameManager::Dispose()
 
     input_handler.Dispose();
     drawer.Dispose();
+}
+
+void GameManager::ChangeWindow(string window_type)
+{
+    if(window_type == "Game")
+        game_running = true;
+    else
+        game_running = false;
+
+    force_redraw = true;
+    current_window = gui_windows[window_type];
 }

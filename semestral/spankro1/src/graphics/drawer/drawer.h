@@ -22,6 +22,7 @@ public:
     ~Drawer();
 
     void Initialize();
+    void ClearAll() const;
     void Clear() const;
     void Refresh() const;
     void Dispose();
