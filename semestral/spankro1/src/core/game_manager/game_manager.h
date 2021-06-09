@@ -9,11 +9,16 @@ using namespace std;
 #include "game/attacker_entity/attacker_template.h"
 #include "game/defender_entity/defender_template.h"
 #include "core/input_handler/input_handler.h"
+#include "game/attacker_entity/attacker_entity.h"
+#include "game/defender_entity/defender_entity.h"
+#include "ui/controls/button/button.h"
 #include <string>
 #include <vector>
 #include <map>
 #include <memory>
 #include <set>
+#include <chrono>
+#include <thread>
 
 struct DefenderTemplateComparator
 {
@@ -34,16 +39,16 @@ struct AttackerTemplateComparator
 class GameManager
 {
 private:
-    int game_width;
-    int game_height; 
-    mutable vector<vector<shared_ptr<GameObject>>> game_objects;
+    int game_width = 20;
+    int game_height = 10; 
+    shared_ptr<GameObject> game_objects[20][10];
     set<AttackerTemplate, AttackerTemplateComparator> attacker_templates;
     set<DefenderTemplate, DefenderTemplateComparator> defender_templates;
 
-    mutable shared_ptr<GameWindow> game_window;
-    mutable map<string, shared_ptr<GUIWindow>> gui_windows;
-    mutable shared_ptr<GUIWindow> current_window;
-    mutable bool show_game = false;
+    BaseWindow game_window;
+    map<string, shared_ptr<GUIWindow>> gui_windows;
+    shared_ptr<GUIWindow> current_window;
+    bool show_game = false;
     Drawer drawer;
     InputHandler input_handler;
 public:

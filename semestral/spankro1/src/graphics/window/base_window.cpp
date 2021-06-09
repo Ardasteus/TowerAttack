@@ -23,3 +23,11 @@ void BaseWindow::Initialize() const
 {
     windowWrapper.get()->Initialize();
 }
+
+void BaseWindow::Draw(const Drawer& drawer) const
+{
+    drawer.SetWindow(windowWrapper);
+    drawer.SetColor(foregroundColor, backgroundColor);
+    drawer.DrawWindowBorder();
+    drawer.Refresh();
+}

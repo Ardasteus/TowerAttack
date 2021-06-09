@@ -17,5 +17,5 @@ public:
     ~BaseWindow();
 
     virtual void Initialize() const;
-    virtual void Draw(const Drawer& drawer) const = 0;
+    virtual void Draw(const Drawer& drawer) const;
 };

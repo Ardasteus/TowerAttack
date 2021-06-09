@@ -16,5 +16,4 @@ public:
     GameWindow(const string& _name, const int& width, const int& height, const IVector2& position, const WindowBorder& border);
 
     void Draw(const Drawer& drawer) const override;
-    void Draw(int width, int height, vector<vector<shared_ptr<GameObject>>>& game_objects, const Drawer& drawer) const;
 };

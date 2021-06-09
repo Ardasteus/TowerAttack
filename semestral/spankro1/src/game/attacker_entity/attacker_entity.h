@@ -15,4 +15,5 @@ public:
 
     void Draw(const Drawer& drawer, const IVector2& offset) const override;
     void Update(GameManager& game_manager) override;
+    void ApplyDamage(int damage);
 };
