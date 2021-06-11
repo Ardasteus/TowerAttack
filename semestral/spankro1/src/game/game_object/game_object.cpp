@@ -4,6 +4,7 @@ GameObject::GameObject(const string& _name, const IVector2& _position, char _dra
 {
     name = _name;
     position = _position;
+    previous_position = _position;
     draw_character = _draw_character;
     foreground = fg;
     background = bg;
@@ -19,4 +20,14 @@ void GameObject::Draw(const Drawer& drawer, const IVector2& offset) const
 {
     drawer.SetColor(foreground, background);
     drawer.DrawChar(draw_character, offset + position);
+}
+
+const string GameObject::GetName() const
+{
+    return name;
+}
+
+const IVector2 GameObject::GetPosition() const
+{
+    return position;
 }

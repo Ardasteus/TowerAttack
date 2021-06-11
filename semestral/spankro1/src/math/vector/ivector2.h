@@ -17,6 +17,11 @@ public:
         return left.X == right.X && left.Y == right.Y;
     }
 
+    friend bool operator!=(const IVector2& left, const IVector2& right)
+    {
+        return left.X != right.X || left.Y != right.Y;
+    }
+
     friend IVector2 operator+(IVector2 left, const IVector2& right)
     {
         left.X += right.X;

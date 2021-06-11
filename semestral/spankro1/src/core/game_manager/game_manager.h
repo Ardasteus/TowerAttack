@@ -6,12 +6,12 @@ using namespace std;
 #include "game/game_object/game_object.h"
 #include "ui/window/gui_window.h"
 #include "ui/controls/gui_object/gui_object.h"
-#include "game/attacker_entity/attacker_template.h"
-#include "game/defender_entity/defender_template.h"
 #include "core/input_handler/input_handler.h"
 #include "game/attacker_entity/attacker_entity.h"
 #include "game/defender_entity/defender_entity.h"
 #include "ui/controls/button/button.h"
+#include "core/enums/tile_type.h"
+#include "core/tile_game_object_pair/tile_game_object_pair.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -20,49 +20,59 @@ using namespace std;
 #include <chrono>
 #include <thread>
 
-struct DefenderTemplateComparator
-{
-    bool operator() (const DefenderTemplate& left, const DefenderTemplate& right)
-    {
-        return left.name < right.name;
-    }
-};
+#define GAME_WIDTH 20
+#define GAME_HEIGHT 10
 
-struct AttackerTemplateComparator
+struct GameObjectComparator
 {
-    bool operator() (const AttackerTemplate& left, const AttackerTemplate& right)
+    bool operator() (const shared_ptr<GameObject> left, const shared_ptr<GameObject> right)
     {
-        return left.name < right.name;
+        return left->GetName() < right->GetName();
     }
 };
 
 class GameManager
 {
 private:
-    int game_width = 20;
-    int game_height = 10; 
-    shared_ptr<GameObject> game_objects[20][10];
-    set<AttackerTemplate, AttackerTemplateComparator> attacker_templates;
-    set<DefenderTemplate, DefenderTemplateComparator> defender_templates;
+    shared_ptr<GameObject> game_objects[GAME_WIDTH][GAME_HEIGHT];
+    TileType game_map_mask[GAME_WIDTH][GAME_HEIGHT];
 
+    set<shared_ptr<GameObject>, GameObjectComparator> entities;
+
+    map<string, AttackerTemplate> attacker_templates;
+    map<string, DefenderTemplate> defender_templates;
+
+    IVector2 SpawnLocation;
+
+    Drawer drawer;
+    list<shared_ptr<GameObject>> to_draw;
+
+    InputHandler input_handler;
     BaseWindow game_window;
     map<string, shared_ptr<GUIWindow>> gui_windows;
     shared_ptr<GUIWindow> current_window;
     bool game_running = false;
-    mutable bool force_redraw = false;
+    bool force_redraw = false;
     bool exit_application = false;
-    Drawer drawer;
-    InputHandler input_handler;
 public:
     GameManager();
 
     void Run();
-    vector<shared_ptr<GameObject>> GetGameObjectsInSquare(IVector2 position, int radius) const;
-    shared_ptr<GameObject> GetGameObjectAtPosition(IVector2 position) const;
+
+    vector<TileGameObjectPair> GetGameObjectsInSquare(IVector2 position, int radius) const;
+    TileGameObjectPair GetGameObjectAtPosition(IVector2 position) const;
+    
+    void TrySpawnAttacker(IVector2 position, string template_name);
+    void TrySpawnDefender(IVector2 position, string template_name);
+    void MoveEntity(IVector2 position, IVector2 move_to);
+
+    void ChangeWindow(string window_type);
+
+private: 
+    shared_ptr<GUIWindow> AddGUIWindow(string name, int width, int height, IVector2 position);
+
     void Initialize();
     void Draw() const;
     void Update();
     void Dispose();
-
-    void ChangeWindow(string window_type);
 };  

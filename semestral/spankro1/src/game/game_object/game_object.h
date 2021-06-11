@@ -14,6 +14,7 @@ class GameObject : public DrawableObject
 protected:
     string name;
     IVector2 position;
+    IVector2 previous_position;
     char draw_character;    
     short foreground;
     short background;
@@ -25,4 +26,6 @@ public:
     virtual void Update(GameManager& game_manager) {};
     virtual void Draw(const Drawer& drawer, const IVector2& offset) const override;
     void SetOnDestroyCallback(function<void(IVector2)> func);
+    const string GetName() const;
+    const IVector2 GetPosition() const;
 };

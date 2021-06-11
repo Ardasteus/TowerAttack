@@ -9,7 +9,6 @@ void ButtonClick()
 int main()
 {
     GameManager game;
-    game.Initialize();
     game.Run();
     return 0;
 }
