@@ -15,3 +15,8 @@ void Label::Draw(const Drawer& drawer, const IVector2& offset) const
 
     drawer.DrawString(print, offset + position);
 }
+
+void Label::UpdateText(string new_text)
+{
+    text = new_text;
+}

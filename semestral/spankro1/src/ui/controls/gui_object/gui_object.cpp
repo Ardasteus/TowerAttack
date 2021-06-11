@@ -9,3 +9,8 @@ GUIObject::GUIObject(const string& _name, const IVector2& _position, const int& 
     foreground = fg;
     background = bg;
 }
+
+int GUIObject::GetWidth() const
+{
+    return width;
+}

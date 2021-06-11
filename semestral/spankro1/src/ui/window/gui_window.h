@@ -16,11 +16,12 @@ private:
     int focused_element;
     string name;
 public:
+    GUIWindow();
     GUIWindow(const string& _name, const int& width, const int& height, const IVector2& position);
     GUIWindow(const string& _name, const int& width, const int& height, const IVector2& position, const WindowBorder& border);
     ~GUIWindow();
 
     void Draw(const Drawer& drawer) const override;
     void HandleInput(const int key);
-    void AddElement(GUIObject* element);
+    void AddElement(shared_ptr<GUIObject> element);
 };

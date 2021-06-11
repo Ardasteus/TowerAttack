@@ -5,6 +5,7 @@ AttackerEntity::AttackerEntity(const IVector2& _position, string _name, Attacker
 : GameObject(_name, _position, a_template.draw_character, a_template.foregroundColor, a_template.backgroundColor)
 {
     onDestroy = nullptr;
+    cost_to_spawn = a_template.cost;
     max_health = a_template.health;
     current_health = a_template.health;
 }
@@ -19,7 +20,10 @@ void AttackerEntity::Update(GameManager& game_manager)
 {
     TileGameObjectPair current = game_manager.GetGameObjectAtPosition(position);
     if(current.tile_type == TileType::End)
+    {
+        onEnd();
         onDestroy(position);
+    }
     vector<TileGameObjectPair> in_radius = game_manager.GetGameObjectsInSquare(position, 1);
     for(auto obj : in_radius)
     {
@@ -36,9 +40,19 @@ void AttackerEntity::Update(GameManager& game_manager)
     }
 }
 
+int AttackerEntity::GetCost() const
+{
+    return cost_to_spawn;
+}
+
 void AttackerEntity::ApplyDamage(int damage)
 {
     current_health -= damage;
     if(current_health <= 0)
         onDestroy(position);
+}
+
+void AttackerEntity::SetOnEndCallback(function<void()> func)
+{
+    onEnd = func;
 }

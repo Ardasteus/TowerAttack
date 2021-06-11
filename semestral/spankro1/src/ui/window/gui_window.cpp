@@ -2,6 +2,13 @@
 
 #define KEY_TAB 9
 
+GUIWindow::GUIWindow() 
+: BaseWindow(0, 0, IVector2(0,0), COLOR_WHITE, COLOR_BLACK)
+{
+    name = "Default";
+    focused_element = -1;
+}
+
 GUIWindow::GUIWindow(const string& _name, const int& width, const int& height, const IVector2& position) 
 : BaseWindow(width, height, position, COLOR_WHITE, COLOR_BLACK)
 {
@@ -35,24 +42,23 @@ void GUIWindow::Draw(const Drawer& drawer) const
     drawer.Refresh();
 }
 
-void GUIWindow::AddElement(GUIObject* element)
+void GUIWindow::AddElement(shared_ptr<GUIObject> element)
 {
-    shared_ptr<GUIObject> to_add (element);
-    FocusableGUIObject* focusable = dynamic_cast<FocusableGUIObject*>(element);
+    FocusableGUIObject* focusable = dynamic_cast<FocusableGUIObject*>(element.get());
     if(focusable != nullptr)
     {
         focusable_elements.push_back(focusable);
         focused_element = 0;
         focusable_elements[focused_element]->isCurrentlyFocused = true;
     }
-    gui_elements.push_back(to_add);
+    gui_elements.push_back(element);
 }
 
 void GUIWindow::HandleInput(const int key)
 {
     if(focusable_elements.size() == 0)
         return;
-    if(key == KEY_RIGHT)
+    if(key == KEY_DOWN)
     {
         focusable_elements[focused_element++]->isCurrentlyFocused = false;
         if(focused_element == (int)focusable_elements.size())
@@ -60,7 +66,7 @@ void GUIWindow::HandleInput(const int key)
 
         focusable_elements[focused_element]->isCurrentlyFocused = true;
     }
-    else if(key == KEY_LEFT)
+    else if(key == KEY_UP)
     {
         focusable_elements[focused_element--]->isCurrentlyFocused = false;
         if(focused_element == -1)

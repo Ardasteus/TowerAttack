@@ -12,6 +12,8 @@ using namespace std;
 #include "ui/controls/button/button.h"
 #include "core/enums/tile_type.h"
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
+#include "core/game_stats/game_stats.h"
+#include "core/game_stats_window/game_stats_window.h"
 #include <string>
 #include <vector>
 #include <map>
@@ -20,8 +22,11 @@ using namespace std;
 #include <chrono>
 #include <thread>
 
-#define GAME_WIDTH 20
-#define GAME_HEIGHT 10
+#define TOTAL_WIDTH 100
+#define TOTAL_HEIGHT 23
+#define GAME_WIDTH 60
+#define GAME_HEIGHT 20
+#define WINDOW_BORDER 2
 
 struct GameObjectComparator
 {
@@ -41,12 +46,12 @@ private:
 
     map<string, AttackerTemplate> attacker_templates;
     map<string, DefenderTemplate> defender_templates;
-
     IVector2 SpawnLocation;
 
-    Drawer drawer;
-    list<shared_ptr<GameObject>> to_draw;
+    GameStats stats;
+    GameStatsWindowHandler stats_window;
 
+    Drawer drawer;
     InputHandler input_handler;
     BaseWindow game_window;
     map<string, shared_ptr<GUIWindow>> gui_windows;

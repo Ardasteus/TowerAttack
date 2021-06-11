@@ -18,4 +18,6 @@ protected:
 public:
     GUIObject(const string& _name, const IVector2& _position, const int& _width, const int& _height, const short& fg, const short& bg);
     virtual ~GUIObject() {};
+
+    int GetWidth() const;
 };
