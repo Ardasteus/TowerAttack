@@ -13,6 +13,7 @@ class DefenderEntity : public GameObject
 protected:
     int attack_radius;
     int attack_damage;
+    int cost_to_spawn;
 public:
     DefenderEntity(const IVector2& _position, string _name, DefenderTemplate d_template);
 

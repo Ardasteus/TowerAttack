@@ -14,7 +14,11 @@ using namespace std;
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
 #include "core/game_stats/game_stats.h"
 #include "core/game_stats_window/game_stats_window.h"
+#include "utility/string_utilities.h"
 #include <string>
+#include <fstream>
+#include <iterator>
+#include <random>
 #include <vector>
 #include <map>
 #include <memory>
@@ -41,6 +45,7 @@ class GameManager
 private:
     shared_ptr<GameObject> game_objects[GAME_WIDTH][GAME_HEIGHT];
     TileType game_map_mask[GAME_WIDTH][GAME_HEIGHT];
+    vector<string> map_files;
 
     set<shared_ptr<GameObject>, GameObjectComparator> entities;
 
@@ -59,6 +64,8 @@ private:
     bool game_running = false;
     bool force_redraw = false;
     bool exit_application = false;
+    bool change_level = false;
+    int ai_update = 0;
 public:
     GameManager();
 
@@ -66,9 +73,8 @@ public:
 
     vector<TileGameObjectPair> GetGameObjectsInSquare(IVector2 position, int radius) const;
     TileGameObjectPair GetGameObjectAtPosition(IVector2 position) const;
+    vector<TileGameObjectPair> GetGameObjectsInCross(IVector2 position) const;
     
-    void TrySpawnAttacker(IVector2 position, string template_name);
-    void TrySpawnDefender(IVector2 position, string template_name);
     void MoveEntity(IVector2 position, IVector2 move_to);
 
     void ChangeWindow(string window_type);
@@ -80,4 +86,15 @@ private:
     void Draw() const;
     void Update();
     void Dispose();
+
+    void LoadAttackerDefinitions();
+    void LoadDefenderDefinitions();
+    void LoadMaps();
+    void LoadRandomMap();
+
+    bool TrySpawnAttacker(IVector2 position, string template_name);
+    bool TrySpawnDefender(IVector2 position, string template_name);
+    void DefenderAIUpdate();
+
+    void NextLevel();
 };  

@@ -9,9 +9,10 @@ DefenderTemplate::DefenderTemplate()
     backgroundColor = 0;
     draw_character = ' ';
     count = 0;
+    cost = 0;
 }
 
-DefenderTemplate::DefenderTemplate(string _name, short fgc, short bgc, char dc, int radius, int damage)
+DefenderTemplate::DefenderTemplate(string _name, short fgc, short bgc, char dc, int radius, int damage, int _cost)
 {
     name = _name;
     attack_radius = radius;
@@ -20,4 +21,5 @@ DefenderTemplate::DefenderTemplate(string _name, short fgc, short bgc, char dc, 
     backgroundColor = bgc;
     draw_character = dc;
     count = 0;
+    cost = _cost;
 }

@@ -14,7 +14,8 @@ public:
     short backgroundColor;
     char draw_character;
     int count;
+    int cost;
 
     DefenderTemplate();
-    DefenderTemplate(string _name, short fgc, short bgc, char dc, int radius, int damage);
+    DefenderTemplate(string _name, short fgc, short bgc, char dc, int radius, int damage, int _cost);
 };

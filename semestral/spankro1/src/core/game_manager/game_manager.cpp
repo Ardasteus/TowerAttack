@@ -16,7 +16,7 @@ void GameManager::Run()
     auto previous = high_resolution_clock::now();
     auto stat_update_current = high_resolution_clock::now();
     auto stat_update_previous = high_resolution_clock::now();
-    int delta_limit = 100;
+    int delta_limit = 33;
     while(!exit_application)
     {
         int input = input_handler.HandleInput();
@@ -31,6 +31,7 @@ void GameManager::Run()
             auto stat_update = duration_cast<seconds>(stat_update_current - stat_update_previous).count();
             if(stat_update > 2)
             {
+                stats.ai_gold += stats.ai_income;
                 stats.player_gold += stats.player_income;
                 stats.InvokeUpdate();
                 stat_update_previous = high_resolution_clock::now();
@@ -64,6 +65,23 @@ vector<TileGameObjectPair> GameManager::GetGameObjectsInSquare(IVector2 position
     return result;
 }
 
+vector<TileGameObjectPair> GameManager::GetGameObjectsInCross(IVector2 position) const
+{
+    vector<TileGameObjectPair> result;
+    vector<IVector2> positions;
+    positions.push_back(position + IVector2(0, 1));
+    positions.push_back(position + IVector2(1, 0));
+    positions.push_back(position - IVector2(0, 1));
+    positions.push_back(position - IVector2(1, 0));
+    for (auto pos : positions)
+    {
+        TileGameObjectPair obj = GetGameObjectAtPosition(pos);
+        if(obj.game_object != nullptr)
+            result.push_back(obj);
+    }
+    return result;
+}
+
 TileGameObjectPair GameManager::GetGameObjectAtPosition(IVector2 position) const
 {
     if(position.GetX() < 0 || position.GetX() >= GAME_WIDTH || position.GetY() < 0 || position.GetY() >= GAME_HEIGHT)
@@ -71,26 +89,28 @@ TileGameObjectPair GameManager::GetGameObjectAtPosition(IVector2 position) const
     return TileGameObjectPair(game_map_mask[position.GetX()][position.GetY()], game_objects[position.GetX()][position.GetY()]);
 }
 
-void GameManager::TrySpawnAttacker(IVector2 position, string template_name)
+bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
 {
     auto found = attacker_templates.find(template_name);
     if(found == attacker_templates.end())
-        return;
+        return false;
     
     TileGameObjectPair cell_pair = GetGameObjectAtPosition(position);
     AttackerEntity* test = dynamic_cast<AttackerEntity*>(cell_pair.game_object.get());
     if(cell_pair.tile_type != TileType::Spawner || test != nullptr)
-        return;
+        return false;
     AttackerTemplate temp_template = found->second;
 
     if(stats.player_gold - temp_template.cost < 0)
-        return;
+        return false;
 
     string name = temp_template.name + to_string(temp_template.count);
     shared_ptr<AttackerEntity> attacker = make_shared<AttackerEntity>(AttackerEntity(position, name, temp_template));
     attacker->SetOnEndCallback([&]()
     {
         stats.lives--;
+        if(stats.lives == 0)
+            change_level = true;
         stats.InvokeUpdate();
     });
     attacker->SetOnDestroyCallback([&](IVector2 position)
@@ -121,17 +141,18 @@ void GameManager::TrySpawnAttacker(IVector2 position, string template_name)
     entities.insert(attacker);
     stats.player_gold -= temp_template.cost;
     stats.InvokeUpdate();
+    return true;
 }
 
-void GameManager::TrySpawnDefender(IVector2 position, string template_name)
+bool GameManager::TrySpawnDefender(IVector2 position, string template_name)
 {
     auto found = defender_templates.find(template_name);
     if(found == defender_templates.end())
-        return;
+        return false;
     
     TileGameObjectPair cell_pair = GetGameObjectAtPosition(position);
     if(cell_pair.tile_type != TileType::Empty)
-        return;
+        return false;
 
     DefenderTemplate temp_template = found->second;
     string name = temp_template.name + to_string(temp_template.count);
@@ -146,6 +167,7 @@ void GameManager::TrySpawnDefender(IVector2 position, string template_name)
     game_map_mask[position.GetX()][position.GetY()] = TileType::Tower;
     defender_templates[template_name].count++;
     entities.insert(defender);
+    return true;
 }
 
 void GameManager::MoveEntity(IVector2 position, IVector2 move_to)
@@ -207,8 +229,16 @@ void GameManager::Update()
 {
     if(game_running)
     {
+        if(change_level)
+            NextLevel();
         for(auto entity : entities)
+        {
+            if(change_level)
+                return;
+
             entity->Update(*this);
+        }
+        DefenderAIUpdate();
     }
 }
 
@@ -219,24 +249,7 @@ void GameManager::Initialize()
     game_window.Initialize();
     ControlCreator creator;
 
-    for (int i = 0; i < GAME_WIDTH; i++)
-    for (int j = 0; j < GAME_HEIGHT; j++)
-    {
-        game_objects[i][j] = make_shared<GameObject>(GameObject("Empty", IVector2(i,j), ' ', COLOR_WHITE, COLOR_BLACK));
-        game_map_mask[i][j] = TileType::Empty;
-    }
-
-    for (int i = 0; i < GAME_HEIGHT; i++)
-    {
-        game_objects[GAME_WIDTH / 2][i] = make_shared<GameObject>(GameObject("Path", IVector2(GAME_WIDTH / 2,i), '.', COLOR_WHITE, COLOR_BLACK));
-        game_map_mask[GAME_WIDTH / 2][i] = TileType::Path;
-    }
-
-    game_map_mask[GAME_WIDTH / 2][0] = TileType::Spawner;
-    game_objects[GAME_WIDTH / 2][0] = make_shared<GameObject>(GameObject("Path", IVector2(GAME_WIDTH / 2,0), '^', COLOR_WHITE, COLOR_BLACK));
-    game_map_mask[GAME_WIDTH / 2][GAME_HEIGHT - 1] = TileType::End;
-    game_objects[GAME_WIDTH / 2][GAME_HEIGHT - 1] = make_shared<GameObject>(GameObject("Path", IVector2(GAME_WIDTH / 2,GAME_HEIGHT - 1), '$', COLOR_WHITE, COLOR_BLACK));
-    SpawnLocation = IVector2(GAME_WIDTH / 2, 0);
+    LoadMaps();
 
     stats_window.Initialize();
     stats.LoadLevels();
@@ -244,21 +257,16 @@ void GameManager::Initialize()
     {
         stats_window.UpdateWindow(stats);
     });
-    stats.SetLevel(0);
 
-    AttackerTemplate test_attacker_template = AttackerTemplate("Attacker", 50, 10, COLOR_BLUE, COLOR_BLACK, 'A');
-    AttackerTemplate test_attacker_template2 = AttackerTemplate("Weakling", 10, 2, COLOR_BLUE, COLOR_BLACK, 'W');
-    DefenderTemplate test_defender_template = DefenderTemplate("Defender", COLOR_RED, COLOR_BLACK, 'D', 2, 5);
-    defender_templates[test_defender_template.name] = test_defender_template;
-    attacker_templates[test_attacker_template.name] = test_attacker_template;
-    attacker_templates[test_attacker_template2.name] = test_attacker_template2;
-    TrySpawnDefender(IVector2(GAME_WIDTH / 2 + 1, GAME_HEIGHT / 2), "Defender");
+    LoadAttackerDefinitions();
+    LoadDefenderDefinitions();
 
     //Main menu Initialization
     shared_ptr<GUIWindow> main_menu = AddGUIWindow("MainMenu", TOTAL_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT + WINDOW_BORDER, IVector2(0,0));
     shared_ptr<Button> start_game_btn = creator.CreateButton("Start Game", IVector2(0,0), 10);
     start_game_btn->AddOnClickEvent([&]() -> void
     {
+        NextLevel();
         ChangeWindow("Game");
     });
     shared_ptr<Button> close_btn = creator.CreateButton("Close", IVector2(0,1), 10);
@@ -326,4 +334,151 @@ shared_ptr<GUIWindow> GameManager::AddGUIWindow(string name, int width, int heig
     window->Initialize();
     gui_windows[name] = window;
     return window;
+}
+
+void GameManager::DefenderAIUpdate()
+{
+    int tries = 5;
+    bool spawned = false;
+    ai_update++;
+    if(ai_update != stats.ai_update_time)
+        return;
+    while(!spawned && tries > 0)
+    {
+        random_device rand;
+        mt19937 rng(rand());
+        uniform_int_distribution<int> rand_dist(0, defender_templates.size() - 1);
+        uniform_int_distribution<int> rand_x(0, GAME_WIDTH - 1);
+        uniform_int_distribution<int> rand_y(0, GAME_HEIGHT - 1);
+        auto index = defender_templates.begin();
+        advance(index, rand_dist(rng));
+        DefenderTemplate def_template = index->second;
+        if(stats.ai_gold - def_template.cost < 0)
+        {
+            tries--;
+            continue;
+        }
+        string def_template_name = index->first;
+        IVector2 rand_position(rand_x(rng), rand_y(rng));
+        spawned = TrySpawnDefender(rand_position, def_template_name);
+        if(spawned)
+        {
+            stats.ai_gold -= def_template.cost;
+            break;
+        }
+        tries--;
+    }
+    ai_update = 0;
+}
+
+void GameManager::LoadAttackerDefinitions()
+{
+    fstream attacker_definitions;
+    attacker_definitions.open("./src/data/attacker_definitions", ios::in);
+    if(attacker_definitions.is_open())
+    {
+        string line;
+        getline(attacker_definitions, line);
+        while(getline(attacker_definitions, line))
+        {
+            vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
+            AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, values[3][0]);
+            attacker_templates[new_template.name] = new_template;
+        }
+        attacker_definitions.close();
+    }
+}
+
+void GameManager::LoadDefenderDefinitions()
+{
+    fstream defender_definitions;
+    defender_definitions.open("./src/data/defender_definitions", ios::in);
+    if(defender_definitions.is_open())
+    {
+        string line;
+        getline(defender_definitions, line);
+        while(getline(defender_definitions, line))
+        {
+            vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
+            DefenderTemplate new_template = DefenderTemplate(values[0], COLOR_YELLOW, COLOR_BLACK, values[4][0], stoi(values[2]), stoi(values[1]), stoi(values[3]));
+            defender_templates[new_template.name] = new_template;
+        }
+        defender_definitions.close();
+    }
+}
+
+void GameManager::LoadRandomMap()
+{
+    fstream map;
+    random_device rand;
+    mt19937 rng(rand());
+    uniform_int_distribution<int> rand_dist(0, map_files.size() - 1);
+    auto index = map_files.begin();
+    advance(index, rand_dist(rng));
+    string chosen_map = *index;
+    map.open("./src/data/maps/" + chosen_map, ios::in);
+    if(map.is_open())
+    {
+        for (int j = 0; j < GAME_HEIGHT; j++)
+        {
+            string line;
+            getline(map, line);
+            for (int i = 0; i < GAME_WIDTH; i++)
+            {
+                char current_char = line[i];
+                switch (current_char)
+                {
+                    case '.':
+                        game_objects[i][j] = make_shared<GameObject>(GameObject("Path", IVector2(i,j), '.', COLOR_WHITE, COLOR_BLACK));
+                        game_map_mask[i][j] = TileType::Path;
+                        break;
+
+                    case '^':
+                        game_objects[i][j] = make_shared<GameObject>(GameObject("Spawner", IVector2(i,j), '^', COLOR_WHITE, COLOR_BLACK));
+                        game_map_mask[i][j] = TileType::Spawner;
+                        SpawnLocation = IVector2(i, j);
+                        break;
+
+                    case '$':
+                        game_objects[i][j] = make_shared<GameObject>(GameObject("End", IVector2(i,j), '$', COLOR_WHITE, COLOR_BLACK));
+                        game_map_mask[i][j] = TileType::End;
+                        break;
+
+                    case 'x':
+                        game_objects[i][j] = make_shared<GameObject>(GameObject("Unavailable", IVector2(i,j), 'x', COLOR_RED, COLOR_BLACK));
+                        game_map_mask[i][j] = TileType::Unavailable;
+                        break;
+                    
+                    default:
+                        game_objects[i][j] = make_shared<GameObject>(GameObject("Empty", IVector2(i,j), ' ', COLOR_WHITE, COLOR_BLACK));
+                        game_map_mask[i][j] = TileType::Empty;
+                        break;
+                }
+            }
+        }
+    }
+}
+
+void GameManager::LoadMaps()
+{
+    fstream map_list;
+    map_list.open("./src/data/maps/map_list", ios::in);
+    if(map_list.is_open())
+    {
+        string line;
+        getline(map_list, line);
+        while(getline(map_list, line))
+            map_files.push_back(line);
+
+        map_list.close();
+    }
+}
+
+void GameManager::NextLevel()
+{
+    entities.clear();
+    change_level = false;
+    ai_update = 0;
+    stats.NextLevel();
+    LoadRandomMap();
 }

@@ -3,8 +3,10 @@
 using namespace std;
 
 #include "core/level/level.h"
+#include "utility/string_utilities.h"
 #include <vector>
 #include <functional>
+#include <fstream>
 
 class GameStats
 {
@@ -18,10 +20,13 @@ public:
     int player_gold;
     int ai_gold;
     int lives;
+    int ai_update_time;
 
     GameStats();
     void LoadLevels();
-    void SetLevel(int level);
+    void NextLevel();
     void SetUpdateFunction(function<void()> func);
     void InvokeUpdate();
+private:
+    void SetValues();
 };

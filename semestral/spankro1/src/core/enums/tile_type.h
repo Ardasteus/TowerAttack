@@ -3,6 +3,7 @@
 enum TileType
 {
     Empty,
+    Unavailable,
     Tower,
     Path,
     Spawner,

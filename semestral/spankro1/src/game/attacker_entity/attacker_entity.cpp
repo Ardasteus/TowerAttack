@@ -24,7 +24,7 @@ void AttackerEntity::Update(GameManager& game_manager)
         onEnd();
         onDestroy(position);
     }
-    vector<TileGameObjectPair> in_radius = game_manager.GetGameObjectsInSquare(position, 1);
+    vector<TileGameObjectPair> in_radius = game_manager.GetGameObjectsInCross(position);
     for(auto obj : in_radius)
     {
         AttackerEntity* attacker = dynamic_cast<AttackerEntity*>(obj.game_object.get());

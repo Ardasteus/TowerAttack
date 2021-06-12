@@ -8,27 +8,34 @@ GameStats::GameStats()
     player_gold = 0;
     ai_gold = 0;
     lives = 0;
+    ai_update_time = 10;
 }
 
-void GameStats::SetLevel(int level)
+void GameStats::NextLevel()
 {
-    if(level < 0 || level >= levels.size())
-        return;
+    current_level++;
+    if(current_level == levels.size())
+        current_level = 0;
 
-    current_level = level;
-    Level new_level = levels[level];
-    player_income = new_level.player_income;
-    ai_income = new_level.ai_income;
-    player_gold = new_level.starting_player_gold;
-    ai_gold = new_level.starting_ai_gold;
-    lives = new_level.ai_lives;
-    onStatsUpdate();
+    SetValues();
 }
 
 void GameStats::LoadLevels()
 {
-    Level test_level = Level(50, 50, 10, 10, 10);
-    levels.push_back(test_level);
+    fstream level_definitions;
+    level_definitions.open("./src/data/levels", ios::in);
+    if(level_definitions.is_open())
+    {
+        string line;
+        getline(level_definitions, line);
+        while(getline(level_definitions, line))
+        {
+            vector<int> values = StringUtils::IntSplitStringByDelimiter(line, ";");
+            Level new_level = Level(values[0], values[1], values[3], values[2], values[4]);
+            levels.push_back(new_level);
+        }
+        level_definitions.close();
+    }
 }
 
 void GameStats::SetUpdateFunction(function<void()> func)
@@ -38,5 +45,19 @@ void GameStats::SetUpdateFunction(function<void()> func)
 
 void GameStats::InvokeUpdate()
 {
+    onStatsUpdate();
+}
+
+void GameStats::SetValues()
+{
+    if(current_level < 0 || current_level >= levels.size())
+        return;
+
+    Level level = levels[current_level];
+    player_income = level.player_income;
+    ai_income = level.ai_income;
+    player_gold = level.starting_player_gold;
+    ai_gold = level.starting_ai_gold;
+    lives = level.ai_lives;
     onStatsUpdate();
 }
