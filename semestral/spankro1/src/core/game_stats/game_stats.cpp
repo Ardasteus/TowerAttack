@@ -13,7 +13,7 @@ GameStats::GameStats()
 void GameStats::NextLevel(SaveGame& save_game)
 {
     save_game.current_level = ++current_level;
-    if(current_level == levels.size())
+    if(current_level == (int)levels.size())
         current_level = 0;
 
     SetValues(save_game);
@@ -21,7 +21,7 @@ void GameStats::NextLevel(SaveGame& save_game)
 
 void GameStats::SetSpecificLevel(int level, SaveGame& save_game)
 {
-    if(level < 0 || level >= levels.size())
+    if(level < 0 || level >= (int)levels.size())
         level = 0;
 
     save_game.current_level = level;
@@ -59,7 +59,7 @@ void GameStats::InvokeUpdate()
 
 void GameStats::SetValues(SaveGame& save_game)
 {
-    if(current_level < 0 || current_level >= levels.size())
+    if(current_level < 0 || current_level >= (int)levels.size())
         return;
 
     Level level = levels[current_level];

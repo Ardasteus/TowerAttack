@@ -10,7 +10,7 @@ void Label::Draw(const Drawer& drawer, const IVector2& offset) const
 {
     drawer.SetColor(foreground, background);
     string print = text;
-    if(text.size() > width)
+    if((int)text.size() > width)
         print = text.substr(0, width - 1);
 
     drawer.DrawString(print, offset + position);

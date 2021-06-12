@@ -14,7 +14,6 @@ private:
     GUIWindow window;
     map<string, shared_ptr<Label>> labels;
 public:
-    GameStatsWindowHandler();
     GameStatsWindowHandler(const int& width, const int& height, const IVector2& position);
 
     void Initialize();

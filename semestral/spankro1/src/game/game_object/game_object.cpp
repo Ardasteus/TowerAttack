@@ -1,4 +1,5 @@
 #include "game_object.h"
+#include "core/game_manager/game_manager.h"
 
 GameObject::GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg)
 {

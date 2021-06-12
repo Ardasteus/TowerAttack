@@ -69,6 +69,6 @@ shared_ptr<Textbox> ControlCreator::CreateTextbox(IVector2 position, int width, 
 
 shared_ptr<Textbox> ControlCreator::CreateTextbox(IVector2 position, int width, string default_text, short fg_color, short bg_color, short ffg_color, short fbg_color)
 {
-    return make_shared<Textbox>(Textbox("Textbox", "", position, width, 
+    return make_shared<Textbox>(Textbox("Textbox", default_text, position, width, 
     fg_color, bg_color, ffg_color, fbg_color));
 }

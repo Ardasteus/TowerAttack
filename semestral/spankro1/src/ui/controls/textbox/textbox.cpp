@@ -34,7 +34,7 @@ void Textbox::Draw(const Drawer& drawer, const IVector2& offset) const
     
 
     string print = value;
-    if(value.size() > width)
+    if((int)value.size() > width)
         print = value.substr(0, width - 1);
 
     drawer.DrawString(print, offset + position);

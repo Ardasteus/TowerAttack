@@ -11,5 +11,5 @@ public:
     DrawableObject() {};
     virtual ~DrawableObject() {};
 
-    virtual void Draw(const Drawer& drawer, const IVector2& offset) const {};
+    virtual void Draw(const Drawer&, const IVector2&) const = 0;
 };

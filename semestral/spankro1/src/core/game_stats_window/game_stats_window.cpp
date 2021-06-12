@@ -1,10 +1,5 @@
 #include "game_stats_window.h"
 
-GameStatsWindowHandler::GameStatsWindowHandler()
-{
-    window = GUIWindow("Stats", 0, 0, IVector2(0,0));
-}
-
 GameStatsWindowHandler::GameStatsWindowHandler(const int& width, const int& height, const IVector2& position)
 {
     window = GUIWindow("Stats", width, height, position);
@@ -20,6 +15,7 @@ void GameStatsWindowHandler::UpdateWindow(const GameStats& stats)
     labels["LevelValue"]->UpdateText(to_string(stats.current_level));
     labels["LivesValue"]->UpdateText(to_string(stats.lives));
     labels["GoldValue"]->UpdateText(to_string(stats.player_gold));
+    labels["IncomeValue"]->UpdateText(to_string(stats.player_income));
 }
 
 void GameStatsWindowHandler::Initialize()
@@ -65,4 +61,18 @@ void GameStatsWindowHandler::Initialize()
     position.SetX(position.GetX() + gold_value->GetWidth());
     labels["GoldValue"] = gold_value;
     window.AddElement(gold_value);
+
+    separator = creator.CreateLabel(" | ", position);
+    position.SetX(position.GetX() + separator->GetWidth());
+    window.AddElement(separator);
+
+    shared_ptr<Label> income_caption = creator.CreateLabel("Income: ", position);
+    position.SetX(position.GetX() + income_caption->GetWidth());
+    labels["IncomeCaption"] = income_caption;
+    window.AddElement(income_caption);
+
+    shared_ptr<Label> income_value = creator.CreateLabel("0", position, 3);
+    position.SetX(position.GetX() + income_value->GetWidth());
+    labels["IncomeValue"] = income_value;
+    window.AddElement(income_value);
 }

@@ -50,6 +50,9 @@ struct GameObjectComparator
 class GameManager
 {
 private:
+    BaseWindow game_window;
+    GameStatsWindowHandler stats_window;
+
     shared_ptr<GameObject> game_objects[GAME_WIDTH][GAME_HEIGHT];
     int total_empty = 0;
     TileType game_map_mask[GAME_WIDTH][GAME_HEIGHT];
@@ -65,20 +68,18 @@ private:
     IVector2 SpawnLocation;
 
     GameStats stats;
-    GameStatsWindowHandler stats_window;
 
     SaveGame save_game;
 
     Drawer drawer;
     InputHandler input_handler;
-    BaseWindow game_window;
     map<string, shared_ptr<GUIWindow>> gui_windows;
     shared_ptr<GUIWindow> current_window;
-    bool game_running = false;
-    bool force_redraw = false;
-    bool change_level = false;
-    int ai_update = 0;
-    int stat_update = 0;
+    bool game_running;
+    bool force_redraw;
+    bool change_level;
+    int ai_update;
+    int stat_update;
 
     bool exit_application = false;
     string error_message;

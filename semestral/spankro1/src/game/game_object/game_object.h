@@ -26,7 +26,7 @@ public:
     GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time);
     virtual ~GameObject() {};
 
-    virtual void Update(GameManager& game_manager) {};
+    virtual void Update(GameManager&) {};
     virtual void Draw(const Drawer& drawer, const IVector2& offset) const override;
     void SetOnDestroyCallback(function<void(IVector2)> func);
     const string GetName() const;

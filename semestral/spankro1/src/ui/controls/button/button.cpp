@@ -28,7 +28,7 @@ void Button::Draw(const Drawer& drawer, const IVector2& offset) const
         drawer.DrawChar(' ', offset + position + IVector2(i,0));
 
     string print = caption;
-    if(caption.size() > width)
+    if((int)caption.size() > width)
         print = caption.substr(0, width - 1);
 
     drawer.DrawString(print, offset + position);

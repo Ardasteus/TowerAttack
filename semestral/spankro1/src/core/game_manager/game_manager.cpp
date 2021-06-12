@@ -3,10 +3,15 @@
 using namespace chrono;
 
 GameManager::GameManager()
-: game_window(GAME_WIDTH + WINDOW_BORDER , GAME_HEIGHT + WINDOW_BORDER, IVector2(0,0), COLOR_WHITE, COLOR_BLACK)
+: game_window(BaseWindow(GAME_WIDTH + WINDOW_BORDER , GAME_HEIGHT + WINDOW_BORDER, IVector2(0,0), COLOR_WHITE, COLOR_BLACK))
+, stats_window(GameStatsWindowHandler(GAME_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT - GAME_HEIGHT, IVector2(0, GAME_HEIGHT + WINDOW_BORDER)))
 {
-    stats_window = GameStatsWindowHandler(GAME_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT - GAME_HEIGHT, IVector2(0, GAME_HEIGHT + WINDOW_BORDER));
     error_message = "";
+    game_running = false;
+    force_redraw = false;
+    change_level = false;
+    stat_update = 0;
+    ai_update = 0;
 }
 
 void GameManager::Run()
@@ -15,8 +20,6 @@ void GameManager::Run()
 
     auto current = high_resolution_clock::now();
     auto previous = high_resolution_clock::now();
-    auto stat_update_current = high_resolution_clock::now();
-    auto stat_update_previous = high_resolution_clock::now();
     while(!exit_application)
     {
         int input = input_handler.HandleInput();
@@ -29,7 +32,10 @@ void GameManager::Run()
 
         Update();
         if(change_level)
-            GoToLevel(stats.current_level + 1, false);
+        {
+            change_level = false;
+            ChangeWindow("LevelFinished");
+        }
 
         current = high_resolution_clock::now();
         auto delta_time = duration_cast<milliseconds>(current - previous).count();
@@ -109,6 +115,7 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
         stats.lives--;
         if(stats.lives == 0)
             change_level = true;
+
         stats.InvokeUpdate();
     });
     attacker->SetOnDestroyCallback([&](IVector2 position)
@@ -317,7 +324,6 @@ void GameManager::Initialize()
         game_menu->AddElement(new_btn);
         button_offset.SetY(button_offset.GetY() + 1);
     }
-
     shared_ptr<Button> back_btn = creator.CreateButton("Back", button_offset, TOTAL_WIDTH - GAME_WIDTH - WINDOW_BORDER);
     back_btn->AddOnClickEvent([&]() -> void
     {
@@ -325,6 +331,38 @@ void GameManager::Initialize()
         ChangeWindow("MainMenu");
     });
     game_menu->AddElement(back_btn);
+
+    shared_ptr<GUIWindow> level_finished_menu = AddGUIWindow("LevelFinished", TOTAL_WIDTH - GAME_WIDTH, TOTAL_HEIGHT + WINDOW_BORDER, IVector2(0,0));
+    shared_ptr<Label> upgrade_info = creator.CreateLabel("Good Job! Choose an Upgrade", IVector2(0,0));
+    shared_ptr<Button> improve_gold = creator.CreateButton("Upgrade Starting Gold (100)", IVector2(0,1), TOTAL_WIDTH - GAME_WIDTH - WINDOW_BORDER);
+    improve_gold->AddOnClickEvent([&]() -> void
+    {
+        save_game.bonus_gold += 100;
+        save_game.Save();
+        GoToLevel(stats.current_level + 1, false);
+        ChangeWindow("Game");
+    });
+    shared_ptr<Button> improve_income = creator.CreateButton("Upgrade Income (20)", IVector2(0,2), TOTAL_WIDTH - GAME_WIDTH - WINDOW_BORDER);
+    improve_income->AddOnClickEvent([&]() -> void
+    {
+        save_game.bonus_income += 20;
+        save_game.Save();
+        GoToLevel(stats.current_level + 1, false);
+        ChangeWindow("Game");
+    });
+    shared_ptr<Button> improve_hp = creator.CreateButton("Upgrade HP (100)", IVector2(0,3), TOTAL_WIDTH - GAME_WIDTH - WINDOW_BORDER);
+    improve_hp->AddOnClickEvent([&]() -> void
+    {
+        save_game.bonus_hp += 100;
+        save_game.Save();
+        GoToLevel(stats.current_level + 1, false);
+        ChangeWindow("Game");
+    });
+    level_finished_menu->AddElement(upgrade_info);
+    level_finished_menu->AddElement(improve_gold);
+    level_finished_menu->AddElement(improve_income);
+    level_finished_menu->AddElement(improve_hp);
+    
     current_window = gui_windows["MainMenu"];
     game_running = false;
 }
@@ -369,9 +407,10 @@ void GameManager::DefenderAIUpdate()
 {
     if(total_empty == 0)
         return;
-    ai_update = ++ai_update % AI_UPDATE_TIME;
-    if(ai_update == 0)
+    ai_update++;
+    if(ai_update == AI_UPDATE_TIME)
     {
+        ai_update = 0;
         int tries = 5;
         bool spawned = false;
         random_device rand;
@@ -404,11 +443,12 @@ void GameManager::DefenderAIUpdate()
 
 void GameManager::StatUpdate()
 {
-    stat_update = ++stat_update % STAT_UPDATE_TIME;
-    if(stat_update == 0)
+    stat_update++;
+    if(stat_update == STAT_UPDATE_TIME)
     {
         stats.ai_gold += stats.ai_income;
-        stats.player_gold += stats.player_income + save_game.bonus_income;
+        stats.player_gold += stats.player_income;
+        stat_update = 0;
         stats.InvokeUpdate();
     }
 }
@@ -546,7 +586,7 @@ void GameManager::GoToLevel(int level, bool new_game)
     change_level = false;
     ai_update = 0;
     stat_update = 0;
-    if(new_game)
+    if(!new_game)
         save_game.Load();
     else
         save_game = SaveGame();
