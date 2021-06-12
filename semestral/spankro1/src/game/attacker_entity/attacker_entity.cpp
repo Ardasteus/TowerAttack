@@ -2,12 +2,14 @@
 #include "core/game_manager/game_manager.h"
 
 AttackerEntity::AttackerEntity(const IVector2& _position, string _name, AttackerTemplate a_template)
-: GameObject(_name, _position, a_template.draw_character, a_template.foregroundColor, a_template.backgroundColor)
+: GameObject(_name, _position, a_template.draw_character, a_template.foregroundColor, a_template.backgroundColor, ATTACKER_UPDATE_TIME)
 {
     onDestroy = nullptr;
     cost_to_spawn = a_template.cost;
     max_health = a_template.health;
     current_health = a_template.health;
+    strength = a_template.strength;
+    weakness = a_template.weakness;
 }
 
 void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset) const
@@ -18,6 +20,11 @@ void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset) const
 
 void AttackerEntity::Update(GameManager& game_manager)
 {
+    current_update_time++;
+    if(current_update_time != update_time)
+        return;
+
+    current_update_time = 0;
     TileGameObjectPair current = game_manager.GetGameObjectAtPosition(position);
     if(current.tile_type == TileType::End)
     {
@@ -45,9 +52,15 @@ int AttackerEntity::GetCost() const
     return cost_to_spawn;
 }
 
-void AttackerEntity::ApplyDamage(int damage)
+void AttackerEntity::ApplyDamage(int damage, string attack_type)
 {
-    current_health -= damage;
+    int actual_damage = damage;
+    if(attack_type == strength)
+        actual_damage *= 0.75f;
+    else if(attack_type == weakness)
+        actual_damage *= 1.25f;
+        
+    current_health -= actual_damage;
     if(current_health <= 0)
         onDestroy(position);
 }

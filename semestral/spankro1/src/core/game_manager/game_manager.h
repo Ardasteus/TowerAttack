@@ -33,6 +33,11 @@ using namespace std;
 #define GAME_WIDTH 60
 #define GAME_HEIGHT 20
 #define WINDOW_BORDER 2
+#define ATTACKER_UPDATE_TIME 3
+#define DEFENDER_UPDATE_TIME 5
+#define AI_UPDATE_TIME 150
+#define STAT_UPDATE_TIME 200
+#define DELTA_TIME 33
 
 struct GameObjectComparator
 {
@@ -46,10 +51,14 @@ class GameManager
 {
 private:
     shared_ptr<GameObject> game_objects[GAME_WIDTH][GAME_HEIGHT];
+    int total_empty = 0;
     TileType game_map_mask[GAME_WIDTH][GAME_HEIGHT];
     vector<string> map_files;
 
-    set<shared_ptr<GameObject>, GameObjectComparator> entities;
+    set<shared_ptr<GameObject>, GameObjectComparator> attackers;
+    set<shared_ptr<GameObject>, GameObjectComparator> defenders;
+    vector<GameObject> path_to_draw;
+    vector<shared_ptr<GameObject>> defenders_to_draw;
 
     map<string, AttackerTemplate> attacker_templates;
     map<string, DefenderTemplate> defender_templates;
@@ -69,6 +78,7 @@ private:
     bool force_redraw = false;
     bool change_level = false;
     int ai_update = 0;
+    int stat_update = 0;
 
     bool exit_application = false;
     string error_message;
@@ -101,7 +111,7 @@ private:
     bool TrySpawnAttacker(IVector2 position, string template_name);
     bool TrySpawnDefender(IVector2 position, string template_name);
     void DefenderAIUpdate();
+    void StatUpdate();
 
-    void NextLevel();
-    void ContinueSaveGame();
+    void GoToLevel(int level, bool new_game);
 };  

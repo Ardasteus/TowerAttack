@@ -13,12 +13,14 @@ private:
     int current_health;
     int cost_to_spawn;
     function<void()> onEnd;
+    string strength;
+    string weakness;
 public:
     AttackerEntity(const IVector2& _position, string _name, AttackerTemplate a_template);
 
     void Draw(const Drawer& drawer, const IVector2& offset) const override;
     void Update(GameManager& game_manager) override;
-    void ApplyDamage(int damage);
+    void ApplyDamage(int damage, string attack_type);
     void SetOnEndCallback(function<void()> func);
     int GetCost() const;
 };

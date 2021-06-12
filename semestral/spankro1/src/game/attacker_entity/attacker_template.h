@@ -14,7 +14,9 @@ public:
     short backgroundColor;
     char draw_character;
     int count = 0;
+    string strength;
+    string weakness;
 
     AttackerTemplate();
-    AttackerTemplate(string _name, int hp, int _cost, short fgc, short bgc, char dc);
+    AttackerTemplate(string _name, int hp, int _cost, short fgc, short bgc, char dc, string str, string weak);
 };

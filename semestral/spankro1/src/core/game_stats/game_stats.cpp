@@ -8,7 +8,6 @@ GameStats::GameStats()
     player_gold = 0;
     ai_gold = 0;
     lives = 0;
-    ai_update_time = 10;
 }
 
 void GameStats::NextLevel(SaveGame& save_game)

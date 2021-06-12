@@ -9,9 +9,11 @@ AttackerTemplate::AttackerTemplate()
     backgroundColor = 0;
     draw_character = ' ';
     count = 0;
+    strength = "";
+    weakness = "";
 }
 
-AttackerTemplate::AttackerTemplate(string _name, int hp, int _cost, short fgc, short bgc, char dc)
+AttackerTemplate::AttackerTemplate(string _name, int hp, int _cost, short fgc, short bgc, char dc, string str, string weak)
 {
     name = _name;
     health = hp;
@@ -20,4 +22,6 @@ AttackerTemplate::AttackerTemplate(string _name, int hp, int _cost, short fgc, s
     backgroundColor = bgc;
     draw_character = dc;
     count = 0;
+    strength = str;
+    weakness = weak;
 }

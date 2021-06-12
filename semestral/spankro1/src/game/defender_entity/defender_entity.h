@@ -14,6 +14,8 @@ protected:
     int attack_radius;
     int attack_damage;
     int cost_to_spawn;
+    string attack_mode;
+    string attack_type;
 public:
     DefenderEntity(const IVector2& _position, string _name, DefenderTemplate d_template);
 

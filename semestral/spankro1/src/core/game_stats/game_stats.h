@@ -21,7 +21,6 @@ public:
     int player_gold;
     int ai_gold;
     int lives;
-    int ai_update_time;
 
     GameStats();
     void LoadLevels();

@@ -17,30 +17,24 @@ void GameManager::Run()
     auto previous = high_resolution_clock::now();
     auto stat_update_current = high_resolution_clock::now();
     auto stat_update_previous = high_resolution_clock::now();
-    int delta_limit = 33;
     while(!exit_application)
     {
         int input = input_handler.HandleInput();
         current_window->HandleInput(input);
+
         Draw();
-        Update();
         force_redraw = false;
+        defenders_to_draw.clear();
+        path_to_draw.clear();
+
+        Update();
+        if(change_level)
+            GoToLevel(stats.current_level + 1, false);
+
         current = high_resolution_clock::now();
         auto delta_time = duration_cast<milliseconds>(current - previous).count();
-        if(game_running)
-        {
-            auto stat_update = duration_cast<seconds>(stat_update_current - stat_update_previous).count();
-            if(stat_update > 2)
-            {
-                stats.ai_gold += stats.ai_income;
-                stats.player_gold += stats.player_income;
-                stats.InvokeUpdate();
-                stat_update_previous = high_resolution_clock::now();
-            }
-            stat_update_current = high_resolution_clock::now();
-        }
-        if(delta_time < delta_limit)
-            this_thread::sleep_for(milliseconds(delta_limit - delta_time));
+        if(delta_time < DELTA_TIME)
+            this_thread::sleep_for(milliseconds(DELTA_TIME - delta_time));
 
         previous = high_resolution_clock::now();
     }
@@ -120,29 +114,36 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
     attacker->SetOnDestroyCallback([&](IVector2 position)
     {
         TileGameObjectPair to_delete = GetGameObjectAtPosition(position);
+        GameObject to_add = GameObject("Dummy", position, ' ', COLOR_WHITE, COLOR_BLACK);
         switch (to_delete.tile_type)
         {
             case TileType::Path:
-                game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Path", position, '.', COLOR_WHITE, COLOR_BLACK));
+                to_add = GameObject("Path", position, '.', COLOR_WHITE, COLOR_BLACK);
+                path_to_draw.push_back(to_add);
+                game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
                 break;
-            
+        
             case TileType::End:
-                game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Path", position, '$', COLOR_WHITE, COLOR_BLACK));
+                to_add = GameObject("End", position, '$', COLOR_WHITE, COLOR_BLACK);
+                path_to_draw.push_back(to_add);
+                game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
                 break;
 
             case TileType::Spawner:
-                game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Path", position, '^', COLOR_WHITE, COLOR_BLACK));
+                to_add = GameObject("Spawner", position, '^', COLOR_WHITE, COLOR_BLACK);
+                path_to_draw.push_back(to_add);
+                game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
                 break;
 
             default:
                 game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Empty", position, ' ', COLOR_WHITE, COLOR_BLACK));
                 break;
         }
-        entities.erase(to_delete.game_object);
+        attackers.erase(to_delete.game_object);
     });
     game_objects[position.GetX()][position.GetY()] = attacker;
     attacker_templates[template_name].count++;
-    entities.insert(attacker);
+    attackers.insert(attacker);
     stats.player_gold -= temp_template.cost;
     stats.InvokeUpdate();
     return true;
@@ -161,34 +162,37 @@ bool GameManager::TrySpawnDefender(IVector2 position, string template_name)
     DefenderTemplate temp_template = found->second;
     string name = temp_template.name + to_string(temp_template.count);
     shared_ptr<DefenderEntity> defender = make_shared<DefenderEntity>(DefenderEntity(position, name, temp_template));
-    defender->SetOnDestroyCallback([&](IVector2 position)
-    {
-        shared_ptr<GameObject> to_delete = GetGameObjectAtPosition(position).game_object;
-        game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Empty", position, ' ', COLOR_WHITE, COLOR_BLACK));
-        entities.erase(to_delete);
-    });
     game_objects[position.GetX()][position.GetY()] = defender;
     game_map_mask[position.GetX()][position.GetY()] = TileType::Tower;
     defender_templates[template_name].count++;
-    entities.insert(defender);
+    defenders.insert(defender);
+    defenders_to_draw.push_back(defender);
+    total_empty--;
     return true;
 }
 
 void GameManager::MoveEntity(IVector2 position, IVector2 move_to)
 {
     TileGameObjectPair to_move = GetGameObjectAtPosition(position);
+    GameObject to_add = GameObject("Empty", position, ' ', COLOR_WHITE, COLOR_BLACK);
     switch (to_move.tile_type)
     {
         case TileType::Path:
-            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Path", position, '.', COLOR_WHITE, COLOR_BLACK));
+            to_add = GameObject("Path", position, '.', COLOR_WHITE, COLOR_BLACK);
+            path_to_draw.push_back(to_add);
+            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
             break;
         
         case TileType::End:
-            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Path", position, '$', COLOR_WHITE, COLOR_BLACK));
+            to_add = GameObject("End", position, '$', COLOR_WHITE, COLOR_BLACK);
+            path_to_draw.push_back(to_add);
+            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
             break;
 
         case TileType::Spawner:
-            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Path", position, '^', COLOR_WHITE, COLOR_BLACK));
+            to_add = GameObject("Spawner", position, '^', COLOR_WHITE, COLOR_BLACK);
+            path_to_draw.push_back(to_add);
+            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
             break;
 
         default:
@@ -219,9 +223,15 @@ void GameManager::Draw() const
     if(game_running)
     {
         game_window.Draw(drawer);
-        for (int i = 0; i < GAME_WIDTH; i++)
-            for (int j = 0; j < GAME_HEIGHT; j++)
-                game_objects[i][j]->Draw(drawer, offset);
+        for(auto defender : defenders_to_draw)
+            defender->Draw(drawer, offset);
+
+        for(auto path : path_to_draw)
+            path.Draw(drawer, offset);
+
+        for(auto attacker : attackers)
+            attacker->Draw(drawer, offset);
+
         drawer.Refresh();
         stats_window.Draw(drawer);
     }
@@ -233,59 +243,59 @@ void GameManager::Update()
 {
     if(game_running)
     {
-        if(change_level)
-            NextLevel();
-        for(auto entity : entities)
+        for(auto defender : defenders)
+            defender->Update(*this);
+
+        for(auto attacker : attackers)
         {
             if(change_level)
                 return;
 
-            entity->Update(*this);
+            attacker->Update(*this);
         }
         DefenderAIUpdate();
+        StatUpdate();
     }
 }
 
 void GameManager::Initialize()
 {
+    //Loading Phase
+    LoadMaps();
+    stats.LoadLevels();
+    LoadAttackerDefinitions();
+    LoadDefenderDefinitions();
+
+    //Initialization Phase
     drawer.Initialize();
     input_handler.Initialize();
     game_window.Initialize();
-    ControlCreator creator;
-
-    LoadMaps();
-
     stats_window.Initialize();
-    stats.LoadLevels();
     stats.SetUpdateFunction([&]()
     {
         stats_window.UpdateWindow(stats);
     });
-
-    LoadAttackerDefinitions();
-    LoadDefenderDefinitions();
+    ControlCreator creator;
 
     //Main menu Initialization
     shared_ptr<GUIWindow> main_menu = AddGUIWindow("MainMenu", TOTAL_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT + WINDOW_BORDER, IVector2(0,0));
     shared_ptr<Button> continue_game_btn = creator.CreateButton("Continue Game", IVector2(0,0), 10);
     continue_game_btn->AddOnClickEvent([&]() -> void
     {
-        ContinueSaveGame();
+        save_game.Load();
+        GoToLevel(save_game.current_level, false);
         ChangeWindow("Game");
     });
     shared_ptr<Button> start_game_btn = creator.CreateButton("Start Game", IVector2(0,1), 10);
     start_game_btn->AddOnClickEvent([&]() -> void
     {
-        save_game = SaveGame();
-        save_game.Save();
-        ContinueSaveGame();
+        GoToLevel(0, true);
         ChangeWindow("Game");
     });
     shared_ptr<Button> close_btn = creator.CreateButton("Close", IVector2(0,2), 10);
     close_btn->AddOnClickEvent([&]() -> void
     {
         exit_application = true;
-        save_game.Save();
     });
     main_menu->AddElement(continue_game_btn);
     main_menu->AddElement(start_game_btn);
@@ -297,7 +307,9 @@ void GameManager::Initialize()
     for(auto pairs : attacker_templates)
     {
         string attacker_name = pairs.first;
-        shared_ptr<Button> new_btn = creator.CreateButton("Spawn " + attacker_name, button_offset, TOTAL_WIDTH - GAME_WIDTH - WINDOW_BORDER);
+        AttackerTemplate attacker_template = pairs.second;
+        shared_ptr<Button> new_btn = creator.CreateButton("Spawn " + attacker_name + " (" + to_string(attacker_template.cost) +")", button_offset, 
+        TOTAL_WIDTH - GAME_WIDTH - WINDOW_BORDER);
         new_btn->AddOnClickEvent([attacker_name,this]() -> void
         {
             TrySpawnAttacker(SpawnLocation, attacker_name);
@@ -309,6 +321,7 @@ void GameManager::Initialize()
     shared_ptr<Button> back_btn = creator.CreateButton("Back", button_offset, TOTAL_WIDTH - GAME_WIDTH - WINDOW_BORDER);
     back_btn->AddOnClickEvent([&]() -> void
     {
+        save_game.Save();
         ChangeWindow("MainMenu");
     });
     game_menu->AddElement(back_btn);
@@ -321,7 +334,9 @@ void GameManager::Dispose()
     attacker_templates.clear();
     defender_templates.clear();
     gui_windows.clear();
-    entities.clear();
+    attackers.clear();
+    defenders.clear();
+    defenders_to_draw.clear();
 
     input_handler.Dispose();
     drawer.Dispose();
@@ -352,37 +367,50 @@ shared_ptr<GUIWindow> GameManager::AddGUIWindow(string name, int width, int heig
 
 void GameManager::DefenderAIUpdate()
 {
-    int tries = 5;
-    bool spawned = false;
-    ai_update++;
-    if(ai_update != stats.ai_update_time)
+    if(total_empty == 0)
         return;
-    while(!spawned && tries > 0)
+    ai_update = ++ai_update % AI_UPDATE_TIME;
+    if(ai_update == 0)
     {
+        int tries = 5;
+        bool spawned = false;
         random_device rand;
         mt19937 rng(rand());
         uniform_int_distribution<int> rand_dist(0, defender_templates.size() - 1);
         uniform_int_distribution<int> rand_x(0, GAME_WIDTH - 1);
         uniform_int_distribution<int> rand_y(0, GAME_HEIGHT - 1);
-        auto index = defender_templates.begin();
-        advance(index, rand_dist(rng));
-        DefenderTemplate def_template = index->second;
-        if(stats.ai_gold - def_template.cost < 0)
+        while(!spawned && tries > 0)
         {
+            auto index = defender_templates.begin();
+            advance(index, rand_dist(rng));
+            DefenderTemplate def_template = index->second;
+            if(stats.ai_gold - def_template.cost < 0)
+            {
+                tries--;
+                continue;
+            }
+            string def_template_name = index->first;
+            IVector2 rand_position(rand_x(rng), rand_y(rng));
+            spawned = TrySpawnDefender(rand_position, def_template_name);
+            if(spawned)
+            {
+                stats.ai_gold -= def_template.cost;
+                break;
+            }
             tries--;
-            continue;
         }
-        string def_template_name = index->first;
-        IVector2 rand_position(rand_x(rng), rand_y(rng));
-        spawned = TrySpawnDefender(rand_position, def_template_name);
-        if(spawned)
-        {
-            stats.ai_gold -= def_template.cost;
-            break;
-        }
-        tries--;
     }
-    ai_update = 0;
+}
+
+void GameManager::StatUpdate()
+{
+    stat_update = ++stat_update % STAT_UPDATE_TIME;
+    if(stat_update == 0)
+    {
+        stats.ai_gold += stats.ai_income;
+        stats.player_gold += stats.player_income + save_game.bonus_income;
+        stats.InvokeUpdate();
+    }
 }
 
 void GameManager::LoadAttackerDefinitions()
@@ -398,7 +426,8 @@ void GameManager::LoadAttackerDefinitions()
             try
             {
                 vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
-                AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, values[3][0]);
+                AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, 
+                values[3][0], values[4], values[5]);
                 attacker_templates[new_template.name] = new_template;
             }
             catch(const std::exception& e)
@@ -425,7 +454,9 @@ void GameManager::LoadDefenderDefinitions()
         while(getline(defender_definitions, line))
         {
             vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
-            DefenderTemplate new_template = DefenderTemplate(values[0], COLOR_YELLOW, COLOR_BLACK, values[4][0], stoi(values[2]), stoi(values[1]), stoi(values[3]));
+            DefenderTemplate new_template = DefenderTemplate(values[0], COLOR_YELLOW, COLOR_BLACK, 
+            values[4][0], stoi(values[2]), stoi(values[1]), stoi(values[3]),
+            values[5], values[6]);
             defender_templates[new_template.name] = new_template;
         }
         defender_definitions.close();
@@ -436,6 +467,7 @@ void GameManager::LoadDefenderDefinitions()
 
 void GameManager::LoadRandomMap()
 {
+    total_empty = 0;
     fstream map;
     random_device rand;
     mt19937 rng(rand());
@@ -479,6 +511,7 @@ void GameManager::LoadRandomMap()
                     default:
                         game_objects[i][j] = make_shared<GameObject>(GameObject("Empty", IVector2(i,j), ' ', COLOR_WHITE, COLOR_BLACK));
                         game_map_mask[i][j] = TileType::Empty;
+                        total_empty++;
                         break;
                 }
             }
@@ -505,23 +538,20 @@ void GameManager::LoadMaps()
         exit_application = true;
 }
 
-void GameManager::ContinueSaveGame()
+void GameManager::GoToLevel(int level, bool new_game)
 {
-    entities.clear();
+    attackers.clear();
+    defenders.clear();
+    defenders_to_draw.clear();
     change_level = false;
     ai_update = 0;
-    save_game.Load();
-    stats.SetSpecificLevel(save_game.current_level, save_game);
+    stat_update = 0;
+    if(new_game)
+        save_game.Load();
+    else
+        save_game = SaveGame();
+    stats.SetSpecificLevel(level, save_game);
     save_game.Save();
     LoadRandomMap();
-}
-
-void GameManager::NextLevel()
-{
-    entities.clear();
-    change_level = false;
-    ai_update = 0;
-    stats.NextLevel(save_game);
-    save_game.Save();
-    LoadRandomMap();
+    force_redraw = true;
 }

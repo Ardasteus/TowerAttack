@@ -18,9 +18,12 @@ protected:
     char draw_character;    
     short foreground;
     short background;
+    int current_update_time;
+    int update_time;
     function<void(IVector2)> onDestroy;
 public:
     GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg);
+    GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time);
     virtual ~GameObject() {};
 
     virtual void Update(GameManager& game_manager) {};

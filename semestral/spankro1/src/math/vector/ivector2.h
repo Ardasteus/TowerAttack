@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h> 
+
 class IVector2
 {
 private:
@@ -61,4 +63,11 @@ public:
 
     int GetY() const;
     void SetY(const int& y);
+
+    static double GetDistance(const IVector2& left, const IVector2& right)
+    {
+        double x_distance = pow(left.X - right.X ,2);
+        double y_distance = pow(left.Y - right.Y ,2);
+        return abs(sqrt(x_distance + y_distance));
+    }
 };
