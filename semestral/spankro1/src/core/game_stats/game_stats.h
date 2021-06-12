@@ -4,6 +4,7 @@ using namespace std;
 
 #include "core/level/level.h"
 #include "utility/string_utilities.h"
+#include "core/save_game/save_game.h"
 #include <vector>
 #include <functional>
 #include <fstream>
@@ -24,9 +25,10 @@ public:
 
     GameStats();
     void LoadLevels();
-    void NextLevel();
+    void NextLevel(SaveGame& save_game);
+    void SetSpecificLevel(int level, SaveGame& save_game);
     void SetUpdateFunction(function<void()> func);
     void InvokeUpdate();
 private:
-    void SetValues();
+    void SetValues(SaveGame& save_game);
 };

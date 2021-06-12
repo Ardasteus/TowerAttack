@@ -8,6 +8,7 @@ clean:
 	@make -C game_stats clean
 	@make -C game_stats_window clean
 	@make -C level clean
+	@make -C save_game clean
 
 game_manager/game_manager.o: game_manager/Makefile FORCE
 	@make -C game_manager build
@@ -27,7 +28,10 @@ game_stats_window/game_stats_window.o: game_stats_window/Makefile FORCE
 level/level.o: level/Makefile FORCE
 	@make -C level build
 
-core.o: game_manager/game_manager.o input_handler/input_handler.o tile_game_object_pair/tile_game_object_pair.o game_stats/game_stats.o game_stats_window/game_stats_window.o level/level.o
+save_game/save_game.o: save_game/Makefile FORCE
+	@make -C save_game build
+
+core.o: game_manager/game_manager.o input_handler/input_handler.o tile_game_object_pair/tile_game_object_pair.o game_stats/game_stats.o game_stats_window/game_stats_window.o level/level.o save_game/save_game.o
 	$(LD) -r -o $@ $^
 
 FORCE:

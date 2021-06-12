@@ -6,6 +6,7 @@ GameManager::GameManager()
 : game_window(GAME_WIDTH + WINDOW_BORDER , GAME_HEIGHT + WINDOW_BORDER, IVector2(0,0), COLOR_WHITE, COLOR_BLACK)
 {
     stats_window = GameStatsWindowHandler(GAME_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT - GAME_HEIGHT, IVector2(0, GAME_HEIGHT + WINDOW_BORDER));
+    error_message = "";
 }
 
 void GameManager::Run()
@@ -44,6 +45,8 @@ void GameManager::Run()
         previous = high_resolution_clock::now();
     }
     Dispose();
+    if(error_message != "")
+        cout << error_message << endl;
 }
 
 vector<TileGameObjectPair> GameManager::GetGameObjectsInSquare(IVector2 position, int radius) const
@@ -105,6 +108,7 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
         return false;
 
     string name = temp_template.name + to_string(temp_template.count);
+    temp_template.health += save_game.bonus_hp;
     shared_ptr<AttackerEntity> attacker = make_shared<AttackerEntity>(AttackerEntity(position, name, temp_template));
     attacker->SetOnEndCallback([&]()
     {
@@ -263,17 +267,27 @@ void GameManager::Initialize()
 
     //Main menu Initialization
     shared_ptr<GUIWindow> main_menu = AddGUIWindow("MainMenu", TOTAL_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT + WINDOW_BORDER, IVector2(0,0));
-    shared_ptr<Button> start_game_btn = creator.CreateButton("Start Game", IVector2(0,0), 10);
-    start_game_btn->AddOnClickEvent([&]() -> void
+    shared_ptr<Button> continue_game_btn = creator.CreateButton("Continue Game", IVector2(0,0), 10);
+    continue_game_btn->AddOnClickEvent([&]() -> void
     {
-        NextLevel();
+        ContinueSaveGame();
         ChangeWindow("Game");
     });
-    shared_ptr<Button> close_btn = creator.CreateButton("Close", IVector2(0,1), 10);
+    shared_ptr<Button> start_game_btn = creator.CreateButton("Start Game", IVector2(0,1), 10);
+    start_game_btn->AddOnClickEvent([&]() -> void
+    {
+        save_game = SaveGame();
+        save_game.Save();
+        ContinueSaveGame();
+        ChangeWindow("Game");
+    });
+    shared_ptr<Button> close_btn = creator.CreateButton("Close", IVector2(0,2), 10);
     close_btn->AddOnClickEvent([&]() -> void
     {
         exit_application = true;
+        save_game.Save();
     });
+    main_menu->AddElement(continue_game_btn);
     main_menu->AddElement(start_game_btn);
     main_menu->AddElement(close_btn);
 
@@ -381,12 +395,23 @@ void GameManager::LoadAttackerDefinitions()
         getline(attacker_definitions, line);
         while(getline(attacker_definitions, line))
         {
-            vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
-            AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, values[3][0]);
-            attacker_templates[new_template.name] = new_template;
+            try
+            {
+                vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
+                AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, values[3][0]);
+                attacker_templates[new_template.name] = new_template;
+            }
+            catch(const std::exception& e)
+            {
+                error_message = "Failed to load an attacker definition.";
+                exit_application = true;
+                return;
+            }
         }
         attacker_definitions.close();
     }
+    else
+        exit_application = true;
 }
 
 void GameManager::LoadDefenderDefinitions()
@@ -405,6 +430,8 @@ void GameManager::LoadDefenderDefinitions()
         }
         defender_definitions.close();
     }
+    else
+        exit_application = true;
 }
 
 void GameManager::LoadRandomMap()
@@ -457,6 +484,8 @@ void GameManager::LoadRandomMap()
             }
         }
     }
+    else
+        exit_application = true;
 }
 
 void GameManager::LoadMaps()
@@ -472,6 +501,19 @@ void GameManager::LoadMaps()
 
         map_list.close();
     }
+    else
+        exit_application = true;
+}
+
+void GameManager::ContinueSaveGame()
+{
+    entities.clear();
+    change_level = false;
+    ai_update = 0;
+    save_game.Load();
+    stats.SetSpecificLevel(save_game.current_level, save_game);
+    save_game.Save();
+    LoadRandomMap();
 }
 
 void GameManager::NextLevel()
@@ -479,6 +521,7 @@ void GameManager::NextLevel()
     entities.clear();
     change_level = false;
     ai_update = 0;
-    stats.NextLevel();
+    stats.NextLevel(save_game);
+    save_game.Save();
     LoadRandomMap();
 }

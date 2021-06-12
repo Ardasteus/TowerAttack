@@ -15,6 +15,7 @@ using namespace std;
 #include "core/game_stats/game_stats.h"
 #include "core/game_stats_window/game_stats_window.h"
 #include "utility/string_utilities.h"
+#include "core/save_game/save_game.h"
 #include <string>
 #include <fstream>
 #include <iterator>
@@ -25,6 +26,7 @@ using namespace std;
 #include <set>
 #include <chrono>
 #include <thread>
+#include <iostream>
 
 #define TOTAL_WIDTH 100
 #define TOTAL_HEIGHT 23
@@ -56,6 +58,8 @@ private:
     GameStats stats;
     GameStatsWindowHandler stats_window;
 
+    SaveGame save_game;
+
     Drawer drawer;
     InputHandler input_handler;
     BaseWindow game_window;
@@ -63,9 +67,11 @@ private:
     shared_ptr<GUIWindow> current_window;
     bool game_running = false;
     bool force_redraw = false;
-    bool exit_application = false;
     bool change_level = false;
     int ai_update = 0;
+
+    bool exit_application = false;
+    string error_message;
 public:
     GameManager();
 
@@ -97,4 +103,5 @@ private:
     void DefenderAIUpdate();
 
     void NextLevel();
+    void ContinueSaveGame();
 };  

@@ -11,13 +11,23 @@ GameStats::GameStats()
     ai_update_time = 10;
 }
 
-void GameStats::NextLevel()
+void GameStats::NextLevel(SaveGame& save_game)
 {
-    current_level++;
+    save_game.current_level = ++current_level;
     if(current_level == levels.size())
         current_level = 0;
 
-    SetValues();
+    SetValues(save_game);
+}
+
+void GameStats::SetSpecificLevel(int level, SaveGame& save_game)
+{
+    if(level < 0 || level >= levels.size())
+        level = 0;
+
+    save_game.current_level = level;
+    current_level = level;
+    SetValues(save_game);
 }
 
 void GameStats::LoadLevels()
@@ -48,15 +58,15 @@ void GameStats::InvokeUpdate()
     onStatsUpdate();
 }
 
-void GameStats::SetValues()
+void GameStats::SetValues(SaveGame& save_game)
 {
     if(current_level < 0 || current_level >= levels.size())
         return;
 
     Level level = levels[current_level];
-    player_income = level.player_income;
+    player_income = level.player_income + save_game.bonus_income;
     ai_income = level.ai_income;
-    player_gold = level.starting_player_gold;
+    player_gold = level.starting_player_gold + save_game.bonus_gold;
     ai_gold = level.starting_ai_gold;
     lives = level.ai_lives;
     onStatsUpdate();
