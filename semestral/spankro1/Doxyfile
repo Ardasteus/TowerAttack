@@ -1,8 +1,12 @@
 PROJECT_NAME = spankro1_tower_attack
-OUTPUT_DIRECTORY       = ./doc
+OUTPUT_DIRECTORY       = doc
 OUTPUT_LANGUAGE        = English
 JAVADOC_AUTOBRIEF      = YES
 INPUT                  = ./src
 FILE_PATTERNS          = *.h *.cpp
 RECURSIVE              = YES
 HAVE_DOT               = YES
+HTML_OUTPUT            = .
+
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO

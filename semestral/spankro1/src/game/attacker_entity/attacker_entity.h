@@ -41,6 +41,10 @@ protected:
      * Callback when the entity reaches the End tile
      */
     function<void()> on_end;
+
+    mutable bool has_been_hit = false;
+    mutable int hit_draw_timer = 10;
+    mutable int current_hit_timer = 0;
 public:
     /**
      * Creates a new entity on given position, name and template.

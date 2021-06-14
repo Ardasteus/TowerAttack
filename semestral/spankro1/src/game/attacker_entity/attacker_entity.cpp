@@ -14,7 +14,17 @@ AttackerEntity::AttackerEntity(const IVector2& _position, string _name, Attacker
 
 void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset) const
 {
-    drawer.SetColor(foreground, background);
+
+    /*if(has_been_hit)
+    {
+        current_hit_timer++;
+        drawer.SetColor(COLOR_RED, background);
+        if(current_hit_timer == hit_draw_timer)
+            has_been_hit = false;
+    }
+    else*/
+        drawer.SetColor(foreground, background);
+
     drawer.DrawChar(draw_character, offset + position);
 }
 
@@ -61,6 +71,8 @@ void AttackerEntity::ApplyDamage(int damage, string attack_type)
         actual_damage *= 1.25f;
         
     current_health -= actual_damage;
+    has_been_hit = true;
+    current_hit_timer = 0;
     if(current_health <= 0)
         on_destroy(position);
 }

@@ -112,11 +112,11 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
     shared_ptr<AttackerEntity> attacker = make_shared<AttackerEntity>(AttackerEntity(position, name, temp_template));
     attacker->SetOnEndCallback([&]()
     {
-        stats.lives--;
+        //stats.lives--;
         if(stats.lives == 0)
             change_level = true;
 
-        stats.InvokeUpdate();
+        //stats.InvokeUpdate();
     });
     attacker->SetOnDestroyCallback([&](IVector2 position)
     {

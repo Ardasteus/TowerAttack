@@ -1,4 +1,4 @@
-build: ../main
+build: ../spankro1
 
 clean:
 	rm -f ../main
@@ -23,7 +23,7 @@ game/game.o: game/Makefile FORCE
 core/core.o: core/Makefile FORCE
 	@make -C core build
 
-../main: main.cpp math/math.o graphics/graphics.o ui/ui.o game/game.o core/core.o
+../spankro1: main.cpp math/math.o graphics/graphics.o ui/ui.o game/game.o core/core.o
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
 FORCE:
