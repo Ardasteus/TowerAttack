@@ -18,6 +18,11 @@ bool SaveGame::Load()
         getline(save_game, line);
         getline(save_game, line);
         vector<int> values = StringUtils::IntSplitStringByDelimiter(line, ";");
+        if(values.size() != 4)
+        {
+            Save();
+            return true;
+        }
         current_level = values[0];
         bonus_gold = values[1];
         bonus_income = values[2];

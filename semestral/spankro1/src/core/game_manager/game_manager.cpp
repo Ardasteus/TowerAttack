@@ -112,11 +112,11 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
     shared_ptr<AttackerEntity> attacker = make_shared<AttackerEntity>(AttackerEntity(position, name, temp_template));
     attacker->SetOnEndCallback([&]()
     {
-        //stats.lives--;
+        stats.lives--;
         if(stats.lives == 0)
             change_level = true;
 
-        //stats.InvokeUpdate();
+        stats.InvokeUpdate();
     });
     attacker->SetOnDestroyCallback([&](IVector2 position)
     {
@@ -147,7 +147,7 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
                 game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Empty", position, ' ', COLOR_WHITE, COLOR_BLACK));
                 break;
         }
-        attackers.erase(to_delete.game_object);
+        attackers_to_remove.push_back(to_delete.game_object);
     });
     game_objects[position.GetX()][position.GetY()] = attacker;
     attacker_templates[template_name].count++;
@@ -254,6 +254,11 @@ void GameManager::Update()
         for(auto defender : defenders)
             defender->Update(*this);
 
+        for(auto to_delete : attackers_to_remove)
+            attackers.erase(to_delete);
+            
+        attackers_to_remove.clear();
+
         for(auto attacker : attackers)
         {
             if(change_level)
@@ -261,18 +266,29 @@ void GameManager::Update()
 
             attacker->Update(*this);
         }
+
+        for(auto to_delete : attackers_to_remove)
+            attackers.erase(to_delete);
+
+        attackers_to_remove.clear();
         DefenderAIUpdate();
         StatUpdate();
     }
+
+
 }
 
 void GameManager::Initialize()
 {
     //Loading Phase
-    LoadMaps();
-    stats.LoadLevels();
-    LoadAttackerDefinitions();
-    LoadDefenderDefinitions();
+    if(!LoadMaps())
+        return;
+    if(!stats.LoadLevels(error_message))
+        return;
+    if(!LoadAttackerDefinitions())
+        return;
+    if(!LoadDefenderDefinitions())
+        return;
 
     //Initialization Phase
     drawer.Initialize();
@@ -365,6 +381,7 @@ void GameManager::Initialize()
     level_finished_menu->AddElement(improve_hp);
     
     current_window = gui_windows["MainMenu"];
+    exit_application = false;
 }
 
 void GameManager::Dispose()
@@ -447,13 +464,17 @@ void GameManager::StatUpdate()
     if(stat_update == STAT_UPDATE_TIME)
     {
         //stats.ai_gold += stats.ai_income;
-        stats.player_gold += stats.player_income;
+        if(stats.player_gold + stats.player_income > 999)
+            stats.player_gold = 999;
+        else    
+            stats.player_gold += stats.player_income;
+
         stat_update = 0;
         stats.InvokeUpdate();
     }
 }
 
-void GameManager::LoadAttackerDefinitions()
+bool GameManager::LoadAttackerDefinitions()
 {
     fstream attacker_definitions;
     attacker_definitions.open("./assets/attacker_definitions", ios::in);
@@ -463,27 +484,28 @@ void GameManager::LoadAttackerDefinitions()
         getline(attacker_definitions, line);
         while(getline(attacker_definitions, line))
         {
-            try
+            vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
+            if(values.size() != 6)
             {
-                vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
-                AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, 
-                values[3][0], values[4], values[5]);
-                attacker_templates[new_template.name] = new_template;
+                attacker_definitions.close();
+                error_message = "Attacker definitions failed to load: Invalid number of arguments, should be 6.";
+                return false;
             }
-            catch(const std::exception& e)
-            {
-                error_message = "Failed to load an attacker definition.";
-                exit_application = true;
-                return;
-            }
+            AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, 
+            values[3][0], values[4], values[5]);
+            attacker_templates[new_template.name] = new_template;
         }
         attacker_definitions.close();
+        return true;
     }
     else
-        exit_application = true;
+    {
+        error_message = "Attacker definitions failed to load: File (./assets/attacker_definitions) could not be opened.";
+        return false;
+    }
 }
 
-void GameManager::LoadDefenderDefinitions()
+bool GameManager::LoadDefenderDefinitions()
 {
     fstream defender_definitions;
     defender_definitions.open("./assets/defender_definitions", ios::in);
@@ -494,18 +516,28 @@ void GameManager::LoadDefenderDefinitions()
         while(getline(defender_definitions, line))
         {
             vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
+            if(values.size() != 7)
+            {
+                defender_definitions.close();
+                error_message = "Defender definitions failed to load: Invalid number of arguments, should be 7.";
+                return false;
+            }
             DefenderTemplate new_template = DefenderTemplate(values[0], COLOR_YELLOW, COLOR_BLACK, 
             values[4][0], stoi(values[2]), stoi(values[1]), stoi(values[3]),
             values[5], values[6]);
             defender_templates[new_template.name] = new_template;
         }
         defender_definitions.close();
+        return true;
     }
     else
-        exit_application = true;
+    {
+        error_message = "Defender definitions failed to load: File (./assets/defender_definitions) could not be opened.";
+        return false;
+    }
 }
 
-void GameManager::LoadRandomMap()
+bool GameManager::LoadRandomMap()
 {
     total_empty = 0;
     fstream map;
@@ -513,6 +545,8 @@ void GameManager::LoadRandomMap()
     mt19937 rng(rand());
     uniform_int_distribution<int> rand_dist(0, map_files.size() - 1);
     auto index = map_files.begin();
+    bool has_spawner = false;
+    bool has_end = false;
     advance(index, rand_dist(rng));
     string chosen_map = *index;
     map.open("./assets/maps/" + chosen_map, ios::in);
@@ -522,6 +556,13 @@ void GameManager::LoadRandomMap()
         {
             string line;
             getline(map, line);
+            if((int)line.size() != GAME_WIDTH)
+            {
+                map.close();
+                error_message = "Map (" + chosen_map + ") failed to load: invalid size of the map. " +
+                "Should be width: " + to_string(GAME_WIDTH) + " height: " + to_string(GAME_HEIGHT) + ".";
+                return false;
+            }
             for (int i = 0; i < GAME_WIDTH; i++)
             {
                 char current_char = line[i];
@@ -533,14 +574,28 @@ void GameManager::LoadRandomMap()
                         break;
 
                     case '^':
+                        if(has_spawner)
+                        {
+                            map.close();
+                            error_message = "Map (" + chosen_map + ") failed to load: Multiple spawners are not allowed.";
+                            return false;
+                        }
                         game_objects[i][j] = make_shared<GameObject>(GameObject("Spawner", IVector2(i,j), '^', COLOR_WHITE, COLOR_BLACK));
                         game_map_mask[i][j] = TileType::Spawner;
                         SpawnLocation = IVector2(i, j);
+                        has_spawner = true;
                         break;
 
                     case '$':
+                        if(has_end)
+                        {
+                            map.close();
+                            error_message = "Map (" + chosen_map + ") failed to load: Multiple ends are not allowed.";
+                            return false;
+                        }
                         game_objects[i][j] = make_shared<GameObject>(GameObject("End", IVector2(i,j), '$', COLOR_WHITE, COLOR_BLACK));
                         game_map_mask[i][j] = TileType::End;
+                        has_end = true;
                         break;
 
                     case 'x':
@@ -556,12 +611,17 @@ void GameManager::LoadRandomMap()
                 }
             }
         }
+        map.close();
+        return true;
     }
     else
-        exit_application = true;
+    {
+        error_message = "Map (" + chosen_map + ") failed to load: File (./assets/maps/" + chosen_map + ") could not be opened.";
+        return false;
+    }
 }
 
-void GameManager::LoadMaps()
+bool GameManager::LoadMaps()
 {
     fstream map_list;
     map_list.open("./assets/maps/map_list", ios::in);
@@ -573,9 +633,20 @@ void GameManager::LoadMaps()
             map_files.push_back(line);
 
         map_list.close();
+
+        if(map_files.size() == 0)
+        {
+            error_message = "Maps could not be loaded: No maps found.";
+            return false;
+        }
+
+        return true;
     }
     else
-        exit_application = true;
+    {
+        error_message = "Maps could not be loaded: File (./assets/maps/map_list) could not be opened.";
+        return false;
+    }
 }
 
 void GameManager::GoToLevel(int level, bool new_game)

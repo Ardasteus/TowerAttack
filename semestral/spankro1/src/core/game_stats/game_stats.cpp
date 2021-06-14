@@ -29,7 +29,7 @@ void GameStats::SetSpecificLevel(int level, SaveGame& save_game)
     SetValues(save_game);
 }
 
-void GameStats::LoadLevels()
+bool GameStats::LoadLevels(string& error_message)
 {
     fstream level_definitions;
     level_definitions.open("./assets/levels", ios::in);
@@ -40,10 +40,22 @@ void GameStats::LoadLevels()
         while(getline(level_definitions, line))
         {
             vector<int> values = StringUtils::IntSplitStringByDelimiter(line, ";");
+            if(values.size() != 5)
+            {
+                level_definitions.close();
+                error_message = "Levels could not be loaded: Wrong amount of parameters. Should be 5";
+                return false;
+            }
             Level new_level = Level(values[0], values[1], values[3], values[2], values[4]);
             levels.push_back(new_level);
         }
         level_definitions.close();
+        return true;
+    }
+    else
+    {
+        error_message = "Levels could not be loaded: File (./assets/levels) could not be opened.";
+        return false;
     }
 }
 

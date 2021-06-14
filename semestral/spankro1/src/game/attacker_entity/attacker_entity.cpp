@@ -15,14 +15,14 @@ AttackerEntity::AttackerEntity(const IVector2& _position, string _name, Attacker
 void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset) const
 {
 
-    /*if(has_been_hit)
+    if(has_been_hit)
     {
         current_hit_timer++;
         drawer.SetColor(COLOR_RED, background);
         if(current_hit_timer == hit_draw_timer)
             has_been_hit = false;
     }
-    else*/
+    else
         drawer.SetColor(foreground, background);
 
     drawer.DrawChar(draw_character, offset + position);

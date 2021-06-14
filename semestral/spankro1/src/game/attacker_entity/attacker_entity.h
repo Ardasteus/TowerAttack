@@ -42,8 +42,19 @@ protected:
      */
     function<void()> on_end;
 
+    /**
+     * Inidicates whether or not has the entity been damaged
+     */
     mutable bool has_been_hit = false;
-    mutable int hit_draw_timer = 10;
+
+    /**
+     * Draw timer limit for when the entity is hit
+     */
+    mutable int hit_draw_timer = 3;
+
+    /**
+     * Draw timer for when the entity is hit
+     */
     mutable int current_hit_timer = 0;
 public:
     /**

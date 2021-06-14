@@ -54,7 +54,6 @@ void DefenderEntity::Update(GameManager& game_manager)
                     distance = attack_distance;
                     to_attack = attacker;
                 }
-                attacker->ApplyDamage(attack_damage, attack_type);
             }
         }
         if(to_attack != nullptr)
@@ -75,7 +74,6 @@ void DefenderEntity::Update(GameManager& game_manager)
                     distance = attack_distance;
                     to_attack = attacker;
                 }
-                attacker->ApplyDamage(attack_damage, attack_type);
             }
         }
         if(to_attack != nullptr)

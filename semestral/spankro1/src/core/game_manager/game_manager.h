@@ -34,9 +34,9 @@ const int GAME_WIDTH = 60;
 const int GAME_HEIGHT = 20;
 const int WINDOW_BORDER = 2;
 const int ATTACKER_UPDATE_TIME = 3;
-const int DEFENDER_UPDATE_TIME = 5;
-const int AI_UPDATE_TIME = 150;
-const int STAT_UPDATE_TIME = 200;
+const int DEFENDER_UPDATE_TIME = 15;
+const int AI_UPDATE_TIME = 100;
+const int STAT_UPDATE_TIME = 150;
 const int DELTA_TIME = 33;
 
 /**
@@ -79,6 +79,7 @@ protected:
      * Set of AttackerEntity instances, stores as GameObject
      */
     set<shared_ptr<GameObject>, GameObjectComparator> attackers;
+    vector<shared_ptr<GameObject>> attackers_to_remove;
 
     /**
      * Set of DefenderEntity instances, stores as GameObject
@@ -168,7 +169,7 @@ protected:
     /**
      * Whether or not the application should exit
      */
-    bool exit_application = false;
+    bool exit_application = true;
 
     /**
      * Error message to be displayed to stdout when app closes.
@@ -256,23 +257,31 @@ protected:
 
     /**
      * Loads all available AttackerTemplate objects from a file
+     * 
+     * @return Returns whether or not definitions loaded
      */
-    void LoadAttackerDefinitions();
+    bool LoadAttackerDefinitions();
 
     /**
      * Loads all available DefenderTemplate objects from a file
+     * 
+     * @return Returns whether or not definitions loaded
      */
-    void LoadDefenderDefinitions();
+    bool LoadDefenderDefinitions();
 
     /**
      * Loads all available maps from a file
+     * 
+     * @return Returns whether or not maps loaded
      */
-    void LoadMaps();
+    bool LoadMaps();
 
     /**
      * Picks a random map from available maps and loads it
+     * 
+     * @return Returns whether or not map loaded
      */
-    void LoadRandomMap();
+    bool LoadRandomMap();
 
     /**
      * Tries to spawn an AttackerEntity at given position using given template

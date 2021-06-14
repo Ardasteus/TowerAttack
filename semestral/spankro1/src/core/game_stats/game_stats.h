@@ -63,7 +63,7 @@ public:
     /**
      * Loads available levels from a file
      */
-    void LoadLevels();
+    bool LoadLevels(string& error_message);
 
     /**
      * Goes to the next level and updates given SaveGame instance

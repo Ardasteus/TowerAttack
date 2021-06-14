@@ -1,4 +1,4 @@
 Name;Damage;Radius;Cost;Icon;AttackMode;AttackType
-Basic;10;5;25;*;Closest;Blunt
-Sniper;5;8;35;!;Furthest;Piercing
-Flame;1;3;50;#;AoE;Magic
+Basic;10;5;5;*;Closest;Blunt
+Sniper;5;8;5;!;Furthest;Piercing
+Flame;1;3;5;#;AoE;Magic
