@@ -76,3 +76,8 @@ void GameStatsWindowHandler::Initialize()
     labels["IncomeValue"] = income_value;
     window.AddElement(income_value);
 }
+
+void GameStatsWindowHandler::Dispose()
+{
+    labels.clear();
+}

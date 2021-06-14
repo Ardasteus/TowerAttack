@@ -7,6 +7,5 @@ FILE_PATTERNS          = *.h *.cpp
 RECURSIVE              = YES
 HAVE_DOT               = YES
 HTML_OUTPUT            = .
-
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO

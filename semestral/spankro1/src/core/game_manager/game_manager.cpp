@@ -24,7 +24,8 @@ void GameManager::Run()
     {
         int input = input_handler.HandleInput();
         current_window->HandleInput(input);
-
+        if(exit_application)
+            break;
         Draw();
         force_redraw = false;
         defenders_to_draw.clear();
@@ -392,8 +393,10 @@ void GameManager::Dispose()
     attackers.clear();
     defenders.clear();
     defenders_to_draw.clear();
+    attackers_to_remove.clear();
 
     input_handler.Dispose();
+    stats_window.Dispose();
     drawer.Dispose();
 }
 
@@ -561,6 +564,7 @@ bool GameManager::LoadRandomMap()
                 map.close();
                 error_message = "Map (" + chosen_map + ") failed to load: invalid size of the map. " +
                 "Should be width: " + to_string(GAME_WIDTH) + " height: " + to_string(GAME_HEIGHT) + ".";
+                exit_application = true;
                 return false;
             }
             for (int i = 0; i < GAME_WIDTH; i++)
@@ -577,7 +581,8 @@ bool GameManager::LoadRandomMap()
                         if(has_spawner)
                         {
                             map.close();
-                            error_message = "Map (" + chosen_map + ") failed to load: Multiple spawners are not allowed.";
+                            error_message = "Map (" + chosen_map + ") failed to load: Multiple spawners (^) are not allowed.";
+                            exit_application = true;
                             return false;
                         }
                         game_objects[i][j] = make_shared<GameObject>(GameObject("Spawner", IVector2(i,j), '^', COLOR_WHITE, COLOR_BLACK));
@@ -590,7 +595,8 @@ bool GameManager::LoadRandomMap()
                         if(has_end)
                         {
                             map.close();
-                            error_message = "Map (" + chosen_map + ") failed to load: Multiple ends are not allowed.";
+                            error_message = "Map (" + chosen_map + ") failed to load: Multiple ends ($) are not allowed.";
+                            exit_application = true;
                             return false;
                         }
                         game_objects[i][j] = make_shared<GameObject>(GameObject("End", IVector2(i,j), '$', COLOR_WHITE, COLOR_BLACK));
@@ -612,11 +618,24 @@ bool GameManager::LoadRandomMap()
             }
         }
         map.close();
+        if(!has_end)
+        {
+            error_message = "Map (" + chosen_map + ") failed to load: Map has to have atleast one end ($).";
+            exit_application = true;
+            return false;
+        }
+        if(!has_spawner)
+        {
+            error_message = "Map (" + chosen_map + ") failed to load: Map has to have atleast one spawner (^).";
+            exit_application = true;
+            return false;
+        }
         return true;
     }
     else
     {
         error_message = "Map (" + chosen_map + ") failed to load: File (./assets/maps/" + chosen_map + ") could not be opened.";
+        exit_application = true;
         return false;
     }
 }

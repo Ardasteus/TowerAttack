@@ -1,0 +1,9 @@
+Name;HP;Cost;Icon;StrongAgainst;WeakAgainst
+Student1;5000;50;S;Knowledge;Procrastination
+Student2;5000;50;S;Procrastination;Knowledge
+
+This how attacker definitions can look. Everything is pretty self explanatory except the "StrongAgainst" and "WeakAgainst" columns.
+
+If there exists an attacker who has the same string in their "AttackType" columns the damage dealt is mofidied.
+
+Lets say we have a Defender named Teacher, who has AttackType Knowledge, if it attack Student1 he will deal 0.75x the damage, however if it attacks Student2, it will deal 1.25x the damage.

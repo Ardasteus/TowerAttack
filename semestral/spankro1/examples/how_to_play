@@ -1,0 +1,10 @@
+    The first thing you see is the main menu, you can either continue an old save game or start a new one. If there is not an old save game and you choose continue, it creates a new one anyway.
+Once you continue or start a new one a random map will be picked for you to play on. You will be presented with a set of buttons, these buttons will spawn attackers to run and try to
+get to the end. Once they get to the end, AI loses one life. If you manage to take down the AI lives to 0, you win this level and you move on to the next one.
+
+However you do not instantly go to the next level, you can choose a power up after you win a level. There are three power ups in the game:
+    Bonus Health points - increases the HP of your attackers
+    Bonus Starting gold - gives you more gold at the start of the level
+    Bonus Income - increases your income, so you get more money as time goes on
+
+The AI also generates money, however they get money for every kill. Once you reach the final level, you get to go all over again, the game never ends.

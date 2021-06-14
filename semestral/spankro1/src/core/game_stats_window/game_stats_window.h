@@ -51,4 +51,9 @@ public:
      * @param drawer Drawer instance to be used
      */
     void Draw(const Drawer& drawer) const;
+
+    /**
+     * Disposes of all resources used.
+     */
+    void Dispose();
 };

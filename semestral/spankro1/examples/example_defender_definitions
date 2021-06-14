@@ -1,0 +1,13 @@
+Name;Damage;Radius;Cost;Icon;AttackMode;AttackType
+Teacher1;10;5;5;T;Closest;Knowledge
+NotATeacher;10;5;5;I;Furthest;Procrastination
+Corona;10;5;5;T;AoE;Quarantine
+
+This is how defender definiton file looks like. Everything is self explanatory except for AttackMode and AttackType.
+
+AttackType is explained in the example attacker definition file.
+
+AttackMode is a property that determines who will the defender attack. There are three (two) supported values.
+    Furthest - the defender will attack the AttackerEntity that is furthest away
+    AoW - it will attack all AttackerEntities in its radius
+    Closest - will attack the one closest to it. This is also the default, if you for example make a type or type in a mode that is not supported, Closest will be used.

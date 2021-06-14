@@ -35,8 +35,8 @@ const int GAME_HEIGHT = 20;
 const int WINDOW_BORDER = 2;
 const int ATTACKER_UPDATE_TIME = 3;
 const int DEFENDER_UPDATE_TIME = 15;
-const int AI_UPDATE_TIME = 100;
-const int STAT_UPDATE_TIME = 150;
+const int AI_UPDATE_TIME = 50;
+const int STAT_UPDATE_TIME = 100;
 const int DELTA_TIME = 33;
 
 /**
@@ -79,6 +79,12 @@ protected:
      * Set of AttackerEntity instances, stores as GameObject
      */
     set<shared_ptr<GameObject>, GameObjectComparator> attackers;
+
+    /**
+     * Vector of AttackEntity instances to remove.
+     * 
+     * Removes them after both defender update calls and attacker update calls.
+     */
     vector<shared_ptr<GameObject>> attackers_to_remove;
 
     /**
