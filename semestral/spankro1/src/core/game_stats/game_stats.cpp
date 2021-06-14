@@ -49,12 +49,12 @@ void GameStats::LoadLevels()
 
 void GameStats::SetUpdateFunction(function<void()> func)
 {
-    onStatsUpdate = func;
+    on_stats_update = func;
 }
 
 void GameStats::InvokeUpdate()
 {
-    onStatsUpdate();
+    on_stats_update();
 }
 
 void GameStats::SetValues(SaveGame& save_game)
@@ -68,5 +68,5 @@ void GameStats::SetValues(SaveGame& save_game)
     player_gold = level.starting_player_gold + save_game.bonus_gold;
     ai_gold = level.starting_ai_gold;
     lives = level.ai_lives;
-    onStatsUpdate();
+    on_stats_update();
 }

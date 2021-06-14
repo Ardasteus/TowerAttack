@@ -28,20 +28,20 @@ using namespace std;
 #include <thread>
 #include <iostream>
 
-#define TOTAL_WIDTH 100
-#define TOTAL_HEIGHT 23
-#define GAME_WIDTH 60
-#define GAME_HEIGHT 20
-#define WINDOW_BORDER 2
-#define ATTACKER_UPDATE_TIME 3
-#define DEFENDER_UPDATE_TIME 5
-#define AI_UPDATE_TIME 150
-#define STAT_UPDATE_TIME 200
-#define DELTA_TIME 33
+const int TOTAL_WIDTH = 100;
+const int TOTAL_HEIGHT = 23;
+const int GAME_WIDTH = 60;
+const int GAME_HEIGHT = 20;
+const int WINDOW_BORDER = 2;
+const int ATTACKER_UPDATE_TIME = 3;
+const int DEFENDER_UPDATE_TIME = 5;
+const int AI_UPDATE_TIME = 150;
+const int STAT_UPDATE_TIME = 200;
+const int DELTA_TIME = 33;
 
 class GameManager
 {
-private:
+protected:
     BaseWindow game_window;
     GameStatsWindowHandler stats_window;
 
@@ -60,13 +60,13 @@ private:
     IVector2 SpawnLocation;
 
     GameStats stats;
-
     SaveGame save_game;
 
     Drawer drawer;
     InputHandler input_handler;
     map<string, shared_ptr<GUIWindow>> gui_windows;
     shared_ptr<GUIWindow> current_window;
+    
     bool game_running;
     bool force_redraw;
     bool change_level;
@@ -88,7 +88,7 @@ public:
 
     void ChangeWindow(string window_type);
 
-private: 
+protected: 
     shared_ptr<GUIWindow> AddGUIWindow(string name, int width, int height, IVector2 position);
 
     void Initialize();
