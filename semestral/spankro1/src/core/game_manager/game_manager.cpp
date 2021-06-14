@@ -380,15 +380,15 @@ void GameManager::Dispose()
     drawer.Dispose();
 }
 
-void GameManager::ChangeWindow(string window_type)
+void GameManager::ChangeWindow(string window_name)
 {
-    if(window_type == "Game")
+    if(window_name == "Game")
         game_running = true;
     else
         game_running = false;
 
     force_redraw = true;
-    current_window = gui_windows[window_type];
+    current_window = gui_windows[window_name];
 }
 
 shared_ptr<GUIWindow> GameManager::AddGUIWindow(string name, int width, int height, IVector2 position)

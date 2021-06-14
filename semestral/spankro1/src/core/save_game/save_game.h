@@ -4,7 +4,9 @@
 #include <fstream>
 
 /**
- * Class that stores all save game information
+ * Class that stores all save game information.
+ * 
+ * Currently only one save game
  */
 class SaveGame
 {
