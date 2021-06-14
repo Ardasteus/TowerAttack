@@ -4,7 +4,7 @@ FocusableGUIObject::FocusableGUIObject(const string& _name, const IVector2& _pos
     const short& fg, const short& bg, const short& ffg, const short& fbg)
 : GUIObject(_name, _position, _width, _height, fg, bg)
 {
-    focusedForegound = ffg;
-    focusedBackground = fbg;
-    isCurrentlyFocused = false;
+    focused_foregound = ffg;
+    focused_background = fbg;
+    is_currently_focused = false;
 }

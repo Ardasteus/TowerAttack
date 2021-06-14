@@ -2,7 +2,6 @@
 
 using namespace std;
 
-#include "game/window/game_window.h"
 #include "game/game_object/game_object.h"
 #include "ui/window/gui_window.h"
 #include "ui/controls/gui_object/gui_object.h"
@@ -16,6 +15,7 @@ using namespace std;
 #include "core/game_stats_window/game_stats_window.h"
 #include "utility/string_utilities.h"
 #include "core/save_game/save_game.h"
+#include "core/game_object_comparator/game_object_comparator.h"
 #include <string>
 #include <fstream>
 #include <iterator>
@@ -38,14 +38,6 @@ using namespace std;
 #define AI_UPDATE_TIME 150
 #define STAT_UPDATE_TIME 200
 #define DELTA_TIME 33
-
-struct GameObjectComparator
-{
-    bool operator() (const shared_ptr<GameObject> left, const shared_ptr<GameObject> right)
-    {
-        return left->GetName() < right->GetName();
-    }
-};
 
 class GameManager
 {

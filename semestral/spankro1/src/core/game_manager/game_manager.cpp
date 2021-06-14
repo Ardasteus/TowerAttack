@@ -122,6 +122,7 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
     {
         TileGameObjectPair to_delete = GetGameObjectAtPosition(position);
         GameObject to_add = GameObject("Dummy", position, ' ', COLOR_WHITE, COLOR_BLACK);
+        stats.ai_gold += stats.ai_income;
         switch (to_delete.tile_type)
         {
             case TileType::Path:
@@ -364,7 +365,6 @@ void GameManager::Initialize()
     level_finished_menu->AddElement(improve_hp);
     
     current_window = gui_windows["MainMenu"];
-    game_running = false;
 }
 
 void GameManager::Dispose()
@@ -446,7 +446,7 @@ void GameManager::StatUpdate()
     stat_update++;
     if(stat_update == STAT_UPDATE_TIME)
     {
-        stats.ai_gold += stats.ai_income;
+        //stats.ai_gold += stats.ai_income;
         stats.player_gold += stats.player_income;
         stat_update = 0;
         stats.InvokeUpdate();
@@ -456,7 +456,7 @@ void GameManager::StatUpdate()
 void GameManager::LoadAttackerDefinitions()
 {
     fstream attacker_definitions;
-    attacker_definitions.open("./src/data/attacker_definitions", ios::in);
+    attacker_definitions.open("./assets/attacker_definitions", ios::in);
     if(attacker_definitions.is_open())
     {
         string line;
@@ -486,7 +486,7 @@ void GameManager::LoadAttackerDefinitions()
 void GameManager::LoadDefenderDefinitions()
 {
     fstream defender_definitions;
-    defender_definitions.open("./src/data/defender_definitions", ios::in);
+    defender_definitions.open("./assets/defender_definitions", ios::in);
     if(defender_definitions.is_open())
     {
         string line;
@@ -515,7 +515,7 @@ void GameManager::LoadRandomMap()
     auto index = map_files.begin();
     advance(index, rand_dist(rng));
     string chosen_map = *index;
-    map.open("./src/data/maps/" + chosen_map, ios::in);
+    map.open("./assets/maps/" + chosen_map, ios::in);
     if(map.is_open())
     {
         for (int j = 0; j < GAME_HEIGHT; j++)
@@ -564,7 +564,7 @@ void GameManager::LoadRandomMap()
 void GameManager::LoadMaps()
 {
     fstream map_list;
-    map_list.open("./src/data/maps/map_list", ios::in);
+    map_list.open("./assets/maps/map_list", ios::in);
     if(map_list.is_open())
     {
         string line;

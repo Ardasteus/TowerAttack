@@ -1,7 +1,7 @@
-build: main
+build: ../main
 
 clean:
-	rm -f main
+	rm -f ../main
 	@make -C math clean
 	@make -C graphics clean
 	@make -C ui clean
@@ -23,7 +23,7 @@ game/game.o: game/Makefile FORCE
 core/core.o: core/Makefile FORCE
 	@make -C core build
 
-main: main.cpp math/math.o graphics/graphics.o ui/ui.o game/game.o core/core.o
+../main: main.cpp math/math.o graphics/graphics.o ui/ui.o game/game.o core/core.o
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
 FORCE:

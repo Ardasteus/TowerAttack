@@ -30,9 +30,9 @@ GUIWindow::~GUIWindow()
 
 void GUIWindow::Draw(const Drawer& drawer) const
 {
-    drawer.SetWindow(windowWrapper);
+    drawer.SetWindow(window_wrapper);
     drawer.Clear();
-    drawer.SetColor(foregroundColor, backgroundColor);
+    drawer.SetColor(foreground_color, background_color);
     drawer.DrawWindowBorder();
     for(auto element : gui_elements)
     {
@@ -49,7 +49,7 @@ void GUIWindow::AddElement(shared_ptr<GUIObject> element)
     {
         focusable_elements.push_back(focusable);
         focused_element = 0;
-        focusable_elements[focused_element]->isCurrentlyFocused = true;
+        focusable_elements[focused_element]->is_currently_focused = true;
     }
     gui_elements.push_back(element);
 }
@@ -60,19 +60,19 @@ void GUIWindow::HandleInput(const int key)
         return;
     if(key == KEY_DOWN)
     {
-        focusable_elements[focused_element++]->isCurrentlyFocused = false;
+        focusable_elements[focused_element++]->is_currently_focused = false;
         if(focused_element == (int)focusable_elements.size())
             focused_element = 0;
 
-        focusable_elements[focused_element]->isCurrentlyFocused = true;
+        focusable_elements[focused_element]->is_currently_focused = true;
     }
     else if(key == KEY_UP)
     {
-        focusable_elements[focused_element--]->isCurrentlyFocused = false;
+        focusable_elements[focused_element--]->is_currently_focused = false;
         if(focused_element == -1)
                 focused_element = (int)focusable_elements.size() - 1;
 
-        focusable_elements[focused_element]->isCurrentlyFocused = true;
+        focusable_elements[focused_element]->is_currently_focused = true;
     }
     else
         focusable_elements[focused_element]->HandleInput(key);

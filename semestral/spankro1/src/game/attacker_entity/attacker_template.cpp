@@ -5,8 +5,8 @@ AttackerTemplate::AttackerTemplate()
     name = "Default";
     health = 0;
     cost = 0;
-    foregroundColor = 0;
-    backgroundColor = 0;
+    foreground_color = 0;
+    background_color = 0;
     draw_character = ' ';
     count = 0;
     strength = "";
@@ -18,8 +18,8 @@ AttackerTemplate::AttackerTemplate(string _name, int hp, int _cost, short fgc, s
     name = _name;
     health = hp;
     cost = _cost;
-    foregroundColor = fgc;
-    backgroundColor = bgc;
+    foreground_color = fgc;
+    background_color = bgc;
     draw_character = dc;
     count = 0;
     strength = str;

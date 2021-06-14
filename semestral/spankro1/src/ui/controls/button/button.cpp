@@ -1,8 +1,8 @@
 #include "button.h"
 
-Button::Button(const std::string& name, const std::string& _caption, const IVector2& _position, const int& width, 
-const short& _foreground, const short& _background, const short& _fforeground, const short& _fbackground)
-: FocusableGUIObject(name, _position, width, 1, _foreground, _background, _fforeground, _fbackground)
+Button::Button(const std::string& name, const std::string& _caption, const IVector2& position, const int& width, 
+const short& fg, const short& bg, const short& ffg, const short& fbg)
+: FocusableGUIObject(name, position, width, 1, fg, bg, ffg, fbg)
 {
     caption = _caption;
 }
@@ -19,8 +19,8 @@ void Button::HandleInput(const int key)
 
 void Button::Draw(const Drawer& drawer, const IVector2& offset) const
 {
-    if(isCurrentlyFocused)
-        drawer.SetColor(focusedForegound, focusedBackground);
+    if(is_currently_focused)
+        drawer.SetColor(focused_foregound, focused_background);
     else
         drawer.SetColor(foreground, background);
 

@@ -5,8 +5,8 @@ DefenderTemplate::DefenderTemplate()
     name = "Default";
     attack_radius = 0;
     attack_damage = 0;
-    foregroundColor = 0;
-    backgroundColor = 0;
+    foreground_color = 0;
+    background_color = 0;
     draw_character = ' ';
     count = 0;
     cost = 0;
@@ -20,8 +20,8 @@ DefenderTemplate::DefenderTemplate(string _name, short fgc, short bgc, char dc, 
     name = _name;
     attack_radius = radius;
     attack_damage = damage;
-    foregroundColor = fgc;
-    backgroundColor = bgc;
+    foreground_color = fgc;
+    background_color = bgc;
     draw_character = dc;
     count = 0;
     cost = _cost;

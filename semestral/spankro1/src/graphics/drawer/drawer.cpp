@@ -58,7 +58,7 @@ void Drawer::Dispose()
     endwin();
 }
 
-void Drawer::SetColor(const short foreground, const short background) const
+void Drawer::SetColor(const short& foreground, const short& background) const
 {
     if(!colorEnabled)
         return;
@@ -85,12 +85,12 @@ void Drawer::DrawWindowBorder() const
     wborder(_window, border[0], border[1], border[2], border[3], border[4], border[5], border[6], border[7]);
 }
 
-void Drawer::DrawChar(const char character, const IVector2 position) const
+void Drawer::DrawChar(const char& character, const IVector2& position) const
 {
     mvwaddch(GetWindow(), position.GetY(), position.GetX(), character);
 }
 
-void Drawer::DrawString(const std::string text, const IVector2 position) const
+void Drawer::DrawString(const std::string& text, const IVector2& position) const
 {
     mvwaddstr(GetWindow(), position.GetY(), position.GetX(), text.c_str());
 }

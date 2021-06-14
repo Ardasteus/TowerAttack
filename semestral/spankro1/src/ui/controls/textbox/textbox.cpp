@@ -1,10 +1,10 @@
 #include "textbox.h"
 
-Textbox::Textbox(const std::string& name, const std::string& _initial_value, const IVector2& _position, const int& width, 
-const short& _foreground, const short& _background, const short& _fforeground, const short& _fbackground)
-: FocusableGUIObject(name, _position, width, 1, _foreground, _background, _fforeground, _fbackground)
+Textbox::Textbox(const std::string& name, const std::string& initial_value, const IVector2& position, const int& width, 
+const short& fg, const short& bg, const short& ffg, const short& fbg)
+: FocusableGUIObject(name, position, width, 1, fg, bg, ffg, fbg)
 {
-    value = _initial_value;
+    value = initial_value;
 }
 
 void Textbox::HandleInput(const int key)
@@ -23,8 +23,8 @@ void Textbox::HandleInput(const int key)
 
 void Textbox::Draw(const Drawer& drawer, const IVector2& offset) const
 {
-    if(isCurrentlyFocused)
-        drawer.SetColor(focusedForegound, focusedBackground);
+    if(is_currently_focused)
+        drawer.SetColor(focused_foregound, focused_background);
     else
         drawer.SetColor(foreground, background);
 

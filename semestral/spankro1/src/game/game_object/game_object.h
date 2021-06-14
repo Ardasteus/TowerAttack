@@ -9,26 +9,117 @@ using namespace std;
 
 class GameManager;
 
+/**
+ * Base class for objects in the game (AttackerEntity and DefenderEntity)
+ */
 class GameObject : public DrawableObject
 {
 protected:
+    /**
+     * Name of the GameObject
+     */
     string name;
+
+    /**
+     * Position of the GameObject
+     */
     IVector2 position;
+
+    /**
+     * Previous position of the GameObject
+     */
     IVector2 previous_position;
-    char draw_character;    
+
+    /**
+     * Icon of this GameObject
+     */
+    char draw_character;
+
+    /**
+     * Foreground color
+     */    
     short foreground;
+
+    /**
+     * Background color
+     */
     short background;
+
+    /**
+     * Current value of update "timer"
+     */
     int current_update_time;
+
+    /**
+     * Determines when/how often will this object update
+     */
     int update_time;
-    function<void(IVector2)> onDestroy;
+
+    /**
+     * A callback called when this GameObject should be destroyed
+     */
+    function<void(IVector2)> on_destroy;
 public:
+    /**
+     * Constructor with default update timer.
+     * 
+     * @param _name Name of the object
+     * @param _position Position of the object
+     * @param _draw_character Icon of the object
+     * @param fg Foreground color of the object
+     * @param bg Background color of the object
+     */
     GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg);
+
+    /**
+     * Constructor with custom update timer.
+     * @param _name Name of the object
+     * @param _position Position of the object
+     * @param _draw_character Icon of the object
+     * @param fg Foreground color of the object
+     * @param bg Background color of the object
+     * @param _update_time Update timer of the object
+     */
     GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time);
+
+    /**
+     * Default destructor
+     */
     virtual ~GameObject() {};
 
+    /**
+     * Updates this GameObject, for example movement
+     * 
+     * @param game_manager GameManager instance to be used
+     */
     virtual void Update(GameManager&) {};
+
+    /**
+     * Draws this GameObject, generally normal GameObject do not move, so should be only called once.
+     * 
+     * @param drawer Drawer instance to be used
+     * @param offset Offset position to be used
+     */
     virtual void Draw(const Drawer& drawer, const IVector2& offset) const override;
+
+    /**
+     * Sets the on_destroy callback
+     * 
+     * @param func Function to be called when destroyed
+     */
     void SetOnDestroyCallback(function<void(IVector2)> func);
-    const string GetName() const;
-    const IVector2 GetPosition() const;
+
+    /**
+     * Returns the name of the object
+     * 
+     * @return Name of the object
+     */
+    const string& GetName() const;
+
+    /**
+     * Returns the position of the object
+     * 
+     * @return Position of the object
+     */
+    const IVector2& GetPosition() const;
 };

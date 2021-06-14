@@ -49,22 +49,22 @@ WINDOW* WindowWrapper::GetWindow() const
     return handle;
 }
 
-IVector2 WindowWrapper::GetPosition() const
+const IVector2& WindowWrapper::GetPosition() const
 {
     return position;
 }
 
-WindowBorder WindowWrapper::GetBorder() const
+const WindowBorder& WindowWrapper::GetBorder() const
 {
     return border;
 }
 
-int WindowWrapper::GetWidth() const
+const int& WindowWrapper::GetWidth() const
 {
     return width;
 }
 
-int WindowWrapper::GetHeight() const
+const int& WindowWrapper::GetHeight() const
 {
     return height;
 }

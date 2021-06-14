@@ -1,0 +1,4 @@
+Name;HP;Cost;Icon;StrongAgainst;WeakAgainst
+Recruit;250;25;O;Magic;Piercing
+Soldier;650;35;%;Piercing;Blunt
+Knight;1000;50;@;Blunt;Magic

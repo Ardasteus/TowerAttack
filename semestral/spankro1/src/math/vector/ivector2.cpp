@@ -57,7 +57,7 @@ IVector2& IVector2::operator/=(const int& other)
     return *this;
 }
 
-int IVector2::GetX() const
+const int& IVector2::GetX() const
 {
     return X;
 }
@@ -66,7 +66,7 @@ void IVector2::SetX(const int& x)
     X = x;
 }
 
-int IVector2::GetY() const
+const int& IVector2::GetY() const
 {
     return Y;
 }

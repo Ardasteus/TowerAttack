@@ -32,7 +32,7 @@ void GameStats::SetSpecificLevel(int level, SaveGame& save_game)
 void GameStats::LoadLevels()
 {
     fstream level_definitions;
-    level_definitions.open("./src/data/levels", ios::in);
+    level_definitions.open("./assets/levels", ios::in);
     if(level_definitions.is_open())
     {
         string line;

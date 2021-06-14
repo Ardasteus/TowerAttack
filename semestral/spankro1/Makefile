@@ -5,11 +5,23 @@ export LD = ld
 
 export CXXFLAGS = -g -Og -Wall -Wextra -pedantic -Wno-long-long -fsanitize=address -fsanitize=undefined -fpermissive -lncurses
 
-main:
+main: FORCE
 	@make -C src build
 
-clean:
+compile: FORCE
+	@make -C src build 
+
+all: FORCE
+	@make -C src build 
+
+clean: FORCE
+	rm -rf doc
 	@make -C src clean
 
-run:
-	@./src/main
+run: FORCE
+	@./main
+
+doc: FORCE
+	@doxygen Doxyfile
+
+FORCE:

@@ -8,17 +8,64 @@ using namespace std;
 #include "game/attacker_entity/attacker_entity.h"
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
 
+/**
+ * This entity represents the AI controlled side of this game.
+ */
 class DefenderEntity : public GameObject
 {
 protected:
+    /**
+     * Attack radius of this entity
+     */
     int attack_radius;
+
+    /**
+     * Damage output of this entity
+     */
     int attack_damage;
+
+    /**
+     * Price to be paid when this entity is spawned
+     */
     int cost_to_spawn;
+
+    /**
+     * Attack mode of this entity
+     * 
+     * Closest - targets the closest AttackerEntity in range
+     * Furthest - targets the furthest AttackerEntity in range
+     * AoE - attacks every AttackerEntity in range
+     */
     string attack_mode;
+
+    /**
+     * Attack type of this entity
+     * 
+     * Does more damage to AttackEntity objects who have the same attack_type as weakness, but does less to those who have it as a strength
+     */
     string attack_type;
 public:
+    /**
+     * Creates an entity with name and position using specificed template
+     * 
+     * @param _position Position of the entity
+     * @param _name Name of the entity
+     * @param d_template DefenderTemplate to be used
+     */
     DefenderEntity(const IVector2& _position, string _name, DefenderTemplate d_template);
 
+    /**
+     * Draws the DefenderEntity. Should be only called once as these entites do not move.
+     * 
+     * @param drawer Drawer instance to be used
+     * @param offset Offset position to be used
+     */
     void Draw(const Drawer& drawer, const IVector2& offset) const override;
+
+    /**
+     * Updates the entity. Tries to attack AttackerEntity objects in its range
+     * 
+     * @param game_manager GameManager instance to be used
+     */
     void Update(GameManager& game_manager) override;
 };
