@@ -15,6 +15,9 @@ AttackerEntity::AttackerEntity(const IVector2& _position, const string& _name, c
 void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset)
 {
 
+    if(!is_active)
+        return;
+
     if(has_been_hit)
     {
         current_hit_timer++;
@@ -28,7 +31,7 @@ void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset)
     drawer.DrawChar(draw_character, offset + position);
 }
 
-void AttackerEntity::Update(GameManager& game_manager)
+void AttackerEntity::Update(const GameManager& game_manager)
 {
     current_update_time++;
     if(current_update_time != update_time)
@@ -42,14 +45,14 @@ void AttackerEntity::Update(GameManager& game_manager)
         on_destroy(position);
     }
     vector<TileGameObjectPair> in_radius = game_manager.GetGameObjectsInCross(position);
-    for(auto obj : in_radius)
+    for(const auto& obj : in_radius)
     {
-        AttackerEntity* attacker = dynamic_cast<AttackerEntity*>(obj.game_object.get());
+        shared_ptr<AttackerEntity> attacker = dynamic_pointer_cast<AttackerEntity>(obj.game_object);
         if((obj.tile_type == TileType::Path && attacker == nullptr &&
             obj.game_object->GetPosition() != position && obj.game_object->GetPosition() != previous_position)
             || obj.tile_type == TileType::End)
         {
-            game_manager.MoveEntity(position, obj.game_object->GetPosition());
+            on_move(position, obj.game_object->GetPosition());
             previous_position = position;
             position = obj.game_object->GetPosition();
             return;
@@ -74,7 +77,10 @@ void AttackerEntity::ApplyDamage(const int& damage, const string& attack_type)
     has_been_hit = true;
     current_hit_timer = 0;
     if(current_health <= 0)
+    {
+        is_active = false;
         on_destroy(position);
+    }
 }
 
 void AttackerEntity::SetOnEndCallback(const function<void()>& func)

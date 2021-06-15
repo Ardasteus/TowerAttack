@@ -56,6 +56,8 @@ protected:
      * Draw timer for when the entity is hit
      */
     mutable int current_hit_timer = 0;
+
+    bool is_active = true;
 public:
     /**
      * Creates a new entity on given position, name and template.
@@ -79,7 +81,7 @@ public:
      * 
      * @param game_manager GameManager instance to be used
      */
-    void Update(GameManager& game_manager) override;
+    void Update(const GameManager& game_manager) override;
 
     /**
      * Applies damage to the entity, lowering current_health, if 0 calls on_destroy

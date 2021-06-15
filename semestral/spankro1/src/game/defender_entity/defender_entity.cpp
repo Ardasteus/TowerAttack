@@ -20,13 +20,15 @@ void DefenderEntity::Draw(const Drawer& drawer, const IVector2& offset)
     drawer.DrawChar(draw_character, offset + position);
 }
 
-void DefenderEntity::Update(GameManager& game_manager)
+void DefenderEntity::Update(const GameManager& game_manager)
 {
-    current_update_time++;
-    if(current_update_time != update_time)
+    if(++current_update_time != update_time)
         return;
+
     current_update_time = 0;
     
     for(const auto& attacker : attack_mode->GetAttackersToDamage(position, attack_radius, game_manager))
+    {
         attacker->ApplyDamage(attack_damage, attack_type);
+    }
 }

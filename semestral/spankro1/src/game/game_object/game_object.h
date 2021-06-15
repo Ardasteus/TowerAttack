@@ -13,7 +13,7 @@ class GameManager;
 /**
  * Base class for objects in the game (AttackerEntity and DefenderEntity)
  */
-class GameObject : public IDrawable
+class GameObject : public IDrawable, public IUpdatable
 {
 protected:
     /**
@@ -59,7 +59,13 @@ protected:
     /**
      * A callback called when this GameObject should be destroyed
      */
-    function<void(IVector2)> on_destroy;
+    function<void(const IVector2&)> on_destroy;
+    function<void(const IVector2&, const IVector2&)> on_move;
+    
+protected:
+    void InvokeOnDestroy();
+    void InvokeOnMove(const IVector2& move_to);
+
 public:
     /**
      * Constructor with default update timer.
@@ -89,26 +95,22 @@ public:
     virtual ~GameObject() {};
 
     /**
-     * Updates this GameObject, for example movement
-     * 
-     * @param game_manager GameManager instance to be used
-     */
-    virtual void Update(GameManager&) {};
-
-    /**
      * Draws this GameObject, generally normal GameObject do not move, so should be only called once.
      * 
      * @param drawer Drawer instance to be used
      * @param offset Offset position to be used
      */
     virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
+    virtual void Update(const GameManager&) override {};
 
     /**
      * Sets the on_destroy callback
      * 
      * @param func Function to be called when destroyed
      */
-    void SetOnDestroyCallback(const function<void(IVector2)>& func);
+    void SetOnDestroyCallback(const function<void(const IVector2&)>& func);
+
+    void SetOnMoveCallback(const function<void(const IVector2&, const IVector2&)>& func);
 
     /**
      * Returns the name of the object

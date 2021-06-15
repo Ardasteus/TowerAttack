@@ -15,7 +15,7 @@ vector<shared_ptr<AttackerEntity>> FurthestAttackMode::GetAttackersToDamage(cons
         if(attacker != nullptr)
         {
             double attack_distance = IVector2::GetDistance(position, attacker->GetPosition());
-            if(attack_distance < distance)
+            if(attack_distance > distance)
             {
                 distance = attack_distance;
                 closest = attacker;

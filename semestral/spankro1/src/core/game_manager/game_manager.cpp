@@ -130,7 +130,7 @@ bool GameManager::TrySpawnAttacker(const IVector2& position, const string& templ
 
         stats.InvokeUpdate();
     });
-    attacker->SetOnDestroyCallback([&](IVector2 position)
+    attacker->SetOnDestroyCallback([&](const IVector2& position)
     {
         TileGameObjectPair to_delete = GetGameObjectAtPosition(position);
         GameObject to_add = GameObject("Dummy", position, ' ', COLOR_WHITE, COLOR_BLACK);
@@ -160,6 +160,10 @@ bool GameManager::TrySpawnAttacker(const IVector2& position, const string& templ
                 break;
         }
         attackers_to_remove.push_back(to_delete.game_object);
+    });
+    attacker->SetOnMoveCallback([&](const IVector2& position, const IVector2& move_to)
+    {
+        MoveEntity(position, move_to);
     });
     game_objects[position.GetX()][position.GetY()] = attacker;
     attacker_templates[template_name].count++;
