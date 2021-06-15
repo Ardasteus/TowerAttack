@@ -47,7 +47,7 @@ public:
      * 
      * @param key Code of the key that was pressed
      */
-    void HandleInput(const int key) override;
+    void HandleInput(const int& key) override;
 
     /**
      * Draws the button.
@@ -57,7 +57,7 @@ public:
      * @param drawer Drawer instance to use
      * @param offset Offset position to be used
      */
-    void Draw(const Drawer& drawer, const IVector2& offset) const override;
+    void Draw(const Drawer& drawer, const IVector2& offset) override;
 
     /**
      * Adds a function to be called when this button is activated.

@@ -6,7 +6,7 @@ using namespace std;
 #include <vector>
 
 /**
- * Utility class to split strings by delimiter.
+ * Header only utility class to split strings by delimiter.
  */
 class StringUtils
 {
@@ -19,10 +19,10 @@ public:
      * @param delimiter Delimier to split by
      * @return Vector of split values
      */
-    static vector<string> SplitStringByDelimiter(string s, string delimiter)
+    static vector<string> SplitStringByDelimiter(const string& to_split, const string& delimiter)
     {
         vector<string> result;
-        
+        string s = to_split;
         size_t pos = 0;
         std::string token;
         while ((pos = s.find(delimiter)) != std::string::npos) {
@@ -41,10 +41,10 @@ public:
      * @param delimiter Delimier to split by
      * @return Vector of split values as integers
      */
-    static vector<int> IntSplitStringByDelimiter(string s, string delimiter)
+    static vector<int> IntSplitStringByDelimiter(const string& to_split, const string& delimiter)
     {
         vector<int> result;
-        
+        string s = to_split;
         size_t pos = 0;
         std::string token;
         while ((pos = s.find(delimiter)) != std::string::npos) {

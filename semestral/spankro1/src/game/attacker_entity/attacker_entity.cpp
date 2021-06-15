@@ -1,7 +1,7 @@
 #include "attacker_entity.h"
 #include "core/game_manager/game_manager.h"
 
-AttackerEntity::AttackerEntity(const IVector2& _position, string _name, AttackerTemplate a_template)
+AttackerEntity::AttackerEntity(const IVector2& _position, const string& _name, const AttackerTemplate& a_template)
 : GameObject(_name, _position, a_template.draw_character, a_template.foreground_color, a_template.background_color, ATTACKER_UPDATE_TIME)
 {
     on_destroy = nullptr;
@@ -12,7 +12,7 @@ AttackerEntity::AttackerEntity(const IVector2& _position, string _name, Attacker
     weakness = a_template.weakness;
 }
 
-void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset) const
+void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset)
 {
 
     if(has_been_hit)
@@ -62,7 +62,7 @@ int AttackerEntity::GetCost() const
     return cost_to_spawn;
 }
 
-void AttackerEntity::ApplyDamage(int damage, string attack_type)
+void AttackerEntity::ApplyDamage(const int& damage, const string& attack_type)
 {
     int actual_damage = damage;
     if(attack_type == strength)
@@ -77,7 +77,7 @@ void AttackerEntity::ApplyDamage(int damage, string attack_type)
         on_destroy(position);
 }
 
-void AttackerEntity::SetOnEndCallback(function<void()> func)
+void AttackerEntity::SetOnEndCallback(const function<void()>& func)
 {
     on_end = func;
 }

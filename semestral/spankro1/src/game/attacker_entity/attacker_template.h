@@ -72,5 +72,5 @@ public:
      * @param str Strength of created AttackerEntity
      * @param weak Weakness type of created AttackerEntity
      */
-    AttackerTemplate(string _name, int hp, int _cost, short fgc, short bgc, char dc, string str, string weak);
+    AttackerTemplate(const string& _name, const int& hp, const int& _cost, const short& fgc, const short& bgc, const char& dc, const string& str, const string& weak);
 };

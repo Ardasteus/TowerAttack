@@ -1,6 +1,6 @@
 #include "level.h"
 
-Level::Level(int ai_gold, int player_gold, int p_income, int a_income, int lives)
+Level::Level(const int& ai_gold, const int& player_gold, const int& p_income, const int& a_income, const int& lives)
 {
     starting_ai_gold = ai_gold;
     starting_player_gold = player_gold;

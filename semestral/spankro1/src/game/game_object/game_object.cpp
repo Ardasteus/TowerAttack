@@ -27,12 +27,12 @@ GameObject::GameObject(const string& _name, const IVector2& _position, char _dra
     on_destroy = nullptr;
 }
 
-void GameObject::SetOnDestroyCallback(function<void(IVector2)> func)
+void GameObject::SetOnDestroyCallback(const function<void(IVector2)>& func)
 {
     on_destroy = func;
 }
 
-void GameObject::Draw(const Drawer& drawer, const IVector2& offset) const
+void GameObject::Draw(const Drawer& drawer, const IVector2& offset)
 {
     drawer.SetColor(foreground, background);
     drawer.DrawChar(draw_character, offset + position);

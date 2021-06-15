@@ -11,13 +11,9 @@ using namespace std;
 /**
  * Encapsulates a GUIWindow with Label objects that show relevant GameStats information
  */
-class GameStatsWindowHandler
+class GameStatsWindow : public GUIWindow
 {
 protected:
-    /**
-     * GUIWindow that is used
-     */
-    GUIWindow window;
 
     /**
      * Map of Labels for easy access
@@ -31,12 +27,14 @@ public:
      * @param height Height of the window
      * @param position Position of the window
      */
-    GameStatsWindowHandler(const int& width, const int& height, const IVector2& position);
+    GameStatsWindow(const int& width, const int& height, const IVector2& position);
+
+    ~GameStatsWindow();
 
     /**
      * Initializes the window. Creates all the labels used.
      */
-    void Initialize();
+    void Initialize() override;
 
     /**
      * Updates the label values with values taken from given GameStats instance
@@ -44,16 +42,4 @@ public:
      * @param stats GameStats instance to update from
      */
     void UpdateWindow(const GameStats& stats);
-
-    /**
-     * Draws the window
-     * 
-     * @param drawer Drawer instance to be used
-     */
-    void Draw(const Drawer& drawer) const;
-
-    /**
-     * Disposes of all resources used.
-     */
-    void Dispose();
 };

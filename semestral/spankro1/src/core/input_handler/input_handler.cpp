@@ -5,6 +5,12 @@ InputHandler::InputHandler()
     input_window = nullptr;
 }
 
+InputHandler::~InputHandler()
+{
+    if(input_window != nullptr)
+        delwin(input_window);
+}
+
 void InputHandler::Initialize()
 {
     input_window = newwin(0, 0, 0, 0);
@@ -18,10 +24,4 @@ int InputHandler::HandleInput() const
     if(key == 27)
         return -1;
     return key;
-}
-
-void InputHandler::Dispose()
-{
-    if(input_window != nullptr)
-        delwin(input_window);
 }

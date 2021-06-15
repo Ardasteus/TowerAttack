@@ -17,7 +17,7 @@ public:
      * @param _tile_type Tile type to use
      * @param _game_object GameObject pointer to use
      */
-    TileGameObjectPair(const TileType _tile_type, shared_ptr<GameObject> _game_object);
+    TileGameObjectPair(const TileType& _tile_type, const shared_ptr<GameObject>& _game_object);
 
     /**
      * TileType

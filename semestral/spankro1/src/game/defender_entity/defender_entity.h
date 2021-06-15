@@ -7,6 +7,7 @@ using namespace std;
 #include "game/defender_entity/defender_template.h"
 #include "game/attacker_entity/attacker_entity.h"
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
+#include "game/attack_modes/attack_mode/attack_mode.h"
 
 /**
  * This entity represents the AI controlled side of this game.
@@ -29,14 +30,7 @@ protected:
      */
     int cost_to_spawn;
 
-    /**
-     * Attack mode of this entity
-     * 
-     * Closest - targets the closest AttackerEntity in range
-     * Furthest - targets the furthest AttackerEntity in range
-     * AoE - attacks every AttackerEntity in range
-     */
-    string attack_mode;
+    shared_ptr<AttackMode> attack_mode;
 
     /**
      * Attack type of this entity
@@ -52,7 +46,7 @@ public:
      * @param _name Name of the entity
      * @param d_template DefenderTemplate to be used
      */
-    DefenderEntity(const IVector2& _position, string _name, DefenderTemplate d_template);
+    DefenderEntity(const IVector2& _position, const string& _name, const DefenderTemplate& d_template);
 
     /**
      * Draws the DefenderEntity. Should be only called once as these entites do not move.
@@ -60,7 +54,7 @@ public:
      * @param drawer Drawer instance to be used
      * @param offset Offset position to be used
      */
-    void Draw(const Drawer& drawer, const IVector2& offset) const override;
+    void Draw(const Drawer& drawer, const IVector2& offset) override;
 
     /**
      * Updates the entity. Tries to attack AttackerEntity objects in its range

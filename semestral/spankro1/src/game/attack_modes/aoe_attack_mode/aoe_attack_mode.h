@@ -1,0 +1,9 @@
+#pragma once
+
+#include "game/attack_modes/attack_mode/attack_mode.h"
+
+class AoEAttackMode : public AttackMode
+{
+public:
+    vector<shared_ptr<AttackerEntity>> GetAttackersToDamage(const IVector2& position, const int& radius, const GameManager& game_manager) const override;
+};

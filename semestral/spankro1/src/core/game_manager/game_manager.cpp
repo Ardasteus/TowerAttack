@@ -3,8 +3,8 @@
 using namespace chrono;
 
 GameManager::GameManager()
-: game_window(BaseWindow(GAME_WIDTH + WINDOW_BORDER , GAME_HEIGHT + WINDOW_BORDER, IVector2(0,0), COLOR_WHITE, COLOR_BLACK))
-, stats_window(GameStatsWindowHandler(GAME_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT - GAME_HEIGHT, IVector2(0, GAME_HEIGHT + WINDOW_BORDER)))
+: game_window(GAME_WIDTH + WINDOW_BORDER , GAME_HEIGHT + WINDOW_BORDER, IVector2(0,0), COLOR_WHITE, COLOR_BLACK)
+, stats_window(GAME_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT - GAME_HEIGHT, IVector2(0, GAME_HEIGHT + WINDOW_BORDER))
 {
     error_message = "";
     game_running = false;
@@ -12,6 +12,17 @@ GameManager::GameManager()
     change_level = false;
     stat_update = 0;
     ai_update = 0;
+}
+
+GameManager::~GameManager()
+{
+    attacker_templates.clear();
+    defender_templates.clear();
+    gui_windows.clear();
+    attackers.clear();
+    defenders.clear();
+    defenders_to_draw.clear();
+    attackers_to_remove.clear();
 }
 
 void GameManager::Run()
@@ -45,12 +56,12 @@ void GameManager::Run()
 
         previous = high_resolution_clock::now();
     }
-    Dispose();
+
     if(error_message != "")
         cout << error_message << endl;
 }
 
-vector<TileGameObjectPair> GameManager::GetGameObjectsInSquare(IVector2 position, int radius) const
+vector<TileGameObjectPair> GameManager::GetGameObjectsInSquare(const IVector2& position, const int& radius) const
 {
     vector<TileGameObjectPair> result;
     IVector2 left_corner = position - IVector2(radius, radius);
@@ -69,7 +80,7 @@ vector<TileGameObjectPair> GameManager::GetGameObjectsInSquare(IVector2 position
     return result;
 }
 
-vector<TileGameObjectPair> GameManager::GetGameObjectsInCross(IVector2 position) const
+vector<TileGameObjectPair> GameManager::GetGameObjectsInCross(const IVector2& position) const
 {
     vector<TileGameObjectPair> result;
     vector<IVector2> positions;
@@ -86,14 +97,14 @@ vector<TileGameObjectPair> GameManager::GetGameObjectsInCross(IVector2 position)
     return result;
 }
 
-TileGameObjectPair GameManager::GetGameObjectAtPosition(IVector2 position) const
+TileGameObjectPair GameManager::GetGameObjectAtPosition(const IVector2& position) const
 {
     if(position.GetX() < 0 || position.GetX() >= GAME_WIDTH || position.GetY() < 0 || position.GetY() >= GAME_HEIGHT)
         return TileGameObjectPair(TileType::Empty, nullptr);
     return TileGameObjectPair(game_map_mask[position.GetX()][position.GetY()], game_objects[position.GetX()][position.GetY()]);
 }
 
-bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
+bool GameManager::TrySpawnAttacker(const IVector2& position, const string& template_name)
 {
     auto found = attacker_templates.find(template_name);
     if(found == attacker_templates.end())
@@ -158,7 +169,7 @@ bool GameManager::TrySpawnAttacker(IVector2 position, string template_name)
     return true;
 }
 
-bool GameManager::TrySpawnDefender(IVector2 position, string template_name)
+bool GameManager::TrySpawnDefender(const IVector2& position, const string& template_name)
 {
     auto found = defender_templates.find(template_name);
     if(found == defender_templates.end())
@@ -180,7 +191,7 @@ bool GameManager::TrySpawnDefender(IVector2 position, string template_name)
     return true;
 }
 
-void GameManager::MoveEntity(IVector2 position, IVector2 move_to)
+void GameManager::MoveEntity(const IVector2& position, const IVector2& move_to)
 {
     TileGameObjectPair to_move = GetGameObjectAtPosition(position);
     GameObject to_add = GameObject("Empty", position, ' ', COLOR_WHITE, COLOR_BLACK);
@@ -211,7 +222,7 @@ void GameManager::MoveEntity(IVector2 position, IVector2 move_to)
     game_objects[move_to.GetX()][move_to.GetY()] = to_move.game_object;
 }
 
-void GameManager::Draw() const
+void GameManager::Draw()
 {
     IVector2 offset(1,1);
     if(force_redraw)
@@ -219,19 +230,19 @@ void GameManager::Draw() const
         drawer.ClearAll();
         if(game_running)
         {
-            game_window.Draw(drawer);
+            game_window.Draw(drawer, offset);
             for (int i = 0; i < GAME_WIDTH; i++)
                 for (int j = 0; j < GAME_HEIGHT; j++)
                     game_objects[i][j]->Draw(drawer, offset);
             drawer.Refresh();
-            stats_window.Draw(drawer);
+            stats_window.Draw(drawer, offset);
         }
-        current_window->Draw(drawer);
+        current_window->Draw(drawer, offset);
         return;
     }
     if(game_running)
     {
-        game_window.Draw(drawer);
+        game_window.Draw(drawer, offset);
         for(auto defender : defenders_to_draw)
             defender->Draw(drawer, offset);
 
@@ -242,10 +253,10 @@ void GameManager::Draw() const
             attacker->Draw(drawer, offset);
 
         drawer.Refresh();
-        stats_window.Draw(drawer);
+        stats_window.Draw(drawer, offset);
     }
 
-    current_window->Draw(drawer);
+    current_window->Draw(drawer, offset);
 }
 
 void GameManager::Update()
@@ -385,22 +396,7 @@ void GameManager::Initialize()
     exit_application = false;
 }
 
-void GameManager::Dispose()
-{
-    attacker_templates.clear();
-    defender_templates.clear();
-    gui_windows.clear();
-    attackers.clear();
-    defenders.clear();
-    defenders_to_draw.clear();
-    attackers_to_remove.clear();
-
-    input_handler.Dispose();
-    stats_window.Dispose();
-    drawer.Dispose();
-}
-
-void GameManager::ChangeWindow(string window_name)
+void GameManager::ChangeWindow(const string& window_name)
 {
     if(window_name == "Game")
         game_running = true;
@@ -411,7 +407,7 @@ void GameManager::ChangeWindow(string window_name)
     current_window = gui_windows[window_name];
 }
 
-shared_ptr<GUIWindow> GameManager::AddGUIWindow(string name, int width, int height, IVector2 position)
+shared_ptr<GUIWindow> GameManager::AddGUIWindow(const string& name, const int& width, const int& height, const IVector2& position)
 {
     auto found = gui_windows.find(name);
     if(found != gui_windows.end())
@@ -525,9 +521,10 @@ bool GameManager::LoadDefenderDefinitions()
                 error_message = "Defender definitions failed to load: Invalid number of arguments, should be 7.";
                 return false;
             }
+            shared_ptr<AttackMode> mode = make_shared<ClosestAttackMode>();
             DefenderTemplate new_template = DefenderTemplate(values[0], COLOR_YELLOW, COLOR_BLACK, 
             values[4][0], stoi(values[2]), stoi(values[1]), stoi(values[3]),
-            values[5], values[6]);
+            mode, values[6]);
             defender_templates[new_template.name] = new_template;
         }
         defender_definitions.close();
@@ -668,7 +665,7 @@ bool GameManager::LoadMaps()
     }
 }
 
-void GameManager::GoToLevel(int level, bool new_game)
+void GameManager::GoToLevel(const int& level, const bool& new_game)
 {
     attackers.clear();
     defenders.clear();

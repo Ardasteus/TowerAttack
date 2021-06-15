@@ -2,20 +2,19 @@
 
 using namespace std;
 
-#include "game/game_object/game_object.h"
 #include "ui/window/gui_window.h"
 #include "ui/controls/gui_object/gui_object.h"
 #include "core/input_handler/input_handler.h"
 #include "game/attacker_entity/attacker_entity.h"
 #include "game/defender_entity/defender_entity.h"
 #include "ui/controls/button/button.h"
-#include "core/enums/tile_type.h"
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
 #include "core/game_stats/game_stats.h"
-#include "core/game_stats_window/game_stats_window.h"
+#include "core/windows/game_stats_window/game_stats_window.h"
 #include "utility/string_utilities.h"
 #include "core/save_game/save_game.h"
 #include "core/game_object_comparator/game_object_comparator.h"
+#include "game/attack_modes/closest_attack_mode/closest_attack_mode.h"
 #include <string>
 #include <fstream>
 #include <iterator>
@@ -53,7 +52,7 @@ protected:
     /**
      * Stats window, shows relevant GameStats properties
      */
-    GameStatsWindowHandler stats_window;
+    GameStatsWindow stats_window;
 
     /**
      * 2D array of GameObject instances, acts as a map.
@@ -187,6 +186,8 @@ public:
      */
     GameManager();
 
+    ~GameManager();
+
     /**
      * Starts and runs the game
      */
@@ -198,21 +199,21 @@ public:
      * @param position Center of the lookup square
      * @param radius Span of the square
      */
-    vector<TileGameObjectPair> GetGameObjectsInSquare(IVector2 position, int radius) const;
+    vector<TileGameObjectPair> GetGameObjectsInSquare(const IVector2& position, const int& radius) const;
 
     /**
      * Returns a TileGameObjectPair object with values from given position
      * 
      * @param position Position to look at
      */
-    TileGameObjectPair GetGameObjectAtPosition(IVector2 position) const;
+    TileGameObjectPair GetGameObjectAtPosition(const IVector2& position) const;
 
     /**
      * Returns a vector of TileGameObjectPair objects neighboring the position, excluding diagonal neighbors
      * 
      * @param position Center of cross
      */
-    vector<TileGameObjectPair> GetGameObjectsInCross(IVector2 position) const;
+    vector<TileGameObjectPair> GetGameObjectsInCross(const IVector2& position) const;
     
     /**
      * Moves an entity on the 2D grid
@@ -220,14 +221,14 @@ public:
      * @param position Position of entity to move
      * @param move_to Where to move the entity
      */
-    void MoveEntity(IVector2 position, IVector2 move_to);
+    void MoveEntity(const IVector2& position, const IVector2& move_to);
 
     /**
      * Changes the current active GUIWindow
      * 
      * @param window_name Name of the window to swap to. Key in gui_windows
      */
-    void ChangeWindow(string window_name);
+    void ChangeWindow(const string& window_name);
 
 protected: 
 
@@ -239,7 +240,7 @@ protected:
      * @param height Height of the window
      * @param position Position of the window
      */
-    shared_ptr<GUIWindow> AddGUIWindow(string name, int width, int height, IVector2 position);
+    shared_ptr<GUIWindow> AddGUIWindow(const string& name, const int& width, const int& height, const IVector2& position);
 
     /**
      * Initializes the game, loads all resources, creates all windows.
@@ -249,17 +250,12 @@ protected:
     /**
      * Draws current GUIWindow and the game if game is not paused
      */
-    void Draw() const;
+    void Draw();
 
     /**
      * Runs update on all entites, defenders first, attackers second. Also runs Stat and AI updates.
      */
     void Update();
-
-    /**
-     * Disposes of all resources used by the game
-     */
-    void Dispose();
 
     /**
      * Loads all available AttackerTemplate objects from a file
@@ -296,7 +292,7 @@ protected:
      * @param template_name Template to use
      * @return Whether or not the entity was spawned
      */
-    bool TrySpawnAttacker(IVector2 position, string template_name);
+    bool TrySpawnAttacker(const IVector2& position, const string& template_name);
 
     /**
      * Tries to spawn an DefenderEntity at given position using given template
@@ -305,7 +301,7 @@ protected:
      * @param template_name Template to use
      * @return Whether or not the entity was spawned
      */
-    bool TrySpawnDefender(IVector2 position, string template_name);
+    bool TrySpawnDefender(const IVector2& position, const string& template_name);
 
     /**
      * AI update, tries to spawn a random DefenderEntity at a random position, 5 times.
@@ -323,5 +319,5 @@ protected:
      * @param level Level to go to
      * @param new_game If true overwrites the current save game
      */
-    void GoToLevel(int level, bool new_game);
+    void GoToLevel(const int& level, const bool& new_game);
 };  

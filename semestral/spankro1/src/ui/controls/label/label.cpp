@@ -6,7 +6,7 @@ const IVector2& position, const int& width, const short& fg, const short& bg) : 
     text = caption;
 }
 
-void Label::Draw(const Drawer& drawer, const IVector2& offset) const
+void Label::Draw(const Drawer& drawer, const IVector2& offset)
 {
     drawer.SetColor(foreground, background);
     string print = text;
@@ -16,7 +16,7 @@ void Label::Draw(const Drawer& drawer, const IVector2& offset) const
     drawer.DrawString(print, offset + position);
 }
 
-void Label::UpdateText(string new_text)
+void Label::UpdateText(const string& new_text)
 {
     text = new_text;
 }

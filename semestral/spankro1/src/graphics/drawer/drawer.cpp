@@ -2,18 +2,13 @@
 
 Drawer::Drawer()
 {
+    window = nullptr;
     colorEnabled = false;
 }
 
 Drawer::~Drawer()
 {
-    
-}
-
-WINDOW* Drawer::GetWindow() const
-{
-    WindowWrapper* window = currentWindow.get();
-    return window->GetWindow();
+    endwin();
 }
 
 void Drawer::Initialize()
@@ -40,27 +35,24 @@ void Drawer::ClearAll() const
 
 void Drawer::Clear() const
 {
-    werase(GetWindow());
+    if(window != nullptr)
+        werase(window);
 }
 
 void Drawer::Refresh() const
 {
-    wrefresh(GetWindow());
+    if(window != nullptr)
+        wrefresh(window);
 }
 
-void Drawer::SetWindow(const std::shared_ptr<WindowWrapper>& window) const
+void Drawer::SetWindow(WINDOW* window_handle) const
 {
-    currentWindow = window;
-}
-
-void Drawer::Dispose()
-{
-    endwin();
+    window = window_handle;
 }
 
 void Drawer::SetColor(const short& foreground, const short& background) const
 {
-    if(!colorEnabled)
+    if(!colorEnabled || window == nullptr)
         return;
 
     short new_id = (short)colors.size() + 1;
@@ -74,23 +66,24 @@ void Drawer::SetColor(const short& foreground, const short& background) const
     else
         pair = *pair_found;
     
-    wattron(GetWindow(), COLOR_PAIR(pair.GetId()));
+    wattron(window, COLOR_PAIR(pair.GetId()));
 }
 
-void Drawer::DrawWindowBorder() const
+void Drawer::DrawWindowBorder(const WindowBorder& border) const
 {
-    WindowWrapper* window = currentWindow.get();
-    std::vector<char> border = window->GetBorder().GetBorderCharacters();
-    WINDOW* _window = window->GetWindow();
-    wborder(_window, border[0], border[1], border[2], border[3], border[4], border[5], border[6], border[7]);
+    if(window == nullptr)
+        return;
+    std::vector<char> border_chars = border.GetBorderCharacters();
+    wborder(window, border_chars[0], border_chars[1], border_chars[2], border_chars[3], 
+    border_chars[4], border_chars[5], border_chars[6], border_chars[7]);
 }
 
 void Drawer::DrawChar(const char& character, const IVector2& position) const
 {
-    mvwaddch(GetWindow(), position.GetY(), position.GetX(), character);
+    mvwaddch(window, position.GetY(), position.GetX(), character);
 }
 
 void Drawer::DrawString(const std::string& text, const IVector2& position) const
 {
-    mvwaddstr(GetWindow(), position.GetY(), position.GetX(), text.c_str());
+    mvwaddstr(window, position.GetY(), position.GetX(), text.c_str());
 }

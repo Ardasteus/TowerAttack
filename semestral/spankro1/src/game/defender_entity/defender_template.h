@@ -3,6 +3,7 @@
 using namespace std;
 
 #include <string>
+#include "game/attack_modes/attack_mode/attack_mode.h"
 
 /**
  * Template to create DefenderEntity objects with given parameters
@@ -50,14 +51,7 @@ public:
      */
     int cost;
 
-    /**
-     * Attack mode of DefenderEntity created using this template
-     * 
-     * Closest - targets the closest AttackerEntity in range
-     * Furthest - targets the furthest AttackerEntity in range
-     * AoE - attacks every AttackerEntity in range
-     */
-    string attack_mode;
+    shared_ptr<AttackMode> attack_mode;
 
     /**
      * Attack type of DefenderEntity created using this template
@@ -82,5 +76,6 @@ public:
      * @param mode Attack mode of created DefenderEntity
      * @param type Attack type of created DefenderEntity
      */
-    DefenderTemplate(string _name, short fgc, short bgc, char dc, int radius, int damage, int _cost, string mode, string type);
+    DefenderTemplate(const string& _name, const short& fgc, const short& bgc, const char& dc, const int& radius, const int& damage, const int& _cost, 
+    const shared_ptr<AttackMode>& mode, const string& type);
 };

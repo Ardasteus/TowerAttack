@@ -17,7 +17,7 @@ GUIWindow::GUIWindow(const string& _name, const int& width, const int& height, c
 }
 
 GUIWindow::GUIWindow(const string& _name, const int& width, const int& height, const IVector2& position, const WindowBorder& border) 
-: BaseWindow(width, height, position, border , COLOR_WHITE, COLOR_BLACK)
+: BaseWindow(width, height, position, COLOR_WHITE, COLOR_BLACK, border)
 {
     name = _name;
     focused_element = -1;
@@ -26,17 +26,17 @@ GUIWindow::GUIWindow(const string& _name, const int& width, const int& height, c
 GUIWindow::~GUIWindow()
 {
     gui_elements.empty();
+    focusable_elements.empty();
 }
 
-void GUIWindow::Draw(const Drawer& drawer) const
+void GUIWindow::Draw(const Drawer& drawer, const IVector2& offset = IVector2(1,1))
 {
-    drawer.SetWindow(window_wrapper);
+    drawer.SetWindow(handle);
     drawer.Clear();
     drawer.SetColor(foreground_color, background_color);
-    drawer.DrawWindowBorder();
+    drawer.DrawWindowBorder(border);
     for(auto element : gui_elements)
     {
-        IVector2 offset(1,1);
         element->Draw(drawer, offset);
     }
     drawer.Refresh();
@@ -44,7 +44,7 @@ void GUIWindow::Draw(const Drawer& drawer) const
 
 void GUIWindow::AddElement(shared_ptr<GUIObject> element)
 {
-    FocusableGUIObject* focusable = dynamic_cast<FocusableGUIObject*>(element.get());
+    shared_ptr<FocusableGUIObject> focusable = dynamic_pointer_cast<FocusableGUIObject>(element);
     if(focusable != nullptr)
     {
         focusable_elements.push_back(focusable);
@@ -54,7 +54,7 @@ void GUIWindow::AddElement(shared_ptr<GUIObject> element)
     gui_elements.push_back(element);
 }
 
-void GUIWindow::HandleInput(const int key)
+void GUIWindow::HandleInput(const int& key)
 {
     if(focusable_elements.size() == 0)
         return;

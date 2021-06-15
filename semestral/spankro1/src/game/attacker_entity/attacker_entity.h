@@ -64,7 +64,7 @@ public:
      * @param _name Name of the entity
      * @param a_template AttackerTemplate to be used
      */
-    AttackerEntity(const IVector2& _position, string _name, AttackerTemplate a_template);
+    AttackerEntity(const IVector2& _position, const string& _name, const AttackerTemplate& a_template);
 
     /**
      * Draws the AttackerEntity.
@@ -72,7 +72,7 @@ public:
      * @param drawer Drawer instance to be used
      * @param offset Offset position to be used
      */
-    void Draw(const Drawer& drawer, const IVector2& offset) const override;
+    void Draw(const Drawer& drawer, const IVector2& offset) override;
 
     /**
      * Updates the entity. Tries to go forward on a map, onto another Path or End Tile.
@@ -90,14 +90,14 @@ public:
      * @param damage Damage to be taken
      * @param attack_type Type of the dame
      */
-    void ApplyDamage(int damage, string attack_type);
+    void ApplyDamage(const int& damage, const string& attack_type);
 
     /**
      * Sets the on_destroy callback function
      * 
      * @param func Function to be set
      */
-    void SetOnEndCallback(function<void()> func);
+    void SetOnEndCallback(const function<void()>& func);
 
     /**
      * Returns the cost of the entity

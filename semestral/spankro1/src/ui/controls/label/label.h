@@ -36,13 +36,13 @@ public:
      * @param drawer Drawer instance to be used
      * @param offset Offset position to be used
      */
-    void Draw(const Drawer& drawer, const IVector2& offset) const override;
+    void Draw(const Drawer& drawer, const IVector2& offset) override;
 
     /**
      * Sets new text to be displayed.
      * 
      * @param new_text New text to be displayed
      */
-    void UpdateText(string new_text);
+    void UpdateText(const string& new_text);
 };
 

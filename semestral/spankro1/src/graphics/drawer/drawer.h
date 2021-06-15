@@ -5,7 +5,7 @@
 #include <memory>
 #include <set>
 #include <vector>
-#include "graphics/window/window_wrapper.h"
+#include "graphics/window/window_border.h"
 #include "graphics/color/color_pair.h"
 #include "graphics/color/color_pair_comparator.h"
 #include "math/vector/ivector2.h"
@@ -21,7 +21,7 @@ protected:
      * 
      * Is mutable so it can be used in const Draw calls.
      */
-    mutable std::shared_ptr<WindowWrapper> currentWindow;
+    mutable WINDOW* window;
 
     /**
      * Set of color pairs, used to keep track of used colors.
@@ -67,18 +67,13 @@ public:
      * Refreshes the window, thus drawing any changes.
      */
     void Refresh() const;
-    
-    /**
-     * Disposes of all ncurses related things.
-     */
-    void Dispose();
 
     /**
      * Sets current window, any further function calls will be executed in the context of this window.
      * 
      * @param window Pointer to a window to be set as the current window.
      */
-    void SetWindow(const std::shared_ptr<WindowWrapper>& window) const;
+    void SetWindow(WINDOW* window_handle) const;
 
     /**
      * Sets the colors to be used for all drawing calls in current window.
@@ -91,7 +86,7 @@ public:
     /**
      * Draws the border of the current window
      */
-    void DrawWindowBorder() const;
+    void DrawWindowBorder(const WindowBorder& border) const;
 
     /**
      * Draws a character at specific position
@@ -108,12 +103,4 @@ public:
      * @param position Position to draw at
      */
     void DrawString(const std::string& text, const IVector2& position) const;
-
-private:
-    /**
-     * Gets the pointer to the actual ncurses window
-     * 
-     * @return Pointer to ncurses WINDOW
-     */
-    WINDOW* GetWindow() const;
 };

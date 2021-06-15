@@ -7,17 +7,17 @@ const short& fg, const short& bg, const short& ffg, const short& fbg)
     caption = _caption;
 }
 
-void Button::HandleInput(const int key)
+void Button::HandleInput(const int& key)
 {
     //Enter
     if(key == 10)
     {
-        for(auto func : on_click_functions)
+        for(const auto& func : on_click_functions)
             func();
     }
 }
 
-void Button::Draw(const Drawer& drawer, const IVector2& offset) const
+void Button::Draw(const Drawer& drawer, const IVector2& offset)
 {
     if(is_currently_focused)
         drawer.SetColor(focused_foregound, focused_background);

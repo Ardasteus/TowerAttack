@@ -13,7 +13,8 @@ AttackerTemplate::AttackerTemplate()
     weakness = "";
 }
 
-AttackerTemplate::AttackerTemplate(string _name, int hp, int _cost, short fgc, short bgc, char dc, string str, string weak)
+AttackerTemplate::AttackerTemplate(const string& _name, const int& hp, const int& _cost, const short& fgc, 
+const short& bgc, const char& dc, const string& str, const string& weak)
 {
     name = _name;
     health = hp;

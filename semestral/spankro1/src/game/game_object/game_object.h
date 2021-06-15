@@ -4,7 +4,8 @@ using namespace std;
 
 #include <string>
 #include <functional>
-#include "graphics/drawable_object/drawable_object.h"
+#include "graphics/idrawable/idrawable.h"
+#include "core/iupdatable/iupdatable.h"
 #include "math/vector/ivector2.h"
 
 class GameManager;
@@ -12,7 +13,7 @@ class GameManager;
 /**
  * Base class for objects in the game (AttackerEntity and DefenderEntity)
  */
-class GameObject : public DrawableObject
+class GameObject : public IDrawable
 {
 protected:
     /**
@@ -100,14 +101,14 @@ public:
      * @param drawer Drawer instance to be used
      * @param offset Offset position to be used
      */
-    virtual void Draw(const Drawer& drawer, const IVector2& offset) const override;
+    virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
 
     /**
      * Sets the on_destroy callback
      * 
      * @param func Function to be called when destroyed
      */
-    void SetOnDestroyCallback(function<void(IVector2)> func);
+    void SetOnDestroyCallback(const function<void(IVector2)>& func);
 
     /**
      * Returns the name of the object

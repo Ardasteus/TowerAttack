@@ -35,9 +35,9 @@ public:
      * @param caption Caption of the Label
      * @param position Position of the Label
      * 
-     * @return Pointer to the new Label
+     * @return Poconst int&er to the new Label
      */
-    shared_ptr<Label> CreateLabel(string caption, IVector2 position);
+    shared_ptr<Label> CreateLabel(const string& caption, const IVector2& position);
 
     /**
      * Creates a new label with caption, position and width. Uses default colors defined in this class.
@@ -46,9 +46,9 @@ public:
      * @param position Position of the Label
      * @param width Width of the Label
      * 
-     * @return Pointer to the new Label
+     * @return Poconst int&er to the new Label
      */
-    shared_ptr<Label> CreateLabel(string caption, IVector2 position, int width);
+    shared_ptr<Label> CreateLabel(const string& caption, const IVector2& position, const int& width);
 
     /**
      * Creates a new label with caption, position, width and custom colors
@@ -59,9 +59,9 @@ public:
      * @param fg_color Foreground color of the Label
      * @param bg_color Background color of the Label
      * 
-     * @return Pointer to the new Label
+     * @return Poconst int&er to the new Label
      */
-    shared_ptr<Label> CreateLabel(string caption, IVector2 position, int width, short fg_color, short bg_color);
+    shared_ptr<Label> CreateLabel(const string& caption, const IVector2& position, const int& width, const short& fg_color, const short& bg_color);
 
     /**
      * Creates a new Button with caption and position. The width is set to the width of the caption. Uses default colors defined in this class.
@@ -69,9 +69,9 @@ public:
      * @param caption Caption of the Button
      * @param position Position of the Button
      * 
-     * @return Pointer to the new Button
+     * @return Poconst int&er to the new Button
      */
-    shared_ptr<Button> CreateButton(string caption, IVector2 position);
+    shared_ptr<Button> CreateButton(const string& caption, const IVector2& position);
 
     /**
      * Creates a new Button with caption, position and width. Uses default colors defined in this class.
@@ -80,9 +80,9 @@ public:
      * @param position Position of the Button
      * @param width Width of the Button
      * 
-     * @return Pointer to the new Button
+     * @return Poconst int&er to the new Button
      */
-    shared_ptr<Button> CreateButton(string caption, IVector2 position, int width);
+    shared_ptr<Button> CreateButton(const string& caption, const IVector2& position, const int& width);
 
     /**
      * Creates a new Button with caption, position, width and custom colors
@@ -95,9 +95,10 @@ public:
      * @param ffg_color Foreground color of the Button when focused
      * @param fbg_color Background color of the Button when focosed
      * 
-     * @return Pointer to the new Button
+     * @return Poconst int&er to the new Button
      */
-    shared_ptr<Button> CreateButton(string caption, IVector2 position, int width, short fg_color, short bg_color, short ffg_color, short fbg_color);
+    shared_ptr<Button> CreateButton(const string& caption, const IVector2& position, const int& width, const short& fg_color, 
+    const short& bg_color, const short& ffg_color, const short& fbg_color);
 
     /**
      * Creates a new Textbox with caption, position and no default value. Uses default colors.
@@ -105,9 +106,9 @@ public:
      * @param position Position of the Textbox
      * @param width Width of the Textbox
      * 
-     * @return Pointer to the new Textbox
+     * @return Poconst int&er to the new Textbox
      */
-    shared_ptr<Textbox> CreateTextbox(IVector2 position, int width);
+    shared_ptr<Textbox> CreateTextbox(const IVector2& position, const int& width);
 
     /**
      * Creates a new Textbox with caption, position, custom colors and no default value.
@@ -119,9 +120,9 @@ public:
      * @param ffg_color Foreground color of the Textbox when focused
      * @param fbg_color Background color of the Textbox when focosed
      * 
-     * @return Pointer to the new Textbox
+     * @return Poconst int&er to the new Textbox
      */
-    shared_ptr<Textbox> CreateTextbox(IVector2 position, int width, short fg_color, short bg_color, short ffg_color, short fbg_color);
+    shared_ptr<Textbox> CreateTextbox(const IVector2& position, const int& width, const short& fg_color, const short& bg_color, const short& ffg_color, const short& fbg_color);
 
     /**
      * Creates a new Textbox with caption, position and a default value. Uses default colors.
@@ -130,9 +131,9 @@ public:
      * @param width Width of the Textbox
      * @param default_text Default value of the textbox
      * 
-     * @return Pointer to the new Textbox
+     * @return Poconst int&er to the new Textbox
      */
-    shared_ptr<Textbox> CreateTextbox(IVector2 position, int width, string default_text);
+    shared_ptr<Textbox> CreateTextbox(const IVector2& position, const int& width, const string& default_text);
 
     /**
      * Creates a new Textbox with caption, position, custom colors and a default value.
@@ -145,7 +146,7 @@ public:
      * @param ffg_color Foreground color of the Textbox when focused
      * @param fbg_color Background color of the Textbox when focosed
      * 
-     * @return Pointer to the new Textbox
+     * @return Poconst int&er to the new Textbox
      */
-    shared_ptr<Textbox> CreateTextbox(IVector2 position, int width, string default_text, short fg_color, short bg_color, short ffg_color, short fbg_color);
+    shared_ptr<Textbox> CreateTextbox(const IVector2& position, const int& width, const string& default_text, const short& fg_color, const short& bg_color, const short& ffg_color, const short& fbg_color);
 };

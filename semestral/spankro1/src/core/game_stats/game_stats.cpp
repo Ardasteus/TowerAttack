@@ -19,13 +19,14 @@ void GameStats::NextLevel(SaveGame& save_game)
     SetValues(save_game);
 }
 
-void GameStats::SetSpecificLevel(int level, SaveGame& save_game)
+void GameStats::SetSpecificLevel(const int& level, SaveGame& save_game)
 {
+    int actual_level = level;
     if(level < 0 || level >= (int)levels.size())
-        level = 0;
+        actual_level = 0;
 
-    save_game.current_level = level;
-    current_level = level;
+    save_game.current_level = actual_level;
+    current_level = actual_level;
     SetValues(save_game);
 }
 
@@ -59,7 +60,7 @@ bool GameStats::LoadLevels(string& error_message)
     }
 }
 
-void GameStats::SetUpdateFunction(function<void()> func)
+void GameStats::SetUpdateFunction(const function<void()>& func)
 {
     on_stats_update = func;
 }

@@ -35,7 +35,7 @@ public:
      * 
      * @param key Code of the key that was pressed
      */
-    void HandleInput(const int key) override;
+    void HandleInput(const int& key) override;
 
     /**
      * Draws the textbox.
@@ -45,5 +45,5 @@ public:
      * @param drawer Drawer instance to be used
      * @param offset Offset position to be used
      */
-    void Draw(const Drawer& drawer, const IVector2& offset) const override;
+    void Draw(const Drawer& drawer, const IVector2& offset) override;
 };

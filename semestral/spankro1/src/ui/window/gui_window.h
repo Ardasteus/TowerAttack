@@ -5,6 +5,7 @@ using namespace std;
 #include "graphics/window/base_window.h"
 #include "ui/controls/gui_object/gui_object.h"
 #include "ui/controls/focusable_gui_object/focusable_gui_object.h"
+#include "ui/ifocusable/ifocusable.h"
 #include <list>
 #include <memory>
 
@@ -12,7 +13,7 @@ using namespace std;
 /**
  * Window class that holds GUIObject instances and passes user input to FocusableGUIObject instances
  */
-class GUIWindow : public BaseWindow
+class GUIWindow : public BaseWindow, public IFocusable
 {
 protected:
     /**
@@ -23,7 +24,7 @@ protected:
     /**
      * Vector of Focusable UI objects in this window
      */
-    vector<FocusableGUIObject*> focusable_elements;
+    vector<shared_ptr<FocusableGUIObject>> focusable_elements;
 
     /**
      * Index of currently focused FocusableGUIObject
@@ -69,18 +70,16 @@ public:
     /**
      * Sets the curren window of the Drawer instance to this window, draws its border and draws all GUIObjects.
      * 
-     * The offset used to draw is IVector2(1,1), so that the objects dont draw inside the border.
-     * 
      * @param drawer Drawer instance to be used
      */
-    void Draw(const Drawer& drawer) const override;
+    virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
 
     /**
      * Handles user input, up/down arrows cycle between focusable UI objects, if anything else is pressed it gets passed down to currently focused object.
      * 
      * @param key Key code
      */
-    void HandleInput(const int key);
+    virtual void HandleInput(const int& key);
 
     /**
      * Adds new GUIObject to this class, if it also a FocusableGUIObject adds it to the vector of those as well.

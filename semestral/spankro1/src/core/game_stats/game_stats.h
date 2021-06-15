@@ -78,14 +78,14 @@ public:
      * @param level Level to go to
      * @param save_game SaveGame to update
      */
-    void SetSpecificLevel(int level, SaveGame& save_game);
+    void SetSpecificLevel(const int& level, SaveGame& save_game);
 
     /**
      * Sets on_stats_update function
      * 
      * @param func Function to be used
      */
-    void SetUpdateFunction(function<void()> func);
+    void SetUpdateFunction(const function<void()>& func);
 
     /**
      * Invokes the on_stats_update callback

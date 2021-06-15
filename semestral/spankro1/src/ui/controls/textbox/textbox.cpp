@@ -7,7 +7,7 @@ const short& fg, const short& bg, const short& ffg, const short& fbg)
     value = initial_value;
 }
 
-void Textbox::HandleInput(const int key)
+void Textbox::HandleInput(const int& key)
 {
     char to_add = (char)key;
     if(to_add == '\a')
@@ -21,7 +21,7 @@ void Textbox::HandleInput(const int key)
         value += to_add;
 }
 
-void Textbox::Draw(const Drawer& drawer, const IVector2& offset) const
+void Textbox::Draw(const Drawer& drawer, const IVector2& offset)
 {
     if(is_currently_focused)
         drawer.SetColor(focused_foregound, focused_background);

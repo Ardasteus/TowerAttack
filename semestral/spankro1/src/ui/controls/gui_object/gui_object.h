@@ -3,13 +3,13 @@
 using namespace std;
 
 #include <string>
-#include "graphics/drawable_object/drawable_object.h"
+#include "graphics/idrawable/idrawable.h"
 #include "math/vector/ivector2.h"
 
 /**
  * Base class for all UI objects
  */
-class GUIObject : public DrawableObject
+class GUIObject : public IDrawable
 {
 protected:
     /**

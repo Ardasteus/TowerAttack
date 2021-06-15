@@ -20,6 +20,8 @@ public:
      */
     InputHandler();
 
+    ~InputHandler();
+
     /**
      * Initializes the window
      */
@@ -31,9 +33,4 @@ public:
      * @return Key code
      */
     int HandleInput() const;
-
-    /**
-     * Disposes of the ncurses WINDOW
-     */
-    void Dispose();
 };

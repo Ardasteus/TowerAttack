@@ -1,11 +1,12 @@
 #pragma once
 
 #include "ui/controls/gui_object/gui_object.h"
+#include "ui/ifocusable/ifocusable.h"
 
 /**
  * Base class for all focusable GUIObjects. They can recieve user input.
  */
-class FocusableGUIObject : public GUIObject
+class FocusableGUIObject : public GUIObject, public IFocusable
 {
 protected:
     /**
@@ -42,11 +43,4 @@ public:
      * Default destructor
      */
     virtual ~FocusableGUIObject() {};
-    
-    /**
-     * Handles user input
-     * 
-     * @param key Code of the key that was pressed
-     */
-    virtual void HandleInput(const int key) = 0;
 };

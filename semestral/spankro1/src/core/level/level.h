@@ -40,5 +40,5 @@ public:
      * @param a_income Income of the AI for every kill
      * @param lives Lives that the AI has
      */
-    Level(int ai_gold, int player_gold, int p_income, int a_income, int lives);
+    Level(const int& ai_gold, const int& player_gold, const int& p_income, const int& a_income, const int& lives);
 };
