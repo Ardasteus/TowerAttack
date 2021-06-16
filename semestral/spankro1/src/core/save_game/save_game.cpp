@@ -3,7 +3,7 @@
 bool SaveGame::Load()
 {
     fstream save_game;
-    save_game.open("./src/data/save_game", ios::in);
+    save_game.open("./assets/save_game", ios::in);
     if(save_game.is_open())
     {
         string line;
@@ -36,11 +36,11 @@ const string& SaveGame::GetError() const
 void SaveGame::Save()
 {
     fstream save_game;
-    save_game.open("./src/data/save_game_temp", ios::out);
+    save_game.open("./assets/save_game_temp", ios::out);
     save_game << "CurrentLevel;BonusGold;BonusIncome;BonusHP" << endl;
     save_game << current_level << ";" << bonus_gold << ";" << bonus_income << ";" << bonus_hp << endl;
-    remove("./src/data/save_game");
-    rename("./src/data/save_game_temp", "./src/data/save_game");
+    remove("./assets/save_game");
+    rename("./assets/save_game_temp", "./assets/save_game");
 }
 
 void SaveGame::NewGame()

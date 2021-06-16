@@ -17,6 +17,9 @@ using namespace std;
 #include "core/level_handler/level_handler.h"
 #include "core/map_handler/map_handler.h"
 #include "core/ai_agent/ai_agent.h"
+#include "core/windows/main_menu_window/main_menu_window.h"
+#include "interfaces/iinitializable.h"
+#include "core/windows/game_window/game_window.h"
 #include <string>
 #include <fstream>
 #include <iterator>
@@ -47,7 +50,6 @@ class GameManager
 {
 protected:
     BaseWindow game_window;
-    GameStatsWindow stats_window;
     shared_ptr<GameObject> game_objects[GAME_WIDTH][GAME_HEIGHT];
     TileType game_map_mask[GAME_WIDTH][GAME_HEIGHT];
 
@@ -59,6 +61,7 @@ protected:
 
     map<string, shared_ptr<ILoadable>> loadable_objects;
     map<string, shared_ptr<IUpdatable>> updatable_services;
+    map<string, shared_ptr<IInitializable>> init_objects;
 
     IVector2 SpawnLocation;
     Drawer drawer;
@@ -85,13 +88,18 @@ public:
     vector<TileGameObjectPair> GetGameObjectsInCross(const IVector2& position) const;
     
     DefenderTemplate GetRandomDefenderTemplate();
+    AttackerTemplate GetAttackerTemplate(const string& name);
+    vector<string> GetAttackerTemplateNames();
+    vector<AttackerTemplate> GetAttackerTemplates();
 
     void MoveEntity(const IVector2& position, const IVector2& move_to);
 
     void ChangeWindow(const string& window_name);
     bool TrySpawnDefender(const IVector2& position, const DefenderTemplate& temp);
-    bool TrySpawnAttacker(const IVector2& position, const AttackerTemplate& temp);
-    GameStats& GetStats() const;
+    bool TrySpawnAttacker(const AttackerTemplate& temp);
+    shared_ptr<GameStats> GetStats();
+
+    void CloseApplication();
 
 protected: 
     void Initialize();

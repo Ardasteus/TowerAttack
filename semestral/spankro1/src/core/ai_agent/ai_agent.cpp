@@ -13,6 +13,7 @@ void AIAgent::Update(GameManager& game_manager)
 
     int tries = 5;
     bool spawned = false;
+    int available_gold = game_manager.GetStats()->GetAIGold();
     random_device rand;
     mt19937 rng(rand());
     uniform_int_distribution<int> rand_x(0, GAME_WIDTH - 1);
@@ -30,18 +31,14 @@ void AIAgent::Update(GameManager& game_manager)
         if(spawned)
         {
             available_gold -= def_template.cost;
-            break;
+            game_manager.GetStats()->SetAIGold(available_gold);
+            return;
         }
         tries--;
     }
 }
 
-void AIAgent::SetGold(const int& gold)
+void AIAgent::ResetTimer()
 {
-    available_gold = gold;
-}
-
-void AIAgent::AddGold(const int& income)
-{
-    available_gold += income;
+    current_update_time = 0;
 }

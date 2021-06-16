@@ -4,6 +4,7 @@ using namespace std;
 
 bool MapHandler::Load()
 {
+    map_files.clear();
     fstream map_list;
     map_list.open("./assets/maps/map_list", ios::in);
     if(map_list.is_open())

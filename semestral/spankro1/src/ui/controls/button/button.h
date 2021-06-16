@@ -6,6 +6,8 @@ using namespace std;
 #include <functional>
 #include "ui/controls/focusable_gui_object/focusable_gui_object.h"
 
+class GameManager;
+
 /**
  * UI component that executes a given action when Enter is pressed while it is focused.
  * 
@@ -22,7 +24,7 @@ protected:
     /**
      * Functions to be called when Buttons is activated
      */
-    vector<function<void()>> on_click_functions;
+    vector<function<void(GameManager&)>> on_click_functions;
 
 public:
     /**
@@ -47,7 +49,7 @@ public:
      * 
      * @param key Code of the key that was pressed
      */
-    void HandleInput(const int& key) override;
+    void HandleInput(const int& key, GameManager& game_manager) override;
 
     /**
      * Draws the button.
@@ -64,5 +66,5 @@ public:
      * 
      * @param func Function to add
      */
-    void AddOnClickEvent(function<void()> func);
+    void AddOnClickEvent(function<void(GameManager&)> func);
 };

@@ -1,7 +1,8 @@
 #include "game_stats_window.h"
+#include "core/game_manager/game_manager.h"
 
-GameStatsWindow::GameStatsWindow()
-: GUIWindow("Stats", 60, 3, IVector2(60, 0))
+GameStatsWindow::GameStatsWindow(const int& width, const int& height, const IVector2& position)
+: GUIWindow("Stats", width, height, position)
 {
     
 }
@@ -21,7 +22,11 @@ void GameStatsWindow::UpdateWindow(const GameStats& game_stats)
 
 void GameStatsWindow::Initialize(GameManager& game_manager)
 {
-    BaseWindow::Initialize();
+    game_manager.GetStats()->SetOnUpdateCallback([&](GameStats& game_stats)
+    {
+        UpdateWindow(game_stats);
+    });
+
     IVector2 position(0,0);
     ControlCreator creator;
 

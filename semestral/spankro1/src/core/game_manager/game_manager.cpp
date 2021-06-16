@@ -31,7 +31,8 @@ void GameManager::Run()
     while(!exit_application)
     {
         int input = input_handler.HandleInput();
-        current_window->HandleInput(input);
+        if(input != -1)
+            current_window->HandleInput(input, *this);
         if(exit_application)
             break;
         Draw();
@@ -56,6 +57,11 @@ void GameManager::Run()
 
     if(error_message != "")
         cout << error_message << endl;
+}
+
+shared_ptr<GameStats> GameManager::GetStats()
+{
+    return dynamic_pointer_cast<GameStats>(updatable_services["Stats"]);
 }
 
 vector<TileGameObjectPair> GameManager::GetGameObjectsInSquare(const IVector2& position, const int& radius) const
@@ -101,19 +107,17 @@ TileGameObjectPair GameManager::GetGameObjectAtPosition(const IVector2& position
     return TileGameObjectPair(game_map_mask[position.GetX()][position.GetY()], game_objects[position.GetX()][position.GetY()]);
 }
 
-bool GameManager::TrySpawnAttacker(const IVector2& position, const AttackerTemplate& temp)
+bool GameManager::TrySpawnAttacker(const AttackerTemplate& temp)
 {
-    
-    TileGameObjectPair cell_pair = GetGameObjectAtPosition(position);
+    TileGameObjectPair cell_pair = GetGameObjectAtPosition(SpawnLocation);
     AttackerEntity* test = dynamic_cast<AttackerEntity*>(cell_pair.game_object.get());
     if(cell_pair.tile_type != TileType::Spawner || test != nullptr)
         return false;
 
-
     string name = temp.name + to_string(temp.count);
-    shared_ptr<AttackerEntity> attacker = make_shared<AttackerEntity>(AttackerEntity(position, name, temp));
+    shared_ptr<AttackerEntity> attacker = make_shared<AttackerEntity>(AttackerEntity(SpawnLocation, name, temp));
 
-    game_objects[position.GetX()][position.GetY()] = attacker;
+    game_objects[SpawnLocation.GetX()][SpawnLocation.GetY()] = attacker;
     attackers.insert(attacker);
     return true;
 }
@@ -131,6 +135,21 @@ bool GameManager::TrySpawnDefender(const IVector2& position, const DefenderTempl
     defenders.insert(defender);
     defenders_to_draw.push_back(defender);
     return true;
+}
+
+AttackerTemplate GameManager::GetAttackerTemplate(const string& name)
+{
+    return dynamic_pointer_cast<AttackerDefinitionHandler>(loadable_objects["AttackerTemplates"])->GetTemplate(name);
+}
+
+vector<string> GameManager::GetAttackerTemplateNames()
+{
+    return dynamic_pointer_cast<AttackerDefinitionHandler>(loadable_objects["AttackerTemplates"])->GetTemplateNames();
+}
+
+vector<AttackerTemplate> GameManager::GetAttackerTemplates()
+{
+    return dynamic_pointer_cast<AttackerDefinitionHandler>(loadable_objects["AttackerTemplates"])->GetTemplates();
 }
 
 void GameManager::MoveEntity(const IVector2& position, const IVector2& move_to)
@@ -168,37 +187,9 @@ void GameManager::Draw()
 {
     IVector2 offset(1,1);
     if(force_redraw)
-    {
         drawer.ClearAll();
-        if(game_running)
-        {
-            game_window.Draw(drawer, offset);
-            for (int i = 0; i < GAME_WIDTH; i++)
-                for (int j = 0; j < GAME_HEIGHT; j++)
-                    game_objects[i][j]->Draw(drawer, offset);
-            drawer.Refresh();
-            stats_window.Draw(drawer, offset);
-        }
-        current_window->Draw(drawer, offset);
-        return;
-    }
-    if(game_running)
-    {
-        game_window.Draw(drawer, offset);
-        for(auto defender : defenders_to_draw)
-            defender->Draw(drawer, offset);
-
-        for(auto path : path_to_draw)
-            path.Draw(drawer, offset);
-
-        for(auto attacker : attackers)
-            attacker->Draw(drawer, offset);
-
-        drawer.Refresh();
-        stats_window.Draw(drawer, offset);
-    }
-
     current_window->Draw(drawer, offset);
+    force_redraw = false;
 }
 
 void GameManager::Update()
@@ -232,23 +223,46 @@ void GameManager::Update()
 
 void GameManager::Initialize()
 {
+    drawer.Initialize();
+    input_handler.Initialize();
     loadable_objects["DefenderTemplates"] = make_shared<DefenderDefinitionHandler>();
     loadable_objects["AttackerTemplates"] = make_shared<AttackerDefinitionHandler>();
     loadable_objects["Maps"] = make_shared<MapHandler>();
     loadable_objects["Levels"] = make_shared<LevelHandler>();
     loadable_objects["Save"] = make_shared<SaveGame>();
+    updatable_services["Stats"] = make_shared<GameStats>();
+    gui_windows["MainMenu"] = make_shared<MainMenuWindow>();
+    gui_windows["Game"] = make_shared<GameWindow>();
+    init_objects["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
+    for(const auto& loadable : loadable_objects)
+    {
+        if(!loadable.second->Load())
+        {
+            error_message = loadable.second->GetError();
+            return;
+        }
+    }
+    for(const auto& window : gui_windows)
+        window.second->Initialize();
+
+    for(const auto& init : init_objects)
+        init.second->Initialize(*this);
+
+    current_window = gui_windows["MainMenu"];
     exit_application = false;
+    game_running = false;
+    force_redraw = false;
 }
 
 void GameManager::ChangeWindow(const string& window_name)
 {
-    if(window_name == "Game")
+    force_redraw = true;
+    current_window = gui_windows[window_name];
+    shared_ptr<GameWindow> is_game_window = dynamic_pointer_cast<GameWindow>(current_window);
+    if(is_game_window != nullptr)
         game_running = true;
     else
         game_running = false;
-
-    force_redraw = true;
-    current_window = gui_windows[window_name];
 }
 
 bool GameManager::LoadRandomMap()
@@ -348,4 +362,9 @@ bool GameManager::LoadRandomMap()
 DefenderTemplate GameManager::GetRandomDefenderTemplate()
 {
     return dynamic_pointer_cast<DefenderDefinitionHandler>(loadable_objects["DefenderTemplates"])->GetRandomTemplate();
+}
+
+void GameManager::CloseApplication()
+{
+    exit_application = true;
 }

@@ -54,7 +54,7 @@ void GUIWindow::AddElement(shared_ptr<GUIObject> element)
     gui_elements.push_back(element);
 }
 
-void GUIWindow::HandleInput(const int& key)
+void GUIWindow::HandleInput(const int& key, GameManager& game_manager)
 {
     if(focusable_elements.size() == 0)
         return;
@@ -75,5 +75,5 @@ void GUIWindow::HandleInput(const int& key)
         focusable_elements[focused_element]->is_currently_focused = true;
     }
     else
-        focusable_elements[focused_element]->HandleInput(key);
+        focusable_elements[focused_element]->HandleInput(key, game_manager);
 }

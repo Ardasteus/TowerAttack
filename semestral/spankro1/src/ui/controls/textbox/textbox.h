@@ -35,7 +35,7 @@ public:
      * 
      * @param key Code of the key that was pressed
      */
-    void HandleInput(const int& key) override;
+    void HandleInput(const int& key, GameManager& game_manager) override;
 
     /**
      * Draws the textbox.

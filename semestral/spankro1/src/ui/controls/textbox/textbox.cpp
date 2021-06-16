@@ -7,7 +7,7 @@ const short& fg, const short& bg, const short& ffg, const short& fbg)
     value = initial_value;
 }
 
-void Textbox::HandleInput(const int& key)
+void Textbox::HandleInput(const int& key, GameManager&)
 {
     char to_add = (char)key;
     if(to_add == '\a')

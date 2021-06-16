@@ -4,7 +4,6 @@ using namespace std;
 
 #include "core/game_stats/game_stats.h"
 #include "ui/window/gui_window.h"
-#include "ui/controls/label/label.h"
 #include "ui/control_creator/control_creator.h"
 #include "interfaces/iinitializable.h"
 #include "core/game_stats/game_stats.h"
@@ -22,6 +21,9 @@ protected:
      */
     map<string, shared_ptr<Label>> labels;
 public:
+
+    using BaseWindow::Initialize;
+
     /**
      * Creates a new GameStats window handler
      * 
@@ -29,7 +31,7 @@ public:
      * @param height Height of the window
      * @param position Position of the window
      */
-    GameStatsWindow();
+    GameStatsWindow(const int& width, const int& height, const IVector2& position);
 
     ~GameStatsWindow();
 

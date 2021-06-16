@@ -2,6 +2,7 @@
 
 bool AttackerDefinitionHandler::Load()
 {
+    attacker_templates.clear();
     fstream attacker_definitions;
     attacker_definitions.open("./assets/attacker_definitions", ios::in);
     if(attacker_definitions.is_open())
@@ -39,4 +40,29 @@ const AttackerTemplate& AttackerDefinitionHandler::GetTemplate(const string& nam
 const string& AttackerDefinitionHandler::GetError() const
 {
     return error_message;
+}
+
+vector<string> AttackerDefinitionHandler::GetTemplateNames() const
+{
+    vector<string> names;
+
+    for(const auto& temp : attacker_templates)
+        names.push_back(temp.first);
+
+    return names;
+}
+
+vector<AttackerTemplate> AttackerDefinitionHandler::GetTemplates() const
+{
+    vector<AttackerTemplate> temps;
+
+    for(const auto& temp : attacker_templates)
+        temps.push_back(temp.second);
+
+    return temps;
+}
+
+void AttackerDefinitionHandler::IncrementTemplateUse(const string& name)
+{
+    attacker_templates[name].count++;
 }

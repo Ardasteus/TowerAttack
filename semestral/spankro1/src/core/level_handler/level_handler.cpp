@@ -2,6 +2,7 @@
 
 bool LevelHandler::Load()
 {
+    levels.clear();
     fstream levels_file;
     levels_file.open("./assets/levels", ios::in);
     if(levels_file.is_open())

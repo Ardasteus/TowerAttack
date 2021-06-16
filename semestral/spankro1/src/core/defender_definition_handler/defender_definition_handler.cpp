@@ -7,6 +7,7 @@ DefenderDefinitionHandler::DefenderDefinitionHandler()
 
 bool DefenderDefinitionHandler::Load()
 {
+    defender_templates.clear();
     fstream defender_definitions;
     defender_definitions.open("./assets/defender_definitions", ios::in);
     if(defender_definitions.is_open())

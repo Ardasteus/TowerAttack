@@ -9,6 +9,7 @@ using namespace std;
 #include <list>
 #include <memory>
 
+class GameManager;
 
 /**
  * Window class that holds GUIObject instances and passes user input to FocusableGUIObject instances
@@ -79,7 +80,7 @@ public:
      * 
      * @param key Key code
      */
-    virtual void HandleInput(const int& key);
+    virtual void HandleInput(const int& key, GameManager& game_manager);
 
     /**
      * Adds new GUIObject to this class, if it also a FocusableGUIObject adds it to the vector of those as well.

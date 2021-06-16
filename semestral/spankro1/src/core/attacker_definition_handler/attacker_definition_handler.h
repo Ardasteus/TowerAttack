@@ -18,4 +18,7 @@ public:
     const string& GetError() const override;
 
     const AttackerTemplate& GetTemplate(const string& name);
+    void IncrementTemplateUse(const string& name);
+    vector<string> GetTemplateNames() const;
+    vector<AttackerTemplate> GetTemplates() const;
 };
