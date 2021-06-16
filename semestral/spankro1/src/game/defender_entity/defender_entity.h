@@ -61,5 +61,5 @@ public:
      * 
      * @param game_manager GameManager instance to be used
      */
-    void Update(const GameManager& game_manager) override;
+    void Update(GameManager& game_manager) override;
 };

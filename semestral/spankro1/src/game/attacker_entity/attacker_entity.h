@@ -81,7 +81,7 @@ public:
      * 
      * @param game_manager GameManager instance to be used
      */
-    void Update(const GameManager& game_manager) override;
+    void Update(GameManager& game_manager) override;
 
     /**
      * Applies damage to the entity, lowering current_health, if 0 calls on_destroy

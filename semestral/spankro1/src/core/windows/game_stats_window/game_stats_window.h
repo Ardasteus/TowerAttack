@@ -6,12 +6,14 @@ using namespace std;
 #include "ui/window/gui_window.h"
 #include "ui/controls/label/label.h"
 #include "ui/control_creator/control_creator.h"
+#include "interfaces/iinitializable.h"
+#include "core/game_stats/game_stats.h"
 #include <map>
 
 /**
  * Encapsulates a GUIWindow with Label objects that show relevant GameStats information
  */
-class GameStatsWindow : public GUIWindow
+class GameStatsWindow : public GUIWindow, public IInitializable
 {
 protected:
 
@@ -27,19 +29,19 @@ public:
      * @param height Height of the window
      * @param position Position of the window
      */
-    GameStatsWindow(const int& width, const int& height, const IVector2& position);
+    GameStatsWindow();
 
     ~GameStatsWindow();
 
     /**
      * Initializes the window. Creates all the labels used.
      */
-    void Initialize() override;
+    void Initialize(GameManager& game_manager) override;
 
     /**
      * Updates the label values with values taken from given GameStats instance
      * 
      * @param stats GameStats instance to update from
      */
-    void UpdateWindow(const GameStats& stats);
+    void UpdateWindow(const GameStats& game_stats);
 };

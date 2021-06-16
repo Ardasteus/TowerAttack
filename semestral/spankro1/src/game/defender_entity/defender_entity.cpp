@@ -20,7 +20,7 @@ void DefenderEntity::Draw(const Drawer& drawer, const IVector2& offset)
     drawer.DrawChar(draw_character, offset + position);
 }
 
-void DefenderEntity::Update(const GameManager& game_manager)
+void DefenderEntity::Update(GameManager& game_manager)
 {
     if(++current_update_time != update_time)
         return;

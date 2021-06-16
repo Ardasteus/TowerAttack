@@ -5,7 +5,7 @@ using namespace std;
 #include "graphics/window/base_window.h"
 #include "ui/controls/gui_object/gui_object.h"
 #include "ui/controls/focusable_gui_object/focusable_gui_object.h"
-#include "ui/ifocusable/ifocusable.h"
+#include "interfaces/ifocusable.h"
 #include <list>
 #include <memory>
 

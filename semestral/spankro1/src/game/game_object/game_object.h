@@ -5,7 +5,7 @@ using namespace std;
 #include <string>
 #include <functional>
 #include "graphics/idrawable/idrawable.h"
-#include "core/iupdatable/iupdatable.h"
+#include "interfaces/iupdatable.h"
 #include "math/vector/ivector2.h"
 
 class GameManager;
@@ -101,7 +101,7 @@ public:
      * @param offset Offset position to be used
      */
     virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
-    virtual void Update(const GameManager&) override {};
+    virtual void Update(GameManager&) override {};
 
     /**
      * Sets the on_destroy callback

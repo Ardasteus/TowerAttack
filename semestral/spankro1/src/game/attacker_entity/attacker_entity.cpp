@@ -31,7 +31,7 @@ void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset)
     drawer.DrawChar(draw_character, offset + position);
 }
 
-void AttackerEntity::Update(const GameManager& game_manager)
+void AttackerEntity::Update(GameManager& game_manager)
 {
     current_update_time++;
     if(current_update_time != update_time)
