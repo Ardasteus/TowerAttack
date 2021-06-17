@@ -34,8 +34,6 @@ using namespace std;
 
 const int TOTAL_WIDTH = 100;
 const int TOTAL_HEIGHT = 23;
-const int GAME_WIDTH = 60;
-const int GAME_HEIGHT = 20;
 const int WINDOW_BORDER = 2;
 const int ATTACKER_UPDATE_TIME = 3;
 const int DEFENDER_UPDATE_TIME = 15;
@@ -49,21 +47,10 @@ const int DELTA_TIME = 33;
 class GameManager
 {
 protected:
-    BaseWindow game_window;
-    shared_ptr<GameObject> game_objects[GAME_WIDTH][GAME_HEIGHT];
-    TileType game_map_mask[GAME_WIDTH][GAME_HEIGHT];
-
-    set<shared_ptr<GameObject>, GameObjectComparator> attackers;
-    vector<shared_ptr<GameObject>> attackers_to_remove;
-    set<shared_ptr<GameObject>, GameObjectComparator> defenders;
-    vector<GameObject> path_to_draw;
-    vector<shared_ptr<GameObject>> defenders_to_draw;
-
     map<string, shared_ptr<ILoadable>> loadable_objects;
     map<string, shared_ptr<IUpdatable>> updatable_services;
     map<string, shared_ptr<IInitializable>> init_objects;
 
-    IVector2 SpawnLocation;
     Drawer drawer;
     InputHandler input_handler;
     map<string, shared_ptr<GUIWindow>> gui_windows;
@@ -71,8 +58,6 @@ protected:
     bool game_running;
     bool force_redraw;
     bool change_level;
-    int ai_update;
-    int stat_update;
     bool exit_application = true;
     string error_message;
 public:
@@ -83,23 +68,29 @@ public:
 
     ~GameManager();
     void Run();
-    vector<TileGameObjectPair> GetGameObjectsInSquare(const IVector2& position, const int& radius) const;
-    TileGameObjectPair GetGameObjectAtPosition(const IVector2& position) const;
-    vector<TileGameObjectPair> GetGameObjectsInCross(const IVector2& position) const;
+    vector<shared_ptr<GameObject>> GetEntitiesInSquare(const IVector2& position, const int& radius);
+    TileGameObjectPair GetGameObjectAtPosition(const IVector2& position);
+    vector<shared_ptr<GameObject>> GetPathsNearPosition(const IVector2& position);
     
     DefenderTemplate GetRandomDefenderTemplate();
     AttackerTemplate GetAttackerTemplate(const string& name);
     vector<string> GetAttackerTemplateNames();
     vector<AttackerTemplate> GetAttackerTemplates();
 
-    void MoveEntity(const IVector2& position, const IVector2& move_to);
+    bool TryMoveEntity(const IVector2& position, const IVector2& move_to);
+    void DeleteObjectAtPosition(const IVector2& position);
 
     void ChangeWindow(const string& window_name);
     bool TrySpawnDefender(const IVector2& position, const DefenderTemplate& temp);
     bool TrySpawnAttacker(const AttackerTemplate& temp);
     shared_ptr<GameStats> GetStats();
+    shared_ptr<SaveGame> GetSaveGame();
+
+    void LoadGame(const bool& new_game);
+    void GoToNextLevel();
 
     void CloseApplication();
+    bool LoadRandomMap();
 
 protected: 
     void Initialize();
@@ -107,6 +98,4 @@ protected:
     void Draw();
 
     void Update();
-
-    bool LoadRandomMap();
 };  

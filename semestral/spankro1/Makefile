@@ -3,7 +3,7 @@ export INCLUDES = -I$(abspath src)
 export CXX = g++
 export LD = ld
 
-export CXXFLAGS = -g -Os -Wall -Wextra -pedantic -Wno-long-long -fpermissive -lncurses -fsanitize=address -fsanitize=undefined
+export CXXFLAGS = -g -Os -Wall -Wextra -pedantic -Wno-long-long -fpermissive -lncurses
 
 spankro1: FORCE
 	@make -C src build

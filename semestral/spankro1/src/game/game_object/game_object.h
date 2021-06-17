@@ -60,13 +60,12 @@ protected:
      * A callback called when this GameObject should be destroyed
      */
     function<void(const IVector2&)> on_destroy;
-    function<void(const IVector2&, const IVector2&)> on_move;
     
 protected:
     void InvokeOnDestroy();
-    void InvokeOnMove(const IVector2& move_to);
 
 public:
+    GameObject();
     /**
      * Constructor with default update timer.
      * 
@@ -110,8 +109,6 @@ public:
      */
     void SetOnDestroyCallback(const function<void(const IVector2&)>& func);
 
-    void SetOnMoveCallback(const function<void(const IVector2&, const IVector2&)>& func);
-
     /**
      * Returns the name of the object
      * 
@@ -125,4 +122,5 @@ public:
      * @return Position of the object
      */
     const IVector2& GetPosition() const;
+    void SetPosition(const IVector2& pos);
 };

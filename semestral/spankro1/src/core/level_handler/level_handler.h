@@ -25,4 +25,5 @@ public:
     void GoToSpecificLevel(const int& level);
 
     const Level& GetCurrentLevel() const;
+    const int& GetCurrentLevelId() const;
 };

@@ -60,3 +60,8 @@ const Level& LevelHandler::GetCurrentLevel() const
 {
     return levels[current_level_index];
 }
+
+const int& LevelHandler::GetCurrentLevelId() const
+{
+    return current_level_index;
+}

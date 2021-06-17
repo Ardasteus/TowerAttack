@@ -6,7 +6,7 @@
 class AIAgent : public IUpdatable
 {
 protected:
-    int ai_update_time = 50;
+    int ai_update_time = 250;
     int current_update_time = 0;
 public:
     void Update(GameManager& game_manager);

@@ -15,7 +15,7 @@ GameStatsWindow::~GameStatsWindow()
 void GameStatsWindow::UpdateWindow(const GameStats& game_stats)
 {
     labels["LevelValue"]->UpdateText(to_string(game_stats.GetLevel()));
-    labels["LivesValue"]->UpdateText(to_string(game_stats.GetLevel()));
+    labels["LivesValue"]->UpdateText(to_string(game_stats.GetLives()));
     labels["GoldValue"]->UpdateText(to_string(game_stats.GetGold()));
     labels["IncomeValue"]->UpdateText(to_string(game_stats.GetIncome()));
 }

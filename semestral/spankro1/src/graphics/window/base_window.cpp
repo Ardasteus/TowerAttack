@@ -34,7 +34,7 @@ void BaseWindow::Initialize()
     box(handle, ' ', ' ');
 }
 
-void BaseWindow::Draw(const Drawer& drawer, const IVector2& offset)
+void BaseWindow::Draw(const Drawer& drawer, const IVector2&)
 {
     drawer.SetWindow(handle);
     drawer.SetColor(foreground_color, background_color);

@@ -11,7 +11,7 @@ void AIAgent::Update(GameManager& game_manager)
 
     current_update_time = 0;
 
-    int tries = 5;
+    int tries = 3;
     bool spawned = false;
     int available_gold = game_manager.GetStats()->GetAIGold();
     random_device rand;

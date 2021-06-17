@@ -44,8 +44,6 @@ const string& MapHandler::GetRandomMap()
     mt19937 rng(rand());
     uniform_int_distribution<int> rand_dist(0, map_files.size() - 1);
     auto index = map_files.begin();
-    bool has_spawner = false;
-    bool has_end = false;
     advance(index, rand_dist(rng));
     return *index;
 }

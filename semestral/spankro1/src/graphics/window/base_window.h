@@ -72,7 +72,7 @@ public:
      * 
      * @param drawer Drawer to be used
      */
-    virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
+    virtual void Draw(const Drawer& drawer, const IVector2&) override;
 
     void SetOnWindowChange(const function<void(string)>& func);
 };

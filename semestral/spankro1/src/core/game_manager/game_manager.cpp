@@ -3,23 +3,16 @@
 using namespace chrono;
 
 GameManager::GameManager()
-: game_window(GAME_WIDTH + WINDOW_BORDER , GAME_HEIGHT + WINDOW_BORDER, IVector2(0,0), COLOR_WHITE, COLOR_BLACK)
 {
     error_message = "";
     game_running = false;
     force_redraw = false;
     change_level = false;
-    stat_update = 0;
-    ai_update = 0;
 }
 
 GameManager::~GameManager()
 {
     gui_windows.clear();
-    attackers.clear();
-    defenders.clear();
-    defenders_to_draw.clear();
-    attackers_to_remove.clear();
 }
 
 void GameManager::Run()
@@ -37,15 +30,8 @@ void GameManager::Run()
             break;
         Draw();
         force_redraw = false;
-        defenders_to_draw.clear();
-        path_to_draw.clear();
 
         Update();
-        if(change_level)
-        {
-            change_level = false;
-            ChangeWindow("LevelFinished");
-        }
 
         current = high_resolution_clock::now();
         auto delta_time = duration_cast<milliseconds>(current - previous).count();
@@ -64,76 +50,51 @@ shared_ptr<GameStats> GameManager::GetStats()
     return dynamic_pointer_cast<GameStats>(updatable_services["Stats"]);
 }
 
-vector<TileGameObjectPair> GameManager::GetGameObjectsInSquare(const IVector2& position, const int& radius) const
+shared_ptr<SaveGame> GameManager::GetSaveGame()
 {
-    vector<TileGameObjectPair> result;
-    IVector2 left_corner = position - IVector2(radius, radius);
-    int diameter = 2 * radius;
-    for (int i = 0; i <= diameter; i++)
-    {
-        for (int j = 0; j <= diameter; j++)
-        {
-            IVector2 pos = left_corner + IVector2(i,j);
-            TileGameObjectPair obj = GetGameObjectAtPosition(pos);
-            if(obj.game_object != nullptr)
-                result.push_back(obj);
-        }
-        
-    }
-    return result;
+    return dynamic_pointer_cast<SaveGame>(loadable_objects["Save"]);
 }
 
-vector<TileGameObjectPair> GameManager::GetGameObjectsInCross(const IVector2& position) const
+
+vector<shared_ptr<GameObject>> GameManager::GetEntitiesInSquare(const IVector2& position, const int& radius)
 {
-    vector<TileGameObjectPair> result;
-    vector<IVector2> positions;
-    positions.push_back(position + IVector2(0, 1));
-    positions.push_back(position + IVector2(1, 0));
-    positions.push_back(position - IVector2(0, 1));
-    positions.push_back(position - IVector2(1, 0));
-    for (auto pos : positions)
-    {
-        TileGameObjectPair obj = GetGameObjectAtPosition(pos);
-        if(obj.game_object != nullptr)
-            result.push_back(obj);
-    }
-    return result;
+    return dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->GetEntitiesInSquare(position, radius);
 }
 
-TileGameObjectPair GameManager::GetGameObjectAtPosition(const IVector2& position) const
+vector<shared_ptr<GameObject>> GameManager::GetPathsNearPosition(const IVector2& position)
 {
-    if(position.GetX() < 0 || position.GetX() >= GAME_WIDTH || position.GetY() < 0 || position.GetY() >= GAME_HEIGHT)
-        return TileGameObjectPair(TileType::Empty, nullptr);
-    return TileGameObjectPair(game_map_mask[position.GetX()][position.GetY()], game_objects[position.GetX()][position.GetY()]);
+    return dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->GetPathsNearPosition(position);
+}
+
+TileGameObjectPair GameManager::GetGameObjectAtPosition(const IVector2& position)
+{
+    return dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->GetGameObjectAtPosition(position);
 }
 
 bool GameManager::TrySpawnAttacker(const AttackerTemplate& temp)
 {
-    TileGameObjectPair cell_pair = GetGameObjectAtPosition(SpawnLocation);
-    AttackerEntity* test = dynamic_cast<AttackerEntity*>(cell_pair.game_object.get());
-    if(cell_pair.tile_type != TileType::Spawner || test != nullptr)
+    shared_ptr<AttackerEntity> attacker = dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->TrySpawnAttacker(temp);
+    if(attacker == nullptr)
         return false;
-
-    string name = temp.name + to_string(temp.count);
-    shared_ptr<AttackerEntity> attacker = make_shared<AttackerEntity>(AttackerEntity(SpawnLocation, name, temp));
-
-    game_objects[SpawnLocation.GetX()][SpawnLocation.GetY()] = attacker;
-    attackers.insert(attacker);
+    attacker->SetOnEndCallback([&]()
+    {   
+        GetStats()->DecrementLives();
+    });
+    attacker->SetOnDestroyCallback([&](const IVector2& position)
+    {
+        DeleteObjectAtPosition(position);
+    });
+    dynamic_pointer_cast<AttackerDefinitionHandler>(loadable_objects["AttackerTemplates"])->IncrementTemplateUse(temp.name);
     return true;
 }
 
 bool GameManager::TrySpawnDefender(const IVector2& position, const DefenderTemplate& temp)
 {  
-    TileGameObjectPair cell_pair = GetGameObjectAtPosition(position);
-    if(cell_pair.tile_type != TileType::Empty)
+    shared_ptr<DefenderEntity> defender = dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->TrySpawnDefender(position, temp);
+    if(defender == nullptr)
         return false;
-
-    string name = temp.name + to_string(temp.count);
-    shared_ptr<DefenderEntity> defender = make_shared<DefenderEntity>(DefenderEntity(position, name, temp));
-    game_objects[position.GetX()][position.GetY()] = defender;
-    game_map_mask[position.GetX()][position.GetY()] = TileType::Tower;
-    defenders.insert(defender);
-    defenders_to_draw.push_back(defender);
+    
+    dynamic_pointer_cast<DefenderDefinitionHandler>(loadable_objects["DefenderTemplates"])->IncrementTemplateUse(temp.name);
     return true;
 }
 
@@ -152,35 +113,36 @@ vector<AttackerTemplate> GameManager::GetAttackerTemplates()
     return dynamic_pointer_cast<AttackerDefinitionHandler>(loadable_objects["AttackerTemplates"])->GetTemplates();
 }
 
-void GameManager::MoveEntity(const IVector2& position, const IVector2& move_to)
+bool GameManager::TryMoveEntity(const IVector2& position, const IVector2& move_to)
 {
-    TileGameObjectPair to_move = GetGameObjectAtPosition(position);
-    GameObject to_add = GameObject("Empty", position, ' ', COLOR_WHITE, COLOR_BLACK);
-    switch (to_move.tile_type)
-    {
-        case TileType::Path:
-            to_add = GameObject("Path", position, '.', COLOR_WHITE, COLOR_BLACK);
-            path_to_draw.push_back(to_add);
-            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
-            break;
-        
-        case TileType::End:
-            to_add = GameObject("End", position, '$', COLOR_WHITE, COLOR_BLACK);
-            path_to_draw.push_back(to_add);
-            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
-            break;
+    return dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->TryMoveEntity(position, move_to);
+}
 
-        case TileType::Spawner:
-            to_add = GameObject("Spawner", position, '^', COLOR_WHITE, COLOR_BLACK);
-            path_to_draw.push_back(to_add);
-            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(to_add);
-            break;
+void GameManager::DeleteObjectAtPosition(const IVector2& position)
+{
+    dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->DeleteObjectAtPosition(position);
+}
 
-        default:
-            game_objects[position.GetX()][position.GetY()] = make_shared<GameObject>(GameObject("Empty", position, ' ', COLOR_WHITE, COLOR_BLACK));
-            break;
-    }
-    game_objects[move_to.GetX()][move_to.GetY()] = to_move.game_object;
+void GameManager::LoadGame(const bool& new_game)
+{
+    shared_ptr<SaveGame> save_game = GetSaveGame();
+    if(new_game)
+        save_game->NewGame();
+    shared_ptr<LevelHandler> levels = dynamic_pointer_cast<LevelHandler>(loadable_objects["Levels"]);
+    levels->GoToSpecificLevel(save_game->GetLevel());
+    GetStats()->SetStats(levels->GetCurrentLevel(), *save_game);
+} 
+
+void GameManager::GoToNextLevel()
+{
+    shared_ptr<SaveGame> save_game = GetSaveGame();
+    shared_ptr<LevelHandler> levels = dynamic_pointer_cast<LevelHandler>(loadable_objects["Levels"]);
+    shared_ptr<GameStats> stats = GetStats();
+    levels->GoToNextLevel();
+    save_game->SetLevel(levels->GetCurrentLevelId());
+    stats->SetStats(levels->GetCurrentLevel(), *save_game);
+    LoadRandomMap();
+    ChangeWindow("Game");
 }
 
 void GameManager::Draw()
@@ -196,29 +158,9 @@ void GameManager::Update()
 {
     if(game_running)
     {
-        for(auto defender : defenders)
-            defender->Update(*this);
-
-        for(auto to_delete : attackers_to_remove)
-            attackers.erase(to_delete);
-            
-        attackers_to_remove.clear();
-
-        for(auto attacker : attackers)
-        {
-            if(change_level)
-                return;
-
-            attacker->Update(*this);
-        }
-
-        for(auto to_delete : attackers_to_remove)
-            attackers.erase(to_delete);
-
-        attackers_to_remove.clear();
+        for(const auto& updatable : updatable_services)
+            updatable.second->Update(*this);
     }
-
-
 }
 
 void GameManager::Initialize()
@@ -234,6 +176,9 @@ void GameManager::Initialize()
     gui_windows["MainMenu"] = make_shared<MainMenuWindow>();
     gui_windows["Game"] = make_shared<GameWindow>();
     init_objects["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
+    init_objects["Stats"] = dynamic_pointer_cast<GameStats>(updatable_services["Stats"]);
+    updatable_services["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
+    updatable_services["XAIAgent"] = make_shared<AIAgent>();
     for(const auto& loadable : loadable_objects)
     {
         if(!loadable.second->Load())
@@ -270,93 +215,8 @@ bool GameManager::LoadRandomMap()
     fstream map;
     random_device rand;
     string chosen_map = dynamic_pointer_cast<MapHandler>(loadable_objects["Maps"])->GetRandomMap();
-    bool has_spawner = false;
-    bool has_end = false;
-    map.open("./assets/maps/" + chosen_map, ios::in);
-    if(map.is_open())
-    {
-        for (int j = 0; j < GAME_HEIGHT; j++)
-        {
-            string line;
-            getline(map, line);
-            if((int)line.size() != GAME_WIDTH)
-            {
-                map.close();
-                error_message = "Map (" + chosen_map + ") failed to load: invalid size of the map. " +
-                "Should be width: " + to_string(GAME_WIDTH) + " height: " + to_string(GAME_HEIGHT) + ".";
-                exit_application = true;
-                return false;
-            }
-            for (int i = 0; i < GAME_WIDTH; i++)
-            {
-                char current_char = line[i];
-                switch (current_char)
-                {
-                    case '.':
-                        game_objects[i][j] = make_shared<GameObject>(GameObject("Path", IVector2(i,j), '.', COLOR_WHITE, COLOR_BLACK));
-                        game_map_mask[i][j] = TileType::Path;
-                        break;
-
-                    case '^':
-                        if(has_spawner)
-                        {
-                            map.close();
-                            error_message = "Map (" + chosen_map + ") failed to load: Multiple spawners (^) are not allowed.";
-                            exit_application = true;
-                            return false;
-                        }
-                        game_objects[i][j] = make_shared<GameObject>(GameObject("Spawner", IVector2(i,j), '^', COLOR_WHITE, COLOR_BLACK));
-                        game_map_mask[i][j] = TileType::Spawner;
-                        SpawnLocation = IVector2(i, j);
-                        has_spawner = true;
-                        break;
-
-                    case '$':
-                        if(has_end)
-                        {
-                            map.close();
-                            error_message = "Map (" + chosen_map + ") failed to load: Multiple ends ($) are not allowed.";
-                            exit_application = true;
-                            return false;
-                        }
-                        game_objects[i][j] = make_shared<GameObject>(GameObject("End", IVector2(i,j), '$', COLOR_WHITE, COLOR_BLACK));
-                        game_map_mask[i][j] = TileType::End;
-                        has_end = true;
-                        break;
-
-                    case 'x':
-                        game_objects[i][j] = make_shared<GameObject>(GameObject("Unavailable", IVector2(i,j), 'x', COLOR_RED, COLOR_BLACK));
-                        game_map_mask[i][j] = TileType::Unavailable;
-                        break;
-                    
-                    default:
-                        game_objects[i][j] = make_shared<GameObject>(GameObject("Empty", IVector2(i,j), ' ', COLOR_WHITE, COLOR_BLACK));
-                        game_map_mask[i][j] = TileType::Empty;
-                        break;
-                }
-            }
-        }
-        map.close();
-        if(!has_end)
-        {
-            error_message = "Map (" + chosen_map + ") failed to load: Map has to have atleast one end ($).";
-            exit_application = true;
-            return false;
-        }
-        if(!has_spawner)
-        {
-            error_message = "Map (" + chosen_map + ") failed to load: Map has to have atleast one spawner (^).";
-            exit_application = true;
-            return false;
-        }
-        return true;
-    }
-    else
-    {
-        error_message = "Map (" + chosen_map + ") failed to load: File (./assets/maps/" + chosen_map + ") could not be opened.";
-        exit_application = true;
-        return false;
-    }
+    error_message = dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->LoadMap(chosen_map);
+    return error_message == "";
 }
 
 DefenderTemplate GameManager::GetRandomDefenderTemplate()
