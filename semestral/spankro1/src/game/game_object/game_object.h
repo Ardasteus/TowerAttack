@@ -5,7 +5,7 @@ using namespace std;
 #include <string>
 #include <functional>
 #include "graphics/idrawable/idrawable.h"
-#include "core/iupdatable/iupdatable.h"
+#include "interfaces/iupdatable.h"
 #include "math/vector/ivector2.h"
 
 class GameManager;
@@ -60,13 +60,12 @@ protected:
      * A callback called when this GameObject should be destroyed
      */
     function<void(const IVector2&)> on_destroy;
-    function<void(const IVector2&, const IVector2&)> on_move;
     
 protected:
     void InvokeOnDestroy();
-    void InvokeOnMove(const IVector2& move_to);
 
 public:
+    GameObject();
     /**
      * Constructor with default update timer.
      * 
@@ -101,7 +100,7 @@ public:
      * @param offset Offset position to be used
      */
     virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
-    virtual void Update(const GameManager&) override {};
+    virtual void Update(GameManager&) override {};
 
     /**
      * Sets the on_destroy callback
@@ -109,8 +108,6 @@ public:
      * @param func Function to be called when destroyed
      */
     void SetOnDestroyCallback(const function<void(const IVector2&)>& func);
-
-    void SetOnMoveCallback(const function<void(const IVector2&, const IVector2&)>& func);
 
     /**
      * Returns the name of the object
@@ -125,4 +122,5 @@ public:
      * @return Position of the object
      */
     const IVector2& GetPosition() const;
+    void SetPosition(const IVector2& pos);
 };

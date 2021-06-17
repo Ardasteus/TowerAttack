@@ -4,14 +4,15 @@ using namespace std;
 
 #include "core/game_stats/game_stats.h"
 #include "ui/window/gui_window.h"
-#include "ui/controls/label/label.h"
 #include "ui/control_creator/control_creator.h"
+#include "interfaces/iinitializable.h"
+#include "core/game_stats/game_stats.h"
 #include <map>
 
 /**
  * Encapsulates a GUIWindow with Label objects that show relevant GameStats information
  */
-class GameStatsWindow : public GUIWindow
+class GameStatsWindow : public GUIWindow, public IInitializable
 {
 protected:
 
@@ -20,6 +21,9 @@ protected:
      */
     map<string, shared_ptr<Label>> labels;
 public:
+
+    using BaseWindow::Initialize;
+
     /**
      * Creates a new GameStats window handler
      * 
@@ -34,12 +38,12 @@ public:
     /**
      * Initializes the window. Creates all the labels used.
      */
-    void Initialize() override;
+    void Initialize(GameManager& game_manager) override;
 
     /**
      * Updates the label values with values taken from given GameStats instance
      * 
      * @param stats GameStats instance to update from
      */
-    void UpdateWindow(const GameStats& stats);
+    void UpdateWindow(const GameStats& game_stats);
 };

@@ -5,5 +5,5 @@ class GameManager;
 class IUpdatable
 {
 public:
-    virtual void Update(const GameManager& game_manager) = 0;
+    virtual void Update(GameManager& game_manager) = 0;
 };

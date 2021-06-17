@@ -3,18 +3,23 @@
 using namespace std;
 
 #include "ui/window/gui_window.h"
-#include "ui/controls/gui_object/gui_object.h"
 #include "core/input_handler/input_handler.h"
 #include "game/attacker_entity/attacker_entity.h"
 #include "game/defender_entity/defender_entity.h"
-#include "ui/controls/button/button.h"
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
 #include "core/game_stats/game_stats.h"
 #include "core/windows/game_stats_window/game_stats_window.h"
 #include "utility/string_utilities.h"
 #include "core/save_game/save_game.h"
 #include "core/game_object_comparator/game_object_comparator.h"
-#include "game/attack_modes/closest_attack_mode/closest_attack_mode.h"
+#include "core/attacker_definition_handler/attacker_definition_handler.h"
+#include "core/defender_definition_handler/defender_definition_handler.h"
+#include "core/level_handler/level_handler.h"
+#include "core/map_handler/map_handler.h"
+#include "core/ai_agent/ai_agent.h"
+#include "core/windows/main_menu_window/main_menu_window.h"
+#include "interfaces/iinitializable.h"
+#include "core/windows/game_window/game_window.h"
 #include <string>
 #include <fstream>
 #include <iterator>
@@ -29,8 +34,6 @@ using namespace std;
 
 const int TOTAL_WIDTH = 100;
 const int TOTAL_HEIGHT = 23;
-const int GAME_WIDTH = 60;
-const int GAME_HEIGHT = 20;
 const int WINDOW_BORDER = 2;
 const int ATTACKER_UPDATE_TIME = 3;
 const int DEFENDER_UPDATE_TIME = 15;
@@ -44,141 +47,18 @@ const int DELTA_TIME = 33;
 class GameManager
 {
 protected:
-    /**
-     * Game window in which all GameObject instances are drawn
-     */
-    BaseWindow game_window;
+    map<string, shared_ptr<ILoadable>> loadable_objects;
+    map<string, shared_ptr<IUpdatable>> updatable_services;
+    map<string, shared_ptr<IInitializable>> init_objects;
 
-    /**
-     * Stats window, shows relevant GameStats properties
-     */
-    GameStatsWindow stats_window;
-
-    /**
-     * 2D array of GameObject instances, acts as a map.
-     */
-    shared_ptr<GameObject> game_objects[GAME_WIDTH][GAME_HEIGHT];
-
-    /**
-     * Number of empty spots on the map
-     */
-    int total_empty = 0;
-
-    /**
-     * 2D array of TileType instances, acts as a mask as to where for example the paths are.
-     */
-    TileType game_map_mask[GAME_WIDTH][GAME_HEIGHT];
-
-    /**
-     * Vector of avilable map file names
-     */
-    vector<string> map_files;
-
-    /**
-     * Set of AttackerEntity instances, stores as GameObject
-     */
-    set<shared_ptr<GameObject>, GameObjectComparator> attackers;
-
-    /**
-     * Vector of AttackEntity instances to remove.
-     * 
-     * Removes them after both defender update calls and attacker update calls.
-     */
-    vector<shared_ptr<GameObject>> attackers_to_remove;
-
-    /**
-     * Set of DefenderEntity instances, stores as GameObject
-     */
-    set<shared_ptr<GameObject>, GameObjectComparator> defenders;
-
-    /**
-     * Vector of paths that need drawing
-     */
-    vector<GameObject> path_to_draw;
-
-    /**
-     * Vector of entites that need to be drawn, used exclusively for defenders as attackers always draw.
-     */
-    vector<shared_ptr<GameObject>> defenders_to_draw;
-
-    /**
-     * Map storing available AttackerTemplate objects
-     */
-    map<string, AttackerTemplate> attacker_templates;
-
-    /**
-     * Map storing available DefenderTemplate objects
-     */
-    map<string, DefenderTemplate> defender_templates;
-
-    /**
-     * Location of the spawner
-     */
-    IVector2 SpawnLocation;
-
-    /**
-     * GameStats instance
-     */
-    GameStats stats;
-
-    /**
-     * SaveGame instance
-     */
-    SaveGame save_game;
-
-    /**
-     * Drawer instance
-     */
     Drawer drawer;
-
-    /**
-     * InputHandler window
-     */
     InputHandler input_handler;
-
-    /**
-     * Map of all GUIWindow instances used in the game
-     */
     map<string, shared_ptr<GUIWindow>> gui_windows;
-
-    /**
-     * Current GUIWindow that recieves input and draws
-     */
     shared_ptr<GUIWindow> current_window;
-
-    /**
-     * Whether or not the game is running/paused
-     */
     bool game_running;
-
-    /**
-     * Whether or not should the whole screen be redrawn
-     */
     bool force_redraw;
-
-    /**
-     * Whether or not a level should be changed
-     */
     bool change_level;
-
-    /**
-     * AI update timer
-     */
-    int ai_update;
-
-    /**
-     * Stat update timer
-     */
-    int stat_update;
-
-    /**
-     * Whether or not the application should exit
-     */
     bool exit_application = true;
-
-    /**
-     * Error message to be displayed to stdout when app closes.
-     */
     string error_message;
 public:
     /**
@@ -187,137 +67,35 @@ public:
     GameManager();
 
     ~GameManager();
-
-    /**
-     * Starts and runs the game
-     */
     void Run();
-
-    /**
-     * Returns a vector of TileGameObjectPair objects in square of given radius
-     * 
-     * @param position Center of the lookup square
-     * @param radius Span of the square
-     */
-    vector<TileGameObjectPair> GetGameObjectsInSquare(const IVector2& position, const int& radius) const;
-
-    /**
-     * Returns a TileGameObjectPair object with values from given position
-     * 
-     * @param position Position to look at
-     */
-    TileGameObjectPair GetGameObjectAtPosition(const IVector2& position) const;
-
-    /**
-     * Returns a vector of TileGameObjectPair objects neighboring the position, excluding diagonal neighbors
-     * 
-     * @param position Center of cross
-     */
-    vector<TileGameObjectPair> GetGameObjectsInCross(const IVector2& position) const;
+    vector<shared_ptr<GameObject>> GetEntitiesInSquare(const IVector2& position, const int& radius);
+    TileGameObjectPair GetGameObjectAtPosition(const IVector2& position);
+    vector<shared_ptr<GameObject>> GetPathsNearPosition(const IVector2& position);
     
-    /**
-     * Moves an entity on the 2D grid
-     * 
-     * @param position Position of entity to move
-     * @param move_to Where to move the entity
-     */
-    void MoveEntity(const IVector2& position, const IVector2& move_to);
+    DefenderTemplate GetRandomDefenderTemplate();
+    AttackerTemplate GetAttackerTemplate(const string& name);
+    vector<string> GetAttackerTemplateNames();
+    vector<AttackerTemplate> GetAttackerTemplates();
 
-    /**
-     * Changes the current active GUIWindow
-     * 
-     * @param window_name Name of the window to swap to. Key in gui_windows
-     */
+    bool TryMoveEntity(const IVector2& position, const IVector2& move_to);
+    void DeleteObjectAtPosition(const IVector2& position);
+
     void ChangeWindow(const string& window_name);
+    bool TrySpawnDefender(const IVector2& position, const DefenderTemplate& temp);
+    bool TrySpawnAttacker(const AttackerTemplate& temp);
+    shared_ptr<GameStats> GetStats();
+    shared_ptr<SaveGame> GetSaveGame();
 
-protected: 
+    void LoadGame(const bool& new_game);
+    void GoToNextLevel();
 
-    /**
-     * Creates and adds new GUIWindow to gui_windows
-     * 
-     * @param name Name of the window
-     * @param width Width of the window
-     * @param height Height of the window
-     * @param position Position of the window
-     */
-    shared_ptr<GUIWindow> AddGUIWindow(const string& name, const int& width, const int& height, const IVector2& position);
-
-    /**
-     * Initializes the game, loads all resources, creates all windows.
-     */
-    void Initialize();
-
-    /**
-     * Draws current GUIWindow and the game if game is not paused
-     */
-    void Draw();
-
-    /**
-     * Runs update on all entites, defenders first, attackers second. Also runs Stat and AI updates.
-     */
-    void Update();
-
-    /**
-     * Loads all available AttackerTemplate objects from a file
-     * 
-     * @return Returns whether or not definitions loaded
-     */
-    bool LoadAttackerDefinitions();
-
-    /**
-     * Loads all available DefenderTemplate objects from a file
-     * 
-     * @return Returns whether or not definitions loaded
-     */
-    bool LoadDefenderDefinitions();
-
-    /**
-     * Loads all available maps from a file
-     * 
-     * @return Returns whether or not maps loaded
-     */
-    bool LoadMaps();
-
-    /**
-     * Picks a random map from available maps and loads it
-     * 
-     * @return Returns whether or not map loaded
-     */
+    void CloseApplication();
     bool LoadRandomMap();
 
-    /**
-     * Tries to spawn an AttackerEntity at given position using given template
-     * 
-     * @param position Where to spawn the entity
-     * @param template_name Template to use
-     * @return Whether or not the entity was spawned
-     */
-    bool TrySpawnAttacker(const IVector2& position, const string& template_name);
+protected: 
+    void Initialize();
+ 
+    void Draw();
 
-    /**
-     * Tries to spawn an DefenderEntity at given position using given template
-     * 
-     * @param position Where to spawn the entity
-     * @param template_name Template to use
-     * @return Whether or not the entity was spawned
-     */
-    bool TrySpawnDefender(const IVector2& position, const string& template_name);
-
-    /**
-     * AI update, tries to spawn a random DefenderEntity at a random position, 5 times.
-     */
-    void DefenderAIUpdate();
-
-    /**
-     * Updates the stats of the game, giving the player gold based on income.
-     */
-    void StatUpdate();
-
-    /**
-     * Switches the game to specific level and notifies if this is a new game or not. If it is a new game, overwrites the old one.
-     * 
-     * @param level Level to go to
-     * @param new_game If true overwrites the current save game
-     */
-    void GoToLevel(const int& level, const bool& new_game);
+    void Update();
 };  

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui/controls/gui_object/gui_object.h"
-#include "ui/ifocusable/ifocusable.h"
+#include "interfaces/ifocusable.h"
 
 /**
  * Base class for all focusable GUIObjects. They can recieve user input.

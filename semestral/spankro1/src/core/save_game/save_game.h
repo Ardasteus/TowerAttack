@@ -1,48 +1,33 @@
 #pragma once
 
+using namespace std;
+
+#include "interfaces/iloadable.h"
 #include "utility/string_utilities.h"
 #include <fstream>
 
-/**
- * Class that stores all save game information.
- * 
- * Currently only one save game
- */
-class SaveGame
+class SaveGame : public ILoadable
 {
+protected:
+    string error_message = "";
+    int current_level = 0;
+    int bonus_gold = 0;
+    int bonus_income = 0;
+    int bonus_hp = 0;
 public:
-    /**
-     * Current level that the player is on
-     */
-    int current_level;
+    bool Load() override;
+    const string& GetError() const override;
 
-    /**
-     * How much bonus gold is the player getting on the start of a level
-     */
-    int bonus_gold;
+    void Save();
+    void NewGame();
 
-    /**
-     * How much bonus income is the player getting
-     */
-    int bonus_income;
+    const int& GetLevel() const;
+    const int& GetGold() const;
+    const int& GetIncome() const;
+    const int& GetHP() const;
 
-    /**
-     * Increases the HP of AttackerEntity objects spawned by the player
-     */
-    int bonus_hp;
-
-    /**
-     * Default constructor
-     */
-    SaveGame();
-    
-    /**
-     * Loads the save game from file
-     */
-    bool Load();
-
-    /**
-     * Saves the save game to file
-     */
-    bool Save();
+    void SetLevel(const int& value);
+    void SetGold(const int& value);
+    void SetIncome(const int& value);
+    void SetHP(const int& value);
 };

@@ -13,5 +13,5 @@ class IVector2;
 class AttackMode
 {
 public:
-    virtual vector<shared_ptr<AttackerEntity>> GetAttackersToDamage(const IVector2& position, const int& radius, const GameManager& game_manager) const = 0;
+    virtual vector<shared_ptr<AttackerEntity>> GetAttackersToDamage(const IVector2& position, const int& radius, GameManager& game_manager) const = 0;
 };

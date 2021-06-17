@@ -1,6 +1,19 @@
 #include "game_object.h"
 #include "core/game_manager/game_manager.h"
 
+GameObject::GameObject()
+{
+    name = "Default";
+    position = IVector2(0,0);
+    previous_position = IVector2(0,0);
+    draw_character = 'D';
+    foreground = COLOR_RED;
+    background = COLOR_YELLOW;
+    update_time = 0;
+    current_update_time = 0;
+    on_destroy = nullptr;
+}
+
 GameObject::GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg)
 {
     name = _name;
@@ -12,7 +25,6 @@ GameObject::GameObject(const string& _name, const IVector2& _position, char _dra
     update_time = 0;
     current_update_time = 0;
     on_destroy = nullptr;
-    on_move = nullptr;
 }
 
 GameObject::GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time)
@@ -26,17 +38,11 @@ GameObject::GameObject(const string& _name, const IVector2& _position, char _dra
     update_time = _update_time;
     current_update_time = 0;
     on_destroy = nullptr;
-    on_move = nullptr;
 }
 
 void GameObject::SetOnDestroyCallback(const function<void(const IVector2&)>& func)
 {
     on_destroy = func;
-}
-
-void GameObject::SetOnMoveCallback(const function<void(const IVector2&, const IVector2&)>& func)
-{
-    on_move = func;
 }
 
 void GameObject::Draw(const Drawer& drawer, const IVector2& offset)
@@ -61,8 +67,7 @@ void GameObject::InvokeOnDestroy()
         on_destroy(position);
 }
 
-void GameObject::InvokeOnMove(const IVector2& move_to)
+void GameObject::SetPosition(const IVector2& pos)
 {
-    if(on_move != nullptr)
-        on_move(position, move_to);
+    position = pos;
 }

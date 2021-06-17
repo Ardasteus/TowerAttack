@@ -5,5 +5,5 @@
 class AoEAttackMode : public AttackMode
 {
 public:
-    vector<shared_ptr<AttackerEntity>> GetAttackersToDamage(const IVector2& position, const int& radius, const GameManager& game_manager) const override;
+    vector<shared_ptr<AttackerEntity>> GetAttackersToDamage(const IVector2& position, const int& radius, GameManager& game_manager) const override;
 };

@@ -1,85 +1,131 @@
 #include "game_stats.h"
+#include "core/game_manager/game_manager.h"
 
-GameStats::GameStats()
+void GameStats::Update(GameManager& game_manager)
 {
-    current_level = -1;
-    player_income = 0;
-    ai_income = 0;
-    player_gold = 0;
-    ai_gold = 0;
-    lives = 0;
-}
-
-void GameStats::NextLevel(SaveGame& save_game)
-{
-    save_game.current_level = ++current_level;
-    if(current_level == (int)levels.size())
-        current_level = 0;
-
-    SetValues(save_game);
-}
-
-void GameStats::SetSpecificLevel(const int& level, SaveGame& save_game)
-{
-    int actual_level = level;
-    if(level < 0 || level >= (int)levels.size())
-        actual_level = 0;
-
-    save_game.current_level = actual_level;
-    current_level = actual_level;
-    SetValues(save_game);
-}
-
-bool GameStats::LoadLevels(string& error_message)
-{
-    fstream level_definitions;
-    level_definitions.open("./assets/levels", ios::in);
-    if(level_definitions.is_open())
+    if(lives_left <= 0)
     {
-        string line;
-        getline(level_definitions, line);
-        while(getline(level_definitions, line))
-        {
-            vector<int> values = StringUtils::IntSplitStringByDelimiter(line, ";");
-            if(values.size() != 5)
-            {
-                level_definitions.close();
-                error_message = "Levels could not be loaded: Wrong amount of parameters. Should be 5";
-                return false;
-            }
-            Level new_level = Level(values[0], values[1], values[3], values[2], values[4]);
-            levels.push_back(new_level);
-        }
-        level_definitions.close();
-        return true;
+        InvokeOnLivesLost(game_manager);
+        return;
     }
-    else
-    {
-        error_message = "Levels could not be loaded: File (./assets/levels) could not be opened.";
-        return false;
-    }
-}
 
-void GameStats::SetUpdateFunction(const function<void()>& func)
-{
-    on_stats_update = func;
-}
-
-void GameStats::InvokeUpdate()
-{
-    on_stats_update();
-}
-
-void GameStats::SetValues(SaveGame& save_game)
-{
-    if(current_level < 0 || current_level >= (int)levels.size())
+    current_update_timer++;
+    if(current_update_timer != update_timer)
         return;
 
-    Level level = levels[current_level];
-    player_income = level.player_income + save_game.bonus_income;
-    ai_income = level.ai_income;
-    player_gold = level.starting_player_gold + save_game.bonus_gold;
+    current_update_timer = 0;
+    SetGold(player_gold + player_income);
+}
+
+void GameStats::Initialize(GameManager&)
+{
+    SetOnLivesLostCallback([&](GameManager& game_manager)
+    {
+        game_manager.GoToNextLevel();
+    });
+}
+
+const int& GameStats::GetGold() const
+{
+    return player_gold;
+}
+
+const int& GameStats::GetIncome() const
+{
+    return player_income;
+}
+
+const int& GameStats::GetLives() const
+{
+    return lives_left;
+}
+
+const int& GameStats::GetLevel() const
+{
+    return current_level;
+}
+
+const int& GameStats::GetAIGold() const
+{
+    return ai_gold;
+}
+
+const int& GameStats::GetAIIncome() const
+{
+    return ai_income;
+}
+
+void GameStats::SetGold(const int& value)
+{
+    player_gold = value;
+    InvokeOnUpdate();
+}
+
+void GameStats::SetIncome(const int& value)
+{
+    player_income = value;
+    InvokeOnUpdate();
+}
+
+void GameStats::SetLives(const int& value)
+{
+    lives_left = value;
+    InvokeOnUpdate();
+}
+
+void GameStats::SetLevel(const int& value)
+{
+    current_level = value;
+    InvokeOnUpdate();
+}
+
+void GameStats::SetAIGold(const int& value)
+{
+    ai_gold = value;
+    InvokeOnUpdate();
+}
+
+void GameStats::SetAIIncome(const int& value)
+{
+    ai_income = value;
+    InvokeOnUpdate();
+}
+
+void GameStats::DecrementLives()
+{
+    lives_left--;
+    InvokeOnUpdate();
+}
+
+void GameStats::SetStats(const Level& level, const SaveGame& save_game)
+{
+    player_gold = level.starting_player_gold + save_game.GetGold();
+    player_income = level.player_income + save_game.GetIncome();
     ai_gold = level.starting_ai_gold;
-    lives = level.ai_lives;
-    on_stats_update();
+    ai_income = level.ai_income;
+    lives_left = level.ai_lives;
+    current_level = save_game.GetLevel();
+    InvokeOnUpdate();
+}
+
+void GameStats::SetOnUpdateCallback(function<void(GameStats&)> func)
+{
+    on_update_callback = func;
+}
+
+void GameStats::InvokeOnUpdate()
+{
+    if(on_update_callback != nullptr)
+        on_update_callback(*this);
+}
+
+void GameStats::SetOnLivesLostCallback(function<void(GameManager&)> func)
+{
+    on_lives_lost_callback = func;
+}
+
+void GameStats::InvokeOnLivesLost(GameManager& game_manager)
+{
+    if(on_lives_lost_callback != nullptr)
+        on_lives_lost_callback(game_manager);
 }

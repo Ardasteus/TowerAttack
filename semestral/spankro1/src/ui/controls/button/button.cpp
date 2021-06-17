@@ -7,13 +7,13 @@ const short& fg, const short& bg, const short& ffg, const short& fbg)
     caption = _caption;
 }
 
-void Button::HandleInput(const int& key)
+void Button::HandleInput(const int& key, GameManager& game_manager)
 {
     //Enter
     if(key == 10)
     {
         for(const auto& func : on_click_functions)
-            func();
+            func(game_manager);
     }
 }
 
@@ -34,7 +34,7 @@ void Button::Draw(const Drawer& drawer, const IVector2& offset)
     drawer.DrawString(print, offset + position);
 }
 
-void Button::AddOnClickEvent(function<void()> func)
+void Button::AddOnClickEvent(function<void(GameManager&)> func)
 {
     on_click_functions.push_back(func);
 }

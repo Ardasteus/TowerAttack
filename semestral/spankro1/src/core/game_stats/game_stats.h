@@ -2,99 +2,48 @@
 
 using namespace std;
 
-#include "core/level/level.h"
-#include "utility/string_utilities.h"
+#include "interfaces/iupdatable.h"
 #include "core/save_game/save_game.h"
-#include <vector>
+#include"core/level/level.h"
+#include "interfaces/iinitializable.h"
 #include <functional>
-#include <fstream>
 
-/**
- * Stores current game stats
- */
-class GameStats
+class GameStats : public IUpdatable, public IInitializable
 {
 protected:
-    /**
-     * Vector of available levels
-     */
-    vector<Level> levels;
+    int player_gold = 500;
+    int player_income = 0;
+    int lives_left = 0;
+    int current_level = 0;
+    int ai_gold = 500;
+    int ai_income = 0;
 
-    /**
-     * Callback to be called when stats are updated
-     */
-    function<void()> on_stats_update;
+    function<void(GameStats&)> on_update_callback;
+    function<void(GameManager&)> on_lives_lost_callback;
+
+    int update_timer = 100;
+    int current_update_timer = 0;
+
 public:
-    /**
-     * Current level
-     */
-    int current_level;
 
-    /**
-     * Current income of the player
-     */
-    int player_income;
-
-    /**
-     * Current income when AI kills an AttackerEntity
-     */
-    int ai_income;
-
-    /**
-     * Current player gold
-     */
-    int player_gold;
-
-    /**
-     * Current AI gold
-     */
-    int ai_gold;
-
-    /**
-     * Lives left
-     */
-    int lives;
-
-    /**
-     * Default constructor
-     */
-    GameStats();
-
-    /**
-     * Loads available levels from a file
-     */
-    bool LoadLevels(string& error_message);
-
-    /**
-     * Goes to the next level and updates given SaveGame instance
-     * 
-     * @param save_game SaveGame to update
-     */
-    void NextLevel(SaveGame& save_game);
-
-    /**
-     * Goes to specific level and updates given SaveGame instance. If that level is not available, goes to 0
-     * 
-     * @param level Level to go to
-     * @param save_game SaveGame to update
-     */
-    void SetSpecificLevel(const int& level, SaveGame& save_game);
-
-    /**
-     * Sets on_stats_update function
-     * 
-     * @param func Function to be used
-     */
-    void SetUpdateFunction(const function<void()>& func);
-
-    /**
-     * Invokes the on_stats_update callback
-     */
-    void InvokeUpdate();
-protected:
-
-    /**
-     * Updates the GameStats instance taking values from current level and global save game bonuses
-     */
-    void SetValues(SaveGame& save_game);
+    void Update(GameManager& game_manager) override;
+    void Initialize(GameManager& game_manager) override;
+    const int& GetGold() const;
+    const int& GetIncome() const;
+    const int& GetLives() const;
+    const int& GetLevel() const;
+    const int& GetAIGold() const;
+    const int& GetAIIncome() const;
+    void SetGold(const int& value);
+    void SetIncome(const int& value);
+    void SetLives(const int& value);
+    void DecrementLives();
+    void SetLevel(const int& value);
+    void SetAIGold(const int& value);
+    void SetAIIncome(const int& value);
+    void SetStats(const Level& level, const SaveGame& save_game);
+    void SetOnUpdateCallback(function<void(GameStats&)> func);
+    void SetOnLivesLostCallback(function<void(GameManager&)> func);
+    void InvokeOnUpdate();
+    void InvokeOnLivesLost(GameManager& game_manager);
 };

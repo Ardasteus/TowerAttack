@@ -1,4 +1,5 @@
 #include "game_stats_window.h"
+#include "core/game_manager/game_manager.h"
 
 GameStatsWindow::GameStatsWindow(const int& width, const int& height, const IVector2& position)
 : GUIWindow("Stats", width, height, position)
@@ -11,17 +12,21 @@ GameStatsWindow::~GameStatsWindow()
     labels.clear();
 }
 
-void GameStatsWindow::UpdateWindow(const GameStats& stats)
+void GameStatsWindow::UpdateWindow(const GameStats& game_stats)
 {
-    labels["LevelValue"]->UpdateText(to_string(stats.current_level));
-    labels["LivesValue"]->UpdateText(to_string(stats.lives));
-    labels["GoldValue"]->UpdateText(to_string(stats.player_gold));
-    labels["IncomeValue"]->UpdateText(to_string(stats.player_income));
+    labels["LevelValue"]->UpdateText(to_string(game_stats.GetLevel()));
+    labels["LivesValue"]->UpdateText(to_string(game_stats.GetLives()));
+    labels["GoldValue"]->UpdateText(to_string(game_stats.GetGold()));
+    labels["IncomeValue"]->UpdateText(to_string(game_stats.GetIncome()));
 }
 
-void GameStatsWindow::Initialize()
+void GameStatsWindow::Initialize(GameManager& game_manager)
 {
-    BaseWindow::Initialize();
+    game_manager.GetStats()->SetOnUpdateCallback([&](GameStats& game_stats)
+    {
+        UpdateWindow(game_stats);
+    });
+
     IVector2 position(0,0);
     ControlCreator creator;
 
