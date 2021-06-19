@@ -10,5 +10,5 @@ using namespace std;
 class AttackModeFactory
 {
 public:
-    shared_ptr<AttackMode> CreateAttackMode(const string& name);
+    shared_ptr<AttackMode> CreateAttackMode(const AttackType type);
 };

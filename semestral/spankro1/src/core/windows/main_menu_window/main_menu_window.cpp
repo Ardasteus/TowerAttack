@@ -30,12 +30,18 @@ void MainMenuWindow::Initialize()
         game_manager.LoadRandomMap();
         game_manager.ChangeWindow("Game");
     });
-    shared_ptr<Button> close = creator.CreateButton("Close", IVector2(0,2));
+    shared_ptr<Button> reload = creator.CreateButton("Reload Settings", IVector2(0,2));
+    reload->AddOnClickEvent([](GameManager& game_manager)
+    {
+        game_manager.LoadData();
+    });
+    shared_ptr<Button> close = creator.CreateButton("Close", IVector2(0,3));
     close->AddOnClickEvent([](GameManager& game_manager)
     {
         game_manager.CloseApplication();
     });
     AddElement(continue_game);
     AddElement(new_game);
+    AddElement(reload);
     AddElement(close);
 }

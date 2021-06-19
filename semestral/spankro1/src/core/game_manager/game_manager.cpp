@@ -15,6 +15,14 @@ GameManager::~GameManager()
     gui_windows.clear();
 }
 
+void GameManager::Dispose()
+{
+    drawer.~Drawer();
+    gui_windows.clear();
+    loadable_objects.clear();
+    updatable_services.clear();
+}
+
 void GameManager::Run()
 {
     Initialize();
@@ -40,7 +48,7 @@ void GameManager::Run()
 
         previous = high_resolution_clock::now();
     }
-
+    Dispose();
     if(error_message != "")
         cout << error_message << endl;
 }
@@ -163,6 +171,20 @@ void GameManager::Update()
     }
 }
 
+bool GameManager::LoadData()
+{
+    for(const auto& loadable : loadable_objects)
+    {
+        if(!loadable.second->Load())
+        {
+            error_message = loadable.second->GetError();
+            exit_application = true;
+            return false;
+        }
+    }
+    return true;
+}
+
 void GameManager::Initialize()
 {
     drawer.Initialize();
@@ -172,21 +194,17 @@ void GameManager::Initialize()
     loadable_objects["Maps"] = make_shared<MapHandler>();
     loadable_objects["Levels"] = make_shared<LevelHandler>();
     loadable_objects["Save"] = make_shared<SaveGame>();
+    loadable_objects["AIAgent"] = make_shared<AIAgent>();
     updatable_services["Stats"] = make_shared<GameStats>();
     gui_windows["MainMenu"] = make_shared<MainMenuWindow>();
     gui_windows["Game"] = make_shared<GameWindow>();
     init_objects["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
     init_objects["Stats"] = dynamic_pointer_cast<GameStats>(updatable_services["Stats"]);
     updatable_services["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
-    updatable_services["XAIAgent"] = make_shared<AIAgent>();
-    for(const auto& loadable : loadable_objects)
-    {
-        if(!loadable.second->Load())
-        {
-            error_message = loadable.second->GetError();
-            return;
-        }
-    }
+    updatable_services["AIAgent"] = dynamic_pointer_cast<AIAgent>(loadable_objects["AIAgent"]);
+    if(!LoadData())
+        return;
+
     for(const auto& window : gui_windows)
         window.second->Initialize();
 
@@ -216,7 +234,13 @@ bool GameManager::LoadRandomMap()
     random_device rand;
     string chosen_map = dynamic_pointer_cast<MapHandler>(loadable_objects["Maps"])->GetRandomMap();
     error_message = dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->LoadMap(chosen_map);
-    return error_message == "";
+    exit_application = error_message != "";
+    return exit_application;
+}
+
+vector<DefenderTemplate> GameManager::GetDefenderTemplates()
+{
+    return dynamic_pointer_cast<DefenderDefinitionHandler>(loadable_objects["DefenderTemplates"])->GetTemplates();
 }
 
 DefenderTemplate GameManager::GetRandomDefenderTemplate()

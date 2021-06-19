@@ -72,6 +72,7 @@ public:
     TileGameObjectPair GetGameObjectAtPosition(const IVector2& position);
     vector<shared_ptr<GameObject>> GetPathsNearPosition(const IVector2& position);
     
+    vector<DefenderTemplate> GetDefenderTemplates();
     DefenderTemplate GetRandomDefenderTemplate();
     AttackerTemplate GetAttackerTemplate(const string& name);
     vector<string> GetAttackerTemplateNames();
@@ -88,6 +89,7 @@ public:
 
     void LoadGame(const bool& new_game);
     void GoToNextLevel();
+    bool LoadData();
 
     void CloseApplication();
     bool LoadRandomMap();
@@ -98,4 +100,6 @@ protected:
     void Draw();
 
     void Update();
+
+    void Dispose();
 };  

@@ -5,7 +5,8 @@
 using namespace std;
 
 DefenderEntity::DefenderEntity(const IVector2& _position, const string& _name, const DefenderTemplate& d_template)
-: GameObject(_name, _position, d_template.draw_character, d_template.foreground_color, d_template.background_color, DEFENDER_UPDATE_TIME)
+: GameObject(_name, _position, d_template.draw_character, 
+d_template.foreground_color, d_template.background_color, DEFENDER_UPDATE_TIME, GameObjectType::Defender)
 {
     on_destroy = nullptr;
     attack_damage = d_template.attack_damage;

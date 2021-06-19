@@ -2,6 +2,12 @@
 #include "core/game_manager/game_manager.h"
 #include "game/attacker_entity/attacker_entity.h"
 
+ClosestAttackMode::ClosestAttackMode()
+: AttackMode(AttackType::Closest)
+{
+
+}
+
 vector<shared_ptr<AttackerEntity>> ClosestAttackMode::GetAttackersToDamage(const IVector2& position, const int& radius, GameManager& game_manager) const
 {
     vector<shared_ptr<AttackerEntity>> to_attack;

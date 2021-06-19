@@ -11,10 +11,12 @@ GameObject::GameObject()
     background = COLOR_YELLOW;
     update_time = 0;
     current_update_time = 0;
+    type = GameObjectType::Other;
     on_destroy = nullptr;
 }
 
-GameObject::GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg)
+GameObject::GameObject(const string& _name, const IVector2& _position, char _draw_character, 
+const short& fg, const short& bg, const GameObjectType _type = GameObjectType::Other)
 {
     name = _name;
     position = _position;
@@ -24,10 +26,12 @@ GameObject::GameObject(const string& _name, const IVector2& _position, char _dra
     background = bg;
     update_time = 0;
     current_update_time = 0;
+    type = _type;
     on_destroy = nullptr;
 }
 
-GameObject::GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time)
+GameObject::GameObject(const string& _name, const IVector2& _position, char _draw_character, 
+const short& fg, const short& bg, int _update_time, const GameObjectType _type = GameObjectType::Other)
 {
     name = _name;
     position = _position;
@@ -37,6 +41,7 @@ GameObject::GameObject(const string& _name, const IVector2& _position, char _dra
     background = bg;
     update_time = _update_time;
     current_update_time = 0;
+    type = _type;
     on_destroy = nullptr;
 }
 
@@ -54,6 +59,11 @@ void GameObject::Draw(const Drawer& drawer, const IVector2& offset)
 const string& GameObject::GetName() const
 {
     return name;
+}
+
+const GameObjectType& GameObject::GetType() const
+{
+    return type;
 }
 
 const IVector2& GameObject::GetPosition() const

@@ -1,11 +1,23 @@
 #include "attack_mode_factory.h"
 
-shared_ptr<AttackMode> AttackModeFactory::CreateAttackMode(const string& name)
+shared_ptr<AttackMode> AttackModeFactory::CreateAttackMode(const AttackType type)
 {
-    if(name == "AoE")
-        return make_shared<AoEAttackMode>();
-    else if(name == "Closest")
-        return make_shared<ClosestAttackMode>();
-    else
-        return make_shared<FurthestAttackMode>();
+    switch (type)
+    {
+        case AttackType::AoE:
+            return make_shared<AoEAttackMode>();
+            break;
+    
+        case AttackType::Closest:
+            return make_shared<ClosestAttackMode>();
+            break;
+
+        case AttackType::Furthest:
+            return make_shared<FurthestAttackMode>();
+            break;
+
+        default:
+            return make_shared<ClosestAttackMode>();
+            break;
+    }
 }

@@ -7,6 +7,7 @@ using namespace std;
 #include "interfaces/iloadable.h"
 #include "game/defender_entity/defender_template.h"
 #include "utility/string_utilities.h"
+#include "enums/attack_type.h"
 #include <map>
 #include <fstream>
 #include <random>
@@ -20,7 +21,10 @@ public:
     bool Load() override;
     const string& GetError() const override;
 
+    const vector<DefenderTemplate> GetTemplates();
     const DefenderTemplate& GetTemplate(const string& name);
     const DefenderTemplate& GetRandomTemplate();
     void IncrementTemplateUse(const string& name);
+private:
+    AttackType GetAttackTypeFromString(const string& s);
 };

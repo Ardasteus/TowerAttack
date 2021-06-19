@@ -23,7 +23,7 @@ bool DefenderDefinitionHandler::Load()
                 error_message = "Defender definitions failed to load: Invalid number of arguments, should be 7.";
                 return false;
             }
-            shared_ptr<AttackMode> mode = AttackModeFactory().CreateAttackMode(values[5]);
+            shared_ptr<AttackMode> mode = AttackModeFactory().CreateAttackMode(GetAttackTypeFromString(values[5]));
             DefenderTemplate new_template = DefenderTemplate(values[0], COLOR_YELLOW, COLOR_BLACK, 
             values[4][0], stoi(values[2]), stoi(values[1]), stoi(values[3]),
             mode, values[6]);
@@ -38,6 +38,14 @@ bool DefenderDefinitionHandler::Load()
         error_message = "Defender definitions failed to load: File (./assets/defender_definitions) could not be opened.";
         return false;
     }
+}
+
+const vector<DefenderTemplate> DefenderDefinitionHandler::GetTemplates()
+{
+    vector<DefenderTemplate> templates;
+    for(const auto& temp : defender_templates)
+        templates.push_back(temp.second);
+    return templates;
 }
 
 const DefenderTemplate& DefenderDefinitionHandler::GetTemplate(const string& name)
@@ -63,4 +71,14 @@ const string& DefenderDefinitionHandler::GetError() const
 void DefenderDefinitionHandler::IncrementTemplateUse(const string& name)
 {
     defender_templates[name].count++;
+}
+
+AttackType DefenderDefinitionHandler::GetAttackTypeFromString(const string& s)
+{
+    if(s == "AoE")
+        return AttackType::AoE;
+    if(s == "Furthest")
+        return AttackType::Furthest;
+    else
+        return AttackType::Closest;
 }

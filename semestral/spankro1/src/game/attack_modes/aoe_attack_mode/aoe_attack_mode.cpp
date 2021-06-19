@@ -2,6 +2,12 @@
 #include "core/game_manager/game_manager.h"
 #include "game/attacker_entity/attacker_entity.h"
 
+AoEAttackMode::AoEAttackMode()
+: AttackMode(AttackType::AoE)
+{
+    
+}
+
 vector<shared_ptr<AttackerEntity>> AoEAttackMode::GetAttackersToDamage(const IVector2& position, const int& radius, GameManager& game_manager) const
 {
     vector<shared_ptr<AttackerEntity>> to_attack;

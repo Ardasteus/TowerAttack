@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/enums/tile_type.h"
+#include "enums/tile_type.h"
 #include "game/game_object/game_object.h"
 
 /**

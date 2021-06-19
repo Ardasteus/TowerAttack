@@ -74,11 +74,11 @@ void GameWindow::Initialize()
     GUIWindow::Initialize();
     stats_window.Initialize();
     attacker_picker.Initialize();
-    map_game_objects['#'] = GameObject("Empty", IVector2(0,0), ' ', COLOR_WHITE, COLOR_BLACK);
-    map_game_objects['^'] = GameObject("Spawner", IVector2(0,0), '^', COLOR_WHITE, COLOR_BLACK);
-    map_game_objects['$'] = GameObject("End", IVector2(0,0), '$', COLOR_WHITE, COLOR_BLACK);
-    map_game_objects['.'] = GameObject("Path", IVector2(0,0), '.', COLOR_WHITE, COLOR_BLACK);
-    map_game_objects['x'] = GameObject("Unavailable", IVector2(0,0), 'x', COLOR_RED, COLOR_BLACK);
+    map_game_objects['#'] = GameObject("Empty", IVector2(0,0), ' ', COLOR_WHITE, COLOR_BLACK, GameObjectType::Other);
+    map_game_objects['^'] = GameObject("Spawner", IVector2(0,0), '^', COLOR_WHITE, COLOR_BLACK, GameObjectType::Other);
+    map_game_objects['$'] = GameObject("End", IVector2(0,0), '$', COLOR_WHITE, COLOR_BLACK, GameObjectType::Other);
+    map_game_objects['.'] = GameObject("Path", IVector2(0,0), '.', COLOR_WHITE, COLOR_BLACK, GameObjectType::Other);
+    map_game_objects['x'] = GameObject("Unavailable", IVector2(0,0), 'x', COLOR_RED, COLOR_BLACK, GameObjectType::Other);
     tile_game_objects[TileType::Empty] = map_game_objects['#'];
     tile_game_objects[TileType::End] = map_game_objects['$'];
     tile_game_objects[TileType::Path] = map_game_objects['.'];

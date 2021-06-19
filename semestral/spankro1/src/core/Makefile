@@ -14,6 +14,7 @@ clean:
 	@make -C defender_definition_handler clean
 	@make -C level_handler clean
 	@make -C map_handler clean
+	@make -C ai_strategies clean
 
 game_manager/game_manager.o: game_manager/Makefile FORCE
 	@make -C game_manager build
@@ -51,7 +52,10 @@ level_handler/level_handler.o: level_handler/Makefile FORCE
 map_handler/map_handler.o: map_handler/Makefile FORCE
 	@make -C map_handler build
 
-core.o: game_manager/game_manager.o input_handler/input_handler.o tile_game_object_pair/tile_game_object_pair.o game_stats/game_stats.o windows/windows.o level/level.o save_game/save_game.o ai_agent/ai_agent.o attacker_definition_handler/attacker_definition_handler.o defender_definition_handler/defender_definition_handler.o level_handler/level_handler.o map_handler/map_handler.o
+ai_strategies/ai_strategies.o: ai_strategies/Makefile FORCE
+	@make -C ai_strategies build
+
+core.o: game_manager/game_manager.o input_handler/input_handler.o tile_game_object_pair/tile_game_object_pair.o game_stats/game_stats.o windows/windows.o level/level.o save_game/save_game.o ai_agent/ai_agent.o attacker_definition_handler/attacker_definition_handler.o defender_definition_handler/defender_definition_handler.o level_handler/level_handler.o map_handler/map_handler.o ai_strategies/ai_strategies.o
 	$(LD) -r -o $@ $^
 
 FORCE:

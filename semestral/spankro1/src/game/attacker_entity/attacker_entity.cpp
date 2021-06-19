@@ -2,7 +2,8 @@
 #include "core/game_manager/game_manager.h"
 
 AttackerEntity::AttackerEntity(const IVector2& _position, const string& _name, const AttackerTemplate& a_template)
-: GameObject(_name, _position, a_template.draw_character, a_template.foreground_color, a_template.background_color, ATTACKER_UPDATE_TIME)
+: GameObject(_name, _position, a_template.draw_character, 
+a_template.foreground_color, a_template.background_color, ATTACKER_UPDATE_TIME, GameObjectType::Attacker)
 {
     on_destroy = nullptr;
     cost_to_spawn = a_template.cost;

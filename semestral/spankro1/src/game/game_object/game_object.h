@@ -5,6 +5,7 @@ using namespace std;
 #include <string>
 #include <functional>
 #include "graphics/idrawable/idrawable.h"
+#include "enums/game_object_type.h"
 #include "interfaces/iupdatable.h"
 #include "math/vector/ivector2.h"
 
@@ -46,6 +47,8 @@ protected:
      */
     short background;
 
+    GameObjectType type;
+
     /**
      * Current value of update "timer"
      */
@@ -75,7 +78,7 @@ public:
      * @param fg Foreground color of the object
      * @param bg Background color of the object
      */
-    GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg);
+    GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, const GameObjectType _type);
 
     /**
      * Constructor with custom update timer.
@@ -86,7 +89,7 @@ public:
      * @param bg Background color of the object
      * @param _update_time Update timer of the object
      */
-    GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time);
+    GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time, const GameObjectType _type);
 
     /**
      * Default destructor
@@ -122,5 +125,8 @@ public:
      * @return Position of the object
      */
     const IVector2& GetPosition() const;
+
+    const GameObjectType& GetType() const;
+
     void SetPosition(const IVector2& pos);
 };

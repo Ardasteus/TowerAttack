@@ -3,6 +3,44 @@
 
 using namespace std;
 
+bool AIAgent::Load()
+{
+    fstream ai_settings;
+    ai_settings.open("./assets/ai_settings", ios::in);
+    if(ai_settings.is_open())
+    {
+        string line;
+        getline(ai_settings, line);
+        getline(ai_settings, line);
+        vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
+        if(values.size() != 2)
+        {
+            ai_settings.close();
+            error_message = "AI Settings failed to load: wrong amount of parameters. Should be 2";
+            return false; 
+        }
+        ai_update_time = stoi(values[0]);
+        current_update_time = 0;
+        string choice = values[1];
+        if(choice == "AoE")
+            defender_choice_strategy = make_unique<AIAoeStrategy>();
+        else if(choice == "Furthest")
+            defender_choice_strategy = make_unique<AIFurthestStrategy>();
+        else if(choice == "Closest")
+            defender_choice_strategy = make_unique<AIClosestStrategy>();
+        else if(choice == "Cyclic")
+            defender_choice_strategy = make_unique<AICyclicStrategy>();
+        else
+            defender_choice_strategy = make_unique<AICyclicStrategy>();
+
+        ai_settings.close();
+        return true;
+    }
+
+    error_message = "AI Settings failed to load: file (./assets/ai_settings) failed to open.";
+    return false;
+}
+
 void AIAgent::Update(GameManager& game_manager)
 {
     current_update_time++;
@@ -20,7 +58,7 @@ void AIAgent::Update(GameManager& game_manager)
     uniform_int_distribution<int> rand_y(0, GAME_HEIGHT - 1);
     while(!spawned && tries > 0)
     {
-        DefenderTemplate def_template = game_manager.GetRandomDefenderTemplate();
+        DefenderTemplate def_template = defender_choice_strategy->GetTemplateToUse(game_manager);
         if(available_gold - def_template.cost < 0)
         {
             tries--;
