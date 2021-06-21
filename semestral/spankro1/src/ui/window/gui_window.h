@@ -72,6 +72,7 @@ public:
      * Sets the curren window of the Drawer instance to this window, draws its border and draws all GUIObjects.
      * 
      * @param drawer Drawer instance to be used
+     * @param offset Offset to be used
      */
     virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
 

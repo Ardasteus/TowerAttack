@@ -26,5 +26,5 @@ public:
      * 
      * @return Returns the actual damage to deal
      */
-    int GetDamageToApply(const int& damage, const DamageType& type);
+    int GetDamageToApply(const int& damage, const DamageType& _type);
 };

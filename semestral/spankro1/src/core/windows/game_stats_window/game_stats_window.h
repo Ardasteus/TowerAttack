@@ -40,13 +40,15 @@ public:
 
     /**
      * Initializes the window. Creates all the labels used.
+     * 
+     * @param game_manager GameManager instance to be used
      */
     void Initialize(GameManager& game_manager) override;
 
     /**
      * Updates the label values with values taken from given GameStats instance
      * 
-     * @param stats GameStats instance to update from
+     * @param game_stats GameStats instance to update from
      */
     void UpdateWindow(const GameStats& game_stats);
 };

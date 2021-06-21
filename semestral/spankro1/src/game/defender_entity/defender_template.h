@@ -78,7 +78,7 @@ public:
      * @param damage Damage of created DefenderEntity
      * @param _cost Cost of created DefenderEntity
      * @param mode Attack mode of created DefenderEntity
-     * @param type Attack type of created DefenderEntity
+     * @param damage_type Damage type of created DefenderEntity
      */
     DefenderTemplate(const string& _name, const short& fgc, const short& bgc, const char& dc, const int& radius, const int& damage, const int& _cost, 
     const AttackType& mode, const DamageType& damage_type);

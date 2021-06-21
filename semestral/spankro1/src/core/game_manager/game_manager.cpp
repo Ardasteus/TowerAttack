@@ -10,13 +10,6 @@ GameManager::GameManager()
     change_level = false;
 }
 
-GameManager::~GameManager()
-{
-    gui_windows.clear();
-    loadable_objects.clear();
-    updatable_services.clear();
-}
-
 void GameManager::Dispose()
 {
     drawer.Dispose();

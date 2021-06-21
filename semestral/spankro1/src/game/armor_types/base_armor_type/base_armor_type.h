@@ -27,7 +27,7 @@ public:
      * 
      * @return Returns the actual damage to deal
      */
-    virtual int GetDamageToApply(const int&, const DamageType&) = 0;
+    virtual int GetDamageToApply(const int& damage, const DamageType& _type) = 0;
 
     /**
      * Getter for ArmorType

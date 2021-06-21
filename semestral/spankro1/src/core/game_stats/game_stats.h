@@ -135,6 +135,11 @@ public:
      */
     void DecrementLives();
 
+    /**
+     * Setter for current level
+     * 
+     * @param value Value to set to
+     */
     void SetLevel(const int& value);
 
     /**

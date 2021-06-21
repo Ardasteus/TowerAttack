@@ -15,7 +15,7 @@ public:
     /**
      * Splits string as delimiter and returns the values as a vector.
      * 
-     * @param s String to split
+     * @param to_split String to split
      * @param delimiter Delimier to split by
      * @return Vector of split values
      */
@@ -37,7 +37,7 @@ public:
     /**
      * Splits string as delimiter and returns the values as a vector of integers.
      * 
-     * @param s String to split
+     * @param to_split String to split
      * @param delimiter Delimier to split by
      * @return Vector of split values as integers
      */

@@ -8,7 +8,6 @@ BaseWindow::BaseWindow(const int& _width, const int& _height, const IVector2& _p
     border = WindowBorder();
     foreground_color = fg;
     background_color = bg;
-    on_window_change = nullptr;
 }
 
 BaseWindow::BaseWindow(const int& _width, const int& _height, const IVector2& _position, const int& fg, const int& bg, const WindowBorder& _border)
@@ -19,7 +18,6 @@ BaseWindow::BaseWindow(const int& _width, const int& _height, const IVector2& _p
         border = _border;
     foreground_color = fg;
     background_color = bg;
-    on_window_change = nullptr;
 }
 
 BaseWindow::~BaseWindow()
@@ -40,9 +38,4 @@ void BaseWindow::Draw(const Drawer& drawer, const IVector2&)
     drawer.SetColor(foreground_color, background_color);
     drawer.DrawWindowBorder(border);
     drawer.Refresh();
-}
-
-void BaseWindow::SetOnWindowChange(const function<void(string)>& func)
-{
-    on_window_change = func;
 }

@@ -76,7 +76,7 @@ public:
     /**
      * Sets current window, any further function calls will be executed in the context of this window.
      * 
-     * @param window Pointer to a window to be set as the current window.
+     * @param window_handle Pointer to a window to be set as the current window.
      */
     void SetWindow(WINDOW* window_handle) const;
 

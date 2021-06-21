@@ -15,10 +15,29 @@ using namespace std;
 class BaseWindow : public IDrawable
 {
 protected:
+    /**
+     * Ncurses WINDOW handle
+     */
     WINDOW* handle;
+
+    /**
+     * Position of the window
+     */
     IVector2 position;
+
+    /**
+     * Border of the window
+     */
     WindowBorder border;
+
+    /**
+     * Width of the window
+     */
     int width;
+
+    /**
+     * Height of the window
+     */
     int height;
 
     /**
@@ -30,7 +49,6 @@ protected:
      */
     int background_color;
 
-    function<void(string)> on_window_change;
 public:
     /**
      * Constructor with default WindowBorder.
@@ -73,6 +91,4 @@ public:
      * @param drawer Drawer to be used
      */
     virtual void Draw(const Drawer& drawer, const IVector2&) override;
-
-    void SetOnWindowChange(const function<void(string)>& func);
 };

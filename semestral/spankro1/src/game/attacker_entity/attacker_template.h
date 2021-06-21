@@ -67,8 +67,7 @@ public:
      * @param fgc Foreground color of created AttackerEntity
      * @param bgc Background color of created AttackerEntity
      * @param dc Icon of created AttackerEntity
-     * @param str Strength of created AttackerEntity
-     * @param weak Weakness type of created AttackerEntity
+     * @param _armor_type ArmorType of created AttackerEntity
      */
     AttackerTemplate(const string& _name, const int& hp, const int& _cost, const short& fgc, const short& bgc, const char& dc, const ArmorType& _armor_type);
 };

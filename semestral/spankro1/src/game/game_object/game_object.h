@@ -87,6 +87,7 @@ public:
      * @param _draw_character Icon of the object
      * @param fg Foreground color of the object
      * @param bg Background color of the object
+     * @param _type Type of the object
      */
     GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, const GameObjectType _type);
 
@@ -98,6 +99,7 @@ public:
      * @param fg Foreground color of the object
      * @param bg Background color of the object
      * @param _update_time Update timer of the object
+     * @param _type Type of the object
      */
     GameObject(const string& _name, const IVector2& _position, char _draw_character, const short& fg, const short& bg, int _update_time, const GameObjectType _type);
 
