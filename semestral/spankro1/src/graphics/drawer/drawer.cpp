@@ -16,7 +16,7 @@ void Drawer::Initialize()
     initscr();
     raw();
     noecho();
-    nodelay(stdscr, TRUE);
+    nodelay(stdscr, FALSE);
     keypad(stdscr, true);
     curs_set(0);
     colorEnabled = has_colors();
@@ -24,6 +24,11 @@ void Drawer::Initialize()
     {
         start_color();
     }
+}
+
+void Drawer::Dispose()
+{
+    endwin();
 }
 
 void Drawer::ClearAll() const

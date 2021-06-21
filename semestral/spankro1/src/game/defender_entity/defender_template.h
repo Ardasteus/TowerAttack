@@ -51,6 +51,9 @@ public:
      */
     int cost;
 
+    /**
+     * Attack mode
+     */
     shared_ptr<AttackMode> attack_mode;
 
     /**

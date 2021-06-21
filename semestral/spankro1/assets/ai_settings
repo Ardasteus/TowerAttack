@@ -1,2 +1,2 @@
-UpdateTime;ChoiceStrategy
-50;Close
+UpdateTime;ChoiceStrategy;PlacementStrategy
+50;Close;Random

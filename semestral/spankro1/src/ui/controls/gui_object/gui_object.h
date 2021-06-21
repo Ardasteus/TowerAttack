@@ -3,7 +3,7 @@
 using namespace std;
 
 #include <string>
-#include "graphics/idrawable/idrawable.h"
+#include "interfaces/idrawable.h"
 #include "math/vector/ivector2.h"
 
 /**

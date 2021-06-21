@@ -34,6 +34,7 @@ public:
      * Handles user input, if supported key is pressed it will append that character to string, if backspace is pressed it deletes a character.
      * 
      * @param key Code of the key that was pressed
+     * @param game_manager GameManager instance to be used
      */
     void HandleInput(const int& key, GameManager& game_manager) override;
 

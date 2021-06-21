@@ -79,6 +79,7 @@ public:
      * Handles user input, up/down arrows cycle between focusable UI objects, if anything else is pressed it gets passed down to currently focused object.
      * 
      * @param key Key code
+     * @param game_manager GameManager instance to use
      */
     virtual void HandleInput(const int& key, GameManager& game_manager);
 

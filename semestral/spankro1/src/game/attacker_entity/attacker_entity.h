@@ -57,6 +57,9 @@ protected:
      */
     mutable int current_hit_timer = 0;
 
+    /**
+     * Whether or not the entity should draw and update
+     */
     bool is_active = true;
 public:
     /**

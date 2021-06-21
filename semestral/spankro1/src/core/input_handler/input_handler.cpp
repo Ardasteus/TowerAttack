@@ -11,6 +11,12 @@ InputHandler::~InputHandler()
         delwin(input_window);
 }
 
+void InputHandler::Dispose()
+{
+    if(input_window != nullptr)
+        delwin(input_window);
+}
+
 void InputHandler::Initialize()
 {
     input_window = newwin(0, 0, 0, 0);

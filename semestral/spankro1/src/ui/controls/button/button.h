@@ -45,9 +45,10 @@ public:
     const short& fg, const short& bg, const short& ffg, const short& fbg);
 
     /**
-     * Handles user input, if Enter is pressed the button is activated.
+     * Handles user input, if Enter is pressed the button is activated. GameManager is needed for the event being called.
      * 
      * @param key Code of the key that was pressed
+     * @param game_manager GameManager instance to be used
      */
     void HandleInput(const int& key, GameManager& game_manager) override;
 

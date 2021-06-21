@@ -52,6 +52,11 @@ public:
     void Initialize();
 
     /**
+     * Turns off Ncurses
+     */
+    void Dispose();
+
+    /**
      * Clears the entire screen.
      * 
      * Used mainly when switching windows to wipe the whole screen.

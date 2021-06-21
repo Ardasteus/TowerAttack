@@ -2,7 +2,7 @@
 #include "core/game_manager/game_manager.h"
 
 MainMenuWindow::MainMenuWindow()
-: GUIWindow("MainMenu", 100, 23, IVector2(0,0))
+: GUIWindow("MainMenu", TOTAL_WIDTH + WINDOW_BORDER, TOTAL_HEIGHT + WINDOW_BORDER, IVector2(0,0))
 {
 
 }

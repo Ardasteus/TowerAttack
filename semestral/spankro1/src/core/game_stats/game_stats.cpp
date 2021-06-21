@@ -21,7 +21,7 @@ void GameStats::Initialize(GameManager&)
 {
     SetOnLivesLostCallback([&](GameManager& game_manager)
     {
-        game_manager.GoToNextLevel();
+        game_manager.ChangeWindow("LevelFinished");
     });
 }
 
@@ -58,6 +58,10 @@ const int& GameStats::GetAIIncome() const
 void GameStats::SetGold(const int& value)
 {
     player_gold = value;
+    if(player_gold < 0)
+        player_gold = 0;
+    else if(player_gold > 999)
+        player_gold = 999;
     InvokeOnUpdate();
 }
 
@@ -82,6 +86,10 @@ void GameStats::SetLevel(const int& value)
 void GameStats::SetAIGold(const int& value)
 {
     ai_gold = value;
+    if(ai_gold < 0)
+        ai_gold = 0;
+    else if(ai_gold > 999)
+        ai_gold = 999;
     InvokeOnUpdate();
 }
 

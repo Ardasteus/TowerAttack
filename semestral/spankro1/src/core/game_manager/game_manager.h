@@ -20,6 +20,8 @@ using namespace std;
 #include "core/windows/main_menu_window/main_menu_window.h"
 #include "interfaces/iinitializable.h"
 #include "core/windows/game_window/game_window.h"
+#include "core/windows/level_finished_window/level_finished_window.h"
+#include "ncurses.h"
 #include <string>
 #include <fstream>
 #include <iterator>

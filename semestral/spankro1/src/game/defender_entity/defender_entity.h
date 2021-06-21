@@ -30,6 +30,9 @@ protected:
      */
     int cost_to_spawn;
 
+    /**
+     * Attack mode strategy
+     */
     shared_ptr<AttackMode> attack_mode;
 
     /**

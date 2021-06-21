@@ -13,11 +13,14 @@ GameManager::GameManager()
 GameManager::~GameManager()
 {
     gui_windows.clear();
+    loadable_objects.clear();
+    updatable_services.clear();
 }
 
 void GameManager::Dispose()
 {
-    drawer.~Drawer();
+    drawer.Dispose();
+    input_handler.Dispose();
     gui_windows.clear();
     loadable_objects.clear();
     updatable_services.clear();
@@ -51,11 +54,12 @@ void GameManager::Run()
     Dispose();
     if(error_message != "")
         cout << error_message << endl;
+
 }
 
 shared_ptr<GameStats> GameManager::GetStats()
 {
-    return dynamic_pointer_cast<GameStats>(updatable_services["Stats"]);
+    return dynamic_pointer_cast<GameStats>(init_objects["Stats"]);
 }
 
 shared_ptr<SaveGame> GameManager::GetSaveGame()
@@ -84,6 +88,10 @@ bool GameManager::TrySpawnAttacker(const AttackerTemplate& temp)
     shared_ptr<AttackerEntity> attacker = dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->TrySpawnAttacker(temp);
     if(attacker == nullptr)
         return false;
+    
+    shared_ptr<GameStats> stats = GetStats();
+    stats->SetGold(stats->GetGold() - temp.cost);
+
     attacker->SetOnEndCallback([&]()
     {   
         GetStats()->DecrementLives();
@@ -187,29 +195,32 @@ bool GameManager::LoadData()
 
 void GameManager::Initialize()
 {
-    drawer.Initialize();
-    input_handler.Initialize();
     loadable_objects["DefenderTemplates"] = make_shared<DefenderDefinitionHandler>();
     loadable_objects["AttackerTemplates"] = make_shared<AttackerDefinitionHandler>();
     loadable_objects["Maps"] = make_shared<MapHandler>();
     loadable_objects["Levels"] = make_shared<LevelHandler>();
     loadable_objects["Save"] = make_shared<SaveGame>();
     loadable_objects["AIAgent"] = make_shared<AIAgent>();
-    updatable_services["Stats"] = make_shared<GameStats>();
-    gui_windows["MainMenu"] = make_shared<MainMenuWindow>();
-    gui_windows["Game"] = make_shared<GameWindow>();
-    init_objects["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
-    init_objects["Stats"] = dynamic_pointer_cast<GameStats>(updatable_services["Stats"]);
-    updatable_services["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
-    updatable_services["AIAgent"] = dynamic_pointer_cast<AIAgent>(loadable_objects["AIAgent"]);
     if(!LoadData())
         return;
 
+    drawer.Initialize();
+    input_handler.Initialize();
+
+    gui_windows["MainMenu"] = make_shared<MainMenuWindow>();
+    gui_windows["Game"] = make_shared<GameWindow>();
+    gui_windows["LevelFinished"] = make_shared<LevelFinishedWindow>();
     for(const auto& window : gui_windows)
         window.second->Initialize();
 
+    init_objects["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
+    init_objects["Stats"] = make_shared<GameStats>();
     for(const auto& init : init_objects)
         init.second->Initialize(*this);
+
+    updatable_services["Game"] = dynamic_pointer_cast<GameWindow>(gui_windows["Game"]);
+    updatable_services["AIAgent"] = dynamic_pointer_cast<AIAgent>(loadable_objects["AIAgent"]);
+    updatable_services["Stats"] = dynamic_pointer_cast<GameStats>(init_objects["Stats"]);
 
     current_window = gui_windows["MainMenu"];
     exit_application = false;

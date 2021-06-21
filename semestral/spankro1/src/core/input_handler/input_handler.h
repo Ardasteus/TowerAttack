@@ -22,6 +22,8 @@ public:
 
     ~InputHandler();
 
+    void Dispose();
+
     /**
      * Initializes the window
      */

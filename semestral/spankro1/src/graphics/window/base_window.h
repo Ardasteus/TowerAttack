@@ -5,7 +5,7 @@ using namespace std;
 #include "ncurses.h"
 #include "graphics/window/window_border.h"
 #include "math/vector/ivector2.h"
-#include "graphics/idrawable/idrawable.h"
+#include "interfaces/idrawable.h"
 #include <memory>
 #include <functional>
 

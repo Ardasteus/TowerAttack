@@ -4,7 +4,7 @@ using namespace std;
 
 #include <string>
 #include <functional>
-#include "graphics/idrawable/idrawable.h"
+#include "interfaces/idrawable.h"
 #include "enums/game_object_type.h"
 #include "interfaces/iupdatable.h"
 #include "math/vector/ivector2.h"
@@ -47,6 +47,9 @@ protected:
      */
     short background;
 
+    /**
+     * Type of the object
+     */
     GameObjectType type;
 
     /**
@@ -65,9 +68,16 @@ protected:
     function<void(const IVector2&)> on_destroy;
     
 protected:
+
+    /**
+     * Invokes the on_destory method.
+     */
     void InvokeOnDestroy();
 
 public:
+    /**
+     * Default constructor
+     */
     GameObject();
     /**
      * Constructor with default update timer.
@@ -103,6 +113,12 @@ public:
      * @param offset Offset position to be used
      */
     virtual void Draw(const Drawer& drawer, const IVector2& offset) override;
+
+    /**
+     * Updates the object. For this base GameObject this does nothing.
+     * 
+     * @param game_manager GameManager instance to use
+     */
     virtual void Update(GameManager&) override {};
 
     /**
@@ -126,7 +142,17 @@ public:
      */
     const IVector2& GetPosition() const;
 
+    /**
+     * Returns the type of game object
+     * 
+     * @return Type of the game object
+     */
     const GameObjectType& GetType() const;
 
+    /**
+     * Sets the position of the GameObject
+     * 
+     * @param pos Position to move to
+     */
     void SetPosition(const IVector2& pos);
 };

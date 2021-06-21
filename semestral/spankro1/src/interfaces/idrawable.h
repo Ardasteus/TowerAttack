@@ -5,9 +5,7 @@ using namespace std;
 #include "graphics/drawer/drawer.h"
 
 /**
- * The base class for all objects that can draw.
- * 
- * This is a header only class
+ * Interface that objects that draw have to implement.
  */
 class IDrawable
 {

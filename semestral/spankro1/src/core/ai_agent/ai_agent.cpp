@@ -13,10 +13,10 @@ bool AIAgent::Load()
         getline(ai_settings, line);
         getline(ai_settings, line);
         vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
-        if(values.size() != 2)
+        if(values.size() != 3)
         {
             ai_settings.close();
-            error_message = "AI Settings failed to load: wrong amount of parameters. Should be 2";
+            error_message = "AI Settings failed to load: wrong amount of parameters. Should be 3";
             return false; 
         }
         ai_update_time = stoi(values[0]);
@@ -32,6 +32,9 @@ bool AIAgent::Load()
             defender_choice_strategy = make_unique<AICyclicStrategy>();
         else
             defender_choice_strategy = make_unique<AICyclicStrategy>();
+        
+        choice = values[2];
+        placement_strategy = make_unique<AIRandomPlacementStrategy>();
 
         ai_settings.close();
         return true;
@@ -64,8 +67,8 @@ void AIAgent::Update(GameManager& game_manager)
             tries--;
             continue;
         }
-        IVector2 rand_position(rand_x(rng), rand_y(rng));
-        spawned = game_manager.TrySpawnDefender(rand_position, def_template);
+        IVector2 position = placement_strategy->GetPositionToUse(game_manager);
+        spawned = game_manager.TrySpawnDefender(position, def_template);
         if(spawned)
         {
             available_gold -= def_template.cost;
