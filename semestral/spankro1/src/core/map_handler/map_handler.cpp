@@ -32,11 +32,6 @@ bool MapHandler::Load()
     }
 }
 
-const string& MapHandler::GetError() const
-{
-    return error_message;
-}
-
 const string& MapHandler::GetRandomMap()
 {
     fstream map;

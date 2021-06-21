@@ -33,6 +33,9 @@ public:
      */
     GameStatsWindow(const int& width, const int& height, const IVector2& position);
 
+    /**
+     * Default destructor
+     */
     ~GameStatsWindow();
 
     /**

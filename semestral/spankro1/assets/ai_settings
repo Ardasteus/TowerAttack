@@ -1,2 +1,2 @@
 UpdateTime;ChoiceStrategy;PlacementStrategy
-50;Close;Random
+50;Random;Path

@@ -10,6 +10,8 @@
 #include "core/ai_strategies/ai_choice_strategies/ai_furthest_strategy/ai_furthest_strategy.h"
 #include "core/ai_strategies/ai_placement_strategies/ai_placement_strategy/ai_placement_strategy.h"
 #include "core/ai_strategies/ai_placement_strategies/ai_random_placement_strategy/ai_random_placement_strategy.h"
+#include "core/ai_strategies/ai_placement_strategies/ai_path_random_placement_strategy/ai_path_random_placement_strategy.h"
+#include "core/ai_strategies/ai_choice_strategies/ai_random_strategy/ai_random_strategy.h"
 #include <random>
 #include <memory>
 

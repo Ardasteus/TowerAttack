@@ -83,6 +83,11 @@ TileGameObjectPair GameManager::GetGameObjectAtPosition(const IVector2& position
     return dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->GetGameObjectAtPosition(position);
 }
 
+vector<shared_ptr<GameObject>> GameManager::GetAllPaths()
+{
+    return dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->GetAllPaths();
+}
+
 bool GameManager::TrySpawnAttacker(const AttackerTemplate& temp)
 {
     shared_ptr<AttackerEntity> attacker = dynamic_pointer_cast<GameWindow>(gui_windows["Game"])->TrySpawnAttacker(temp);

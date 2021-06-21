@@ -8,7 +8,7 @@ const DefenderTemplate AIFurthestStrategy::GetTemplateToUse(GameManager& game_ma
     vector<DefenderTemplate> temp_templates = game_manager.GetDefenderTemplates();
     vector<DefenderTemplate> templates;
     for(const auto& temp : temp_templates)
-        if(temp.attack_mode->GetType() == AttackType::Furthest)
+        if(temp.attack_mode == AttackType::Furthest)
             templates.push_back(temp);
 
     random_device rand;

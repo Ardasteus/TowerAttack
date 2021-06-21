@@ -31,10 +31,13 @@ bool AIAgent::Load()
         else if(choice == "Cyclic")
             defender_choice_strategy = make_unique<AICyclicStrategy>();
         else
-            defender_choice_strategy = make_unique<AICyclicStrategy>();
+            defender_choice_strategy = make_unique<AIRandomStrategy>();
         
         choice = values[2];
-        placement_strategy = make_unique<AIRandomPlacementStrategy>();
+        if(choice == "Path")
+            placement_strategy = make_unique<AIPathRandomPlacementStrategy>();
+        else
+            placement_strategy = make_unique<AIRandomPlacementStrategy>();
 
         ai_settings.close();
         return true;

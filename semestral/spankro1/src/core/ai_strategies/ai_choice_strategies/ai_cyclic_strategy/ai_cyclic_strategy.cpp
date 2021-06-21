@@ -6,7 +6,7 @@ const DefenderTemplate AICyclicStrategy::GetTemplateToUse(GameManager& game_mana
     vector<DefenderTemplate> temp_templates = game_manager.GetDefenderTemplates();
     vector<DefenderTemplate> templates;
     for(const auto& temp : temp_templates)
-        if(temp.attack_mode->GetType() == current_type)
+        if(temp.attack_mode == current_type)
             templates.push_back(temp);
 
     random_device rand;

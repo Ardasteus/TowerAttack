@@ -1,6 +1,6 @@
 #include "attack_mode_factory.h"
 
-shared_ptr<AttackMode> AttackModeFactory::CreateAttackMode(const AttackType type)
+shared_ptr<AttackMode> AttackModeFactory::CreateAttackMode(const AttackType& type)
 {
     switch (type)
     {

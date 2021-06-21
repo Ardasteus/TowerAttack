@@ -1,10 +1,5 @@
 #include "defender_definition_handler.h"
 
-DefenderDefinitionHandler::DefenderDefinitionHandler()
-{
-    
-}
-
 bool DefenderDefinitionHandler::Load()
 {
     defender_templates.clear();
@@ -23,10 +18,23 @@ bool DefenderDefinitionHandler::Load()
                 error_message = "Defender definitions failed to load: Invalid number of arguments, should be 7.";
                 return false;
             }
-            shared_ptr<AttackMode> mode = AttackModeFactory().CreateAttackMode(GetAttackTypeFromString(values[5]));
+            AttackType type = AttackType::Closest;
+            if(values[5] == "AoE")
+                type = AttackType::AoE;
+            else if(values[5] == "Furthest")
+                type = AttackType::Furthest;
+
+            DamageType dmg = DamageType::Basic;
+            if(values[6] == "Chaos")
+                dmg = DamageType::Chaos;
+            else if(values[6] == "Magic")
+                dmg = DamageType::Magic;
+            else if(values[6] == "Physical")
+                dmg = DamageType::Physical;
+
             DefenderTemplate new_template = DefenderTemplate(values[0], COLOR_YELLOW, COLOR_BLACK, 
             values[4][0], stoi(values[2]), stoi(values[1]), stoi(values[3]),
-            mode, values[6]);
+            type, dmg);
             defender_templates[new_template.name] = new_template;
         }
         defender_definitions.close();
@@ -61,11 +69,6 @@ const DefenderTemplate& DefenderDefinitionHandler::GetRandomTemplate()
     auto index = defender_templates.begin();
     advance(index, rand_dist(rng));
     return index->second;
-}
-
-const string& DefenderDefinitionHandler::GetError() const
-{
-    return error_message;
 }
 
 void DefenderDefinitionHandler::IncrementTemplateUse(const string& name)

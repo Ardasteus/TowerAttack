@@ -21,5 +21,5 @@ public:
      * 
      * @return AttackMode
      */
-    shared_ptr<AttackMode> CreateAttackMode(const AttackType type);
+    shared_ptr<AttackMode> CreateAttackMode(const AttackType& type);
 };

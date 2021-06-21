@@ -73,6 +73,7 @@ public:
     vector<shared_ptr<GameObject>> GetEntitiesInSquare(const IVector2& position, const int& radius);
     TileGameObjectPair GetGameObjectAtPosition(const IVector2& position);
     vector<shared_ptr<GameObject>> GetPathsNearPosition(const IVector2& position);
+    vector<shared_ptr<GameObject>> GetAllPaths();
     
     vector<DefenderTemplate> GetDefenderTemplates();
     DefenderTemplate GetRandomDefenderTemplate();

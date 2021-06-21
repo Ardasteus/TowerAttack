@@ -51,11 +51,6 @@ void LevelHandler::GoToSpecificLevel(const int& level)
     current_level_index = actual_level;
 }
 
-const string& LevelHandler::GetError() const
-{
-    return error_message;
-}
-
 const Level& LevelHandler::GetCurrentLevel() const
 {
     return levels[current_level_index];

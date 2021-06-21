@@ -7,11 +7,6 @@ AttackerPickerWindow::AttackerPickerWindow(const int& width, const int& height, 
 
 }
 
-AttackerPickerWindow::~AttackerPickerWindow()
-{
-
-}
-
 void AttackerPickerWindow::Initialize(GameManager& game_manager)
 {
     ControlCreator creator;

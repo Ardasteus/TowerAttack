@@ -2,7 +2,10 @@
 
 using namespace std;
 
+#include "game/armor_types/base_armor_type/base_armor_type.h"
+#include "game/armor_types/normal_armor_type/normal_armor_type.h"
 #include <string>
+#include <memory>
 
 /**
  * Template to create AttackerEntity objects with given parameters
@@ -46,14 +49,9 @@ public:
     int count = 0;
 
     /**
-     * Takes less damage from AttackerEntity attack type with same name
+     * Armor type of the attacker
      */
-    string strength;
-
-    /**
-     * Takes more damage from AttackerEntity attack type with same name
-     */
-    string weakness;
+    ArmorType armor_type;
 
     /**
      * Default constructor
@@ -72,5 +70,5 @@ public:
      * @param str Strength of created AttackerEntity
      * @param weak Weakness type of created AttackerEntity
      */
-    AttackerTemplate(const string& _name, const int& hp, const int& _cost, const short& fgc, const short& bgc, const char& dc, const string& str, const string& weak);
+    AttackerTemplate(const string& _name, const int& hp, const int& _cost, const short& fgc, const short& bgc, const char& dc, const ArmorType& _armor_type);
 };

@@ -20,8 +20,14 @@ public:
      */
     InputHandler();
 
+    /**
+     * Destructor that releases the underlying Ncurses window
+     */
     ~InputHandler();
 
+    /**
+     * Manually disposes of the underlying Ncurses window
+     */
     void Dispose();
 
     /**

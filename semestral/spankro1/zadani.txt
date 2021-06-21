@@ -16,12 +16,3 @@ while you as the player get gold over time.
 
     Defenders and Attackers can be customized in the asset folder in their respective files. Same goes for levels. User can also create their own custom maps and include them in the game
 or they can chose to only include certain maps by editing the map list file. In the examples folder you can find instructions on how to play the game.
-
-Technicalities:
-    Polymorphism in this game/application is used in GameObjects and GUIObjects, which themselves derive from DrawableObject. I could have implemented inheritance and
-polymorphism in much more depth, but I opted out to use system comparable to ECS (Entity Component System) rather than multiple different GameObject. Doing proper
-GameObject oriented system would require the implementation of GameComponents that can be "slotted" in to a GameObject.
-
-    Having GameObject act as an empty or occupied space and having the defenders and attackers being instances of a single class greatly simplifies the problem. 
-If this was a game engine, I would opt out for GameComponentsas it is not however and it is a game, I think the system I chose makes more sense, 
-even if it seems like polymorphism was not implemented in such scale as it could have been.

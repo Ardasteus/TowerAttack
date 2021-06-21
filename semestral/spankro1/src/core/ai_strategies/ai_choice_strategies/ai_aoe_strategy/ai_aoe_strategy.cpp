@@ -8,7 +8,7 @@ const DefenderTemplate AIAoeStrategy::GetTemplateToUse(GameManager& game_manager
     vector<DefenderTemplate> temp_templates = game_manager.GetDefenderTemplates();
     vector<DefenderTemplate> templates;
     for(const auto& temp : temp_templates)
-        if(temp.attack_mode->GetType() == AttackType::AoE)
+        if(temp.attack_mode == AttackType::AoE)
             templates.push_back(temp);
 
     random_device rand;

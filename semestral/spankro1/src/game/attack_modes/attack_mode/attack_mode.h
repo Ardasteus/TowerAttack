@@ -41,7 +41,7 @@ public:
      * 
      * @return Vector of attackers to be hit
      */
-    virtual vector<shared_ptr<AttackerEntity>> GetAttackersToDamage(const IVector2& position, const int& radius, GameManager& game_manager) const = 0;
+    virtual vector<shared_ptr<AttackerEntity>> GetAttackersToDamage(const IVector2&, const int&, GameManager&) const = 0;
     
     /**
      * Returns the type of this AttackMode

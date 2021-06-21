@@ -12,14 +12,22 @@ bool AttackerDefinitionHandler::Load()
         while(getline(attacker_definitions, line))
         {
             vector<string> values = StringUtils::SplitStringByDelimiter(line, ";");
-            if(values.size() != 6)
+            if(values.size() != 5)
             {
                 attacker_definitions.close();
-                error_message = "Attacker definitions failed to load: Invalid number of arguments, should be 6.";
+                error_message = "Attacker definitions failed to load: Invalid number of arguments, should be 5.";
                 return false;
             }
+            ArmorType type = ArmorType::Normal;
+            if(values[4] == "LimitedImmunity")
+                type = ArmorType::LimitedImmunity;
+            else if(values[4] == "MagicalResist")
+                type = ArmorType::MagicalResistance;
+            else if(values[4] == "PhysicalResist")
+                type = ArmorType::PhysicalResistance;
+
             AttackerTemplate new_template = AttackerTemplate(values[0], stoi(values[1]), stoi(values[2]), COLOR_CYAN, COLOR_BLACK, 
-            values[3][0], values[4], values[5]);
+            values[3][0], type);
             attacker_templates[new_template.name] = new_template;
         }
         attacker_definitions.close();
@@ -35,11 +43,6 @@ bool AttackerDefinitionHandler::Load()
 const AttackerTemplate& AttackerDefinitionHandler::GetTemplate(const string& name)
 {
     return attacker_templates[name];
-}
-
-const string& AttackerDefinitionHandler::GetError() const
-{
-    return error_message;
 }
 
 vector<string> AttackerDefinitionHandler::GetTemplateNames() const

@@ -115,6 +115,14 @@ vector<shared_ptr<GameObject>> GameWindow::GetEntitiesInSquare(const IVector2& p
     return result;
 }
 
+vector<shared_ptr<GameObject>> GameWindow::GetAllPaths()
+{
+    vector<shared_ptr<GameObject>> paths;
+    for(const auto& obj : path_objects)
+        paths.push_back(obj);
+    return paths;
+}
+
 TileGameObjectPair GameWindow::GetGameObjectAtPosition(const IVector2& position)
 {
     if(!IsPositionValid(position))

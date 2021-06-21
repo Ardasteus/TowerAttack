@@ -4,6 +4,7 @@ using namespace std;
 
 #include <string>
 #include "game/attack_modes/attack_mode/attack_mode.h"
+#include "enums/damage_type.h"
 
 /**
  * Template to create DefenderEntity objects with given parameters
@@ -54,12 +55,12 @@ public:
     /**
      * Attack mode
      */
-    shared_ptr<AttackMode> attack_mode;
+    AttackType attack_mode;
 
     /**
-     * Attack type of DefenderEntity created using this template
+     * Damage type of DefenderEntity created using this template
      */
-    string attack_type;
+    DamageType attack_type;
 
     /**
      * Default constructor
@@ -80,5 +81,5 @@ public:
      * @param type Attack type of created DefenderEntity
      */
     DefenderTemplate(const string& _name, const short& fgc, const short& bgc, const char& dc, const int& radius, const int& damage, const int& _cost, 
-    const shared_ptr<AttackMode>& mode, const string& type);
+    const AttackType& mode, const DamageType& damage_type);
 };

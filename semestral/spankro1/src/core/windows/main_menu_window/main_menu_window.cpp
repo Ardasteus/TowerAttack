@@ -7,11 +7,6 @@ MainMenuWindow::MainMenuWindow()
 
 }
 
-MainMenuWindow::~MainMenuWindow()
-{
-
-}
-
 void MainMenuWindow::Initialize()
 {
     BaseWindow::Initialize();

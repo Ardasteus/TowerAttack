@@ -9,12 +9,11 @@ AttackerTemplate::AttackerTemplate()
     background_color = 0;
     draw_character = ' ';
     count = 0;
-    strength = "";
-    weakness = "";
+    armor_type = ArmorType::Normal;
 }
 
-AttackerTemplate::AttackerTemplate(const string& _name, const int& hp, const int& _cost, const short& fgc, 
-const short& bgc, const char& dc, const string& str, const string& weak)
+AttackerTemplate::AttackerTemplate(const string& _name, const int& hp, const int& _cost, const short& fgc, const short& bgc, 
+const char& dc, const ArmorType& _armor_type)
 {
     name = _name;
     health = hp;
@@ -23,6 +22,5 @@ const short& bgc, const char& dc, const string& str, const string& weak)
     background_color = bgc;
     draw_character = dc;
     count = 0;
-    strength = str;
-    weakness = weak;
+    armor_type = _armor_type;
 }

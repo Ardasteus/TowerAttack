@@ -5,6 +5,10 @@ using namespace std;
 #include "game/game_object/game_object.h"
 #include "attacker_template.h"
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
+#include "game/armor_types/base_armor_type/base_armor_type.h"
+#include "game/armor_types/armor_type_factory/armor_type_factory.h"
+#include "enums/attack_type.h"
+#include <memory>
 
 /**
  * This entity represents the player controlled side of this game.
@@ -28,14 +32,9 @@ protected:
     int cost_to_spawn;
 
     /**
-     * Strength of the entity
+     * Armor type of the attacker
      */
-    string strength;
-
-    /**
-     * Weakness of the entity
-     */
-    string weakness;
+    shared_ptr<BaseArmorType> armor_type;
 
     /**
      * Callback when the entity reaches the End tile
@@ -95,7 +94,7 @@ public:
      * @param damage Damage to be taken
      * @param attack_type Type of the dame
      */
-    void ApplyDamage(const int& damage, const string& attack_type);
+    void ApplyDamage(const int& damage, const DamageType& attack_type);
 
     /**
      * Sets the on_destroy callback function

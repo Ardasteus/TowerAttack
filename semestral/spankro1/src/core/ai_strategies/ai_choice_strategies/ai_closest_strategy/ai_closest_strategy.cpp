@@ -8,7 +8,7 @@ const DefenderTemplate AIClosestStrategy::GetTemplateToUse(GameManager& game_man
     vector<DefenderTemplate> temp_templates = game_manager.GetDefenderTemplates();
     vector<DefenderTemplate> templates;
     for(const auto& temp : temp_templates)
-        if(temp.attack_mode->GetType() == AttackType::Closest)
+        if(temp.attack_mode == AttackType::Closest)
             templates.push_back(temp);
 
     random_device rand;

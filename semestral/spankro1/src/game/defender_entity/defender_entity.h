@@ -8,6 +8,8 @@ using namespace std;
 #include "game/attacker_entity/attacker_entity.h"
 #include "core/tile_game_object_pair/tile_game_object_pair.h"
 #include "game/attack_modes/attack_mode/attack_mode.h"
+#include "game/attack_modes/attack_mode_factory/attack_mode_factory.h"
+#include "enums/damage_type.h"
 
 /**
  * This entity represents the AI controlled side of this game.
@@ -36,11 +38,9 @@ protected:
     shared_ptr<AttackMode> attack_mode;
 
     /**
-     * Attack type of this entity
-     * 
-     * Does more damage to AttackEntity objects who have the same attack_type as weakness, but does less to those who have it as a strength
+     * Damage type of this entity
      */
-    string attack_type;
+    DamageType attack_type;
 public:
     /**
      * Creates an entity with name and position using specificed template

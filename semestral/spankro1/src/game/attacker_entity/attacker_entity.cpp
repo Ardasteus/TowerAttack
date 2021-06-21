@@ -5,12 +5,12 @@ AttackerEntity::AttackerEntity(const IVector2& _position, const string& _name, c
 : GameObject(_name, _position, a_template.draw_character, 
 a_template.foreground_color, a_template.background_color, ATTACKER_UPDATE_TIME, GameObjectType::Attacker)
 {
+    ArmorTypeFactory factory;
     on_destroy = nullptr;
     cost_to_spawn = a_template.cost;
     max_health = a_template.health;
     current_health = a_template.health;
-    strength = a_template.strength;
-    weakness = a_template.weakness;
+    armor_type = factory.GetArmorType(a_template.armor_type);
 }
 
 void AttackerEntity::Draw(const Drawer& drawer, const IVector2& offset)
@@ -66,13 +66,9 @@ int AttackerEntity::GetCost() const
     return cost_to_spawn;
 }
 
-void AttackerEntity::ApplyDamage(const int& damage, const string& attack_type)
+void AttackerEntity::ApplyDamage(const int& damage, const DamageType& attack_type)
 {
-    int actual_damage = damage;
-    if(attack_type == strength)
-        actual_damage *= 0.75f;
-    else if(attack_type == weakness)
-        actual_damage *= 1.25f;
+    int actual_damage = armor_type->GetDamageToApply(damage, attack_type);
         
     current_health -= actual_damage;
     has_been_hit = true;

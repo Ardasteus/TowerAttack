@@ -8,10 +8,11 @@ DefenderEntity::DefenderEntity(const IVector2& _position, const string& _name, c
 : GameObject(_name, _position, d_template.draw_character, 
 d_template.foreground_color, d_template.background_color, DEFENDER_UPDATE_TIME, GameObjectType::Defender)
 {
+    AttackModeFactory factory;
     on_destroy = nullptr;
     attack_damage = d_template.attack_damage;
     attack_radius = d_template.attack_radius;
-    attack_mode = d_template.attack_mode;
+    attack_mode = factory.CreateAttackMode(d_template.attack_mode);
     attack_type = d_template.attack_type;
 }
 

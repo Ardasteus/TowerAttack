@@ -28,11 +28,6 @@ bool SaveGame::Load()
     }
 }
 
-const string& SaveGame::GetError() const
-{
-    return error_message;
-}
-
 void SaveGame::Save()
 {
     fstream save_game;

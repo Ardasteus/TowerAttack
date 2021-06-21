@@ -10,12 +10,12 @@ DefenderTemplate::DefenderTemplate()
     draw_character = ' ';
     count = 0;
     cost = 0;
-    attack_mode = nullptr;
-    attack_type = "";
+    attack_mode = AttackType::Closest;
+    attack_type = DamageType::Basic;
 }
 
 DefenderTemplate::DefenderTemplate(const string& _name, const short& fgc, const short& bgc, const char& dc, const int& radius, const int& damage, const int& _cost, 
-    const shared_ptr<AttackMode>& mode, const string& type)
+    const AttackType& mode, const DamageType& damage_type)
 {
     name = _name;
     attack_radius = radius;
@@ -26,5 +26,5 @@ DefenderTemplate::DefenderTemplate(const string& _name, const short& fgc, const 
     count = 0;
     cost = _cost;
     attack_mode = mode;
-    attack_type = type;
+    attack_type = damage_type;
 }
