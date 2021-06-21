@@ -1,17 +1,34 @@
 ## Tower Attack Game by Roman Španko (spankro1)
 
+#### Premise
+This is my semester project in which I created a Tower attack game with a bit of a twist, the player can choose power ups after finishing a level instead of just simply winning. The player then progresses further and further untill the game eventually goes back to level 0. Many aspects of the game are (and must be) customizable.
+
+#### Requirments
+These were requirments I needed to adhere to:
+
+ - Loading the definitions of attackers (player controlled side) from file
+ - Loading the definitions of defenders (AI controlled side)
+ - Loading map definitions
+ - Interactions between defenders and attackers
+ - Score and Victory detection
+ - AI to place the defenders
+ - Save and load capability
+
 #### How to play:
 The first thing you see is the main menu, you can either continue an old save game or start a new one. If there is not an old save game and you choose to continue, it creates a new one anyway.
 
+You can also edit the game files and press the reload button, which will load all the changes you made.
+
 Once you continue or start a new one a random map will be picked for you to play on. You will be presented with a set of buttons, these buttons will spawn attackers to run and try to
-get to the end. Once they get to the end, AI loses one life. If you manage to take down the AI lives to 0, you win this level and you move on to the next one.
+get to the end. Once they get to the end, AI loses one life. Both you and the AI earn gold to spawn attackers/defender, you as the player earn gold over time, while the AI gets gold from killing your attackers.
+
+If you manage to take down the AI lives to 0, you win this level and you move on to the next one.
+
 
 However, you do not instantly go to the next level, you can choose a power up after you win a level. There are three power ups in the game:
  - Bonus Health points - increases the HP of your attackers
  - Bonus Starting gold - gives you more gold at the start of the level
  - Bonus Income - increases your income, so you get more money as time goes on
-
-The AI also generates money, however they get money for every kill. Once you reach the final level, you get to go all over again, the game never ends.
 
 #### How to edit the game files:
 The files you can edit usually have the first row filled with the column names used in this file.
@@ -49,6 +66,12 @@ There are currently 3 attack modes:
  - AoE - the defender targets every attacker in its reach
  - Closest - the defender targets only the closest attacker
  - Furthest - targets the attacker that is furthest away
+
+There are currently 4 damage types:
+ - Basic
+ - Physical
+ - Magic
+ - Chaos
 
 #### Level Definitions (assets/level)
 This file stores the information about levels in the game. There always must be atleast one level. This determines values like gold and income, which can make the game harder.

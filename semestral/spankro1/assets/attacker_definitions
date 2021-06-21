@@ -1,5 +1,5 @@
 Name;HP;Cost;Icon;ArmorType
-Recruit;250;1;O;Normal
-Soldier;650;1;%;MagicalResist
-Knight;1000;1;@;PhysicalResist
-General;1000;1;G;LimitedImmunity
+Recruit;250;10;O;Normal
+Soldier;650;25;%;MagicalResist
+Knight;1000;40;@;PhysicalResist
+General;1000;60;G;LimitedImmunity

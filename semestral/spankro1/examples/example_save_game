@@ -1,4 +1,2 @@
 CurrentLevel;BonusGold;BonusIncome;BonusHP
-5;500;50;2000
-
-This is how a save file looks. It is very simple, it stores your current level and values of power ups.
+4;450;30;1000
