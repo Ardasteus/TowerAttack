@@ -112,7 +112,7 @@ bool GameManager::TrySpawnDefender(const IVector2& position, const DefenderTempl
     return true;
 }
 
-AttackerTemplate GameManager::GetAttackerTemplate(const string& name)
+const AttackerTemplate& GameManager::GetAttackerTemplate(const string& name)
 {
     return dynamic_pointer_cast<AttackerDefinitionHandler>(loadable_objects["AttackerTemplates"])->GetTemplate(name);
 }
@@ -252,7 +252,7 @@ vector<DefenderTemplate> GameManager::GetDefenderTemplates()
     return dynamic_pointer_cast<DefenderDefinitionHandler>(loadable_objects["DefenderTemplates"])->GetTemplates();
 }
 
-DefenderTemplate GameManager::GetRandomDefenderTemplate()
+const DefenderTemplate& GameManager::GetRandomDefenderTemplate()
 {
     return dynamic_pointer_cast<DefenderDefinitionHandler>(loadable_objects["DefenderTemplates"])->GetRandomTemplate();
 }

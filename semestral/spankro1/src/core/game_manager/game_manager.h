@@ -166,7 +166,7 @@ public:
      * 
      * @return random DefenderTemplate
      */
-    DefenderTemplate GetRandomDefenderTemplate();
+    const DefenderTemplate& GetRandomDefenderTemplate();
 
     /**
      * Tells the AttackerDefinitionHandler to fetch a specific AttackerTemplate
@@ -175,7 +175,7 @@ public:
      * 
      * @return AttackerTemplate
      */
-    AttackerTemplate GetAttackerTemplate(const string& name);
+    const AttackerTemplate& GetAttackerTemplate(const string& name);
 
     /**
      * Tells the AttackerDefinitionHandler to fetch names of all attacker templates

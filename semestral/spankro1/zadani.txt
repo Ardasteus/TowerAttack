@@ -16,3 +16,10 @@ while you as the player get gold over time.
 
     Defenders and Attackers can be customized in the asset folder in their respective files. Same goes for levels. User can also create their own custom maps and include them in the game
 or they can chose to only include certain maps by editing the map list file. In the examples folder you can find instructions on how to play the game.
+
+Polymorphism:
+    Polymorphism in this project is used in the subsystems for Entities and game services in general. Defender can have multiple stategies of what to target, AIAgent
+has strategies that determine where to place defenders and what defenders to place and attackers have armor types.
+
+    In terms of services, there are for example loadable services, that I can load with one for loop and such, adding these services is easy and does not polute
+the big Initialization method of the GameManager, which was the reason behind choosing this aproach.
